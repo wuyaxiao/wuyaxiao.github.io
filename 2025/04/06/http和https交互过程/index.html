@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuyaxiao.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="http交互过程  用wireshark抓包后利用百度ip地址过滤数据包ipv6.src &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296 || ipv6.dst &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296  “三次握手”建立TCP连接 客户端发送HTTP请求 客户端向服务器发送HTTP请求消息。请求消息通常包括">
+<meta property="og:type" content="article">
+<meta property="og:title" content="http和https交互过程">
+<meta property="og:url" content="http://wuyaxiao.com/2025/04/06/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="学习小屋">
+<meta property="og:description" content="http交互过程  用wireshark抓包后利用百度ip地址过滤数据包ipv6.src &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296 || ipv6.dst &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296  “三次握手”建立TCP连接 客户端发送HTTP请求 客户端向服务器发送HTTP请求消息。请求消息通常包括">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221702611.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221720457.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221743565.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221755801.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221808248.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221827193.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221839504.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221855258.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221911301.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221927735.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221942057.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221951935.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222010322.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222026174.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222044546.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222056722.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222111873.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222126505.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222141946.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222153092.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222204616.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222217832.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222228493.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222316867.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222328763.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222340929.png">
+<meta property="og:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222350469.png">
+<meta property="article:published_time" content="2025-04-06T14:14:01.000Z">
+<meta property="article:modified_time" content="2025-04-06T14:30:54.661Z">
+<meta property="article:author" content="Sunny">
+<meta property="article:tag" content="作业">
+<meta property="article:tag" content="HTTP协议">
+<meta property="article:tag" content="HTTPS协议">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wuyaxiao.com/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221702611.png">
+
+<link rel="canonical" href="http://wuyaxiao.com/2025/04/06/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>http和https交互过程 | 学习小屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学习小屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wuyaxiao.com/2025/04/06/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunny">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学习小屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          http和https交互过程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-04-06 22:14:01 / 修改时间：22:30:54" itemprop="dateCreated datePublished" datetime="2025-04-06T22:14:01+08:00">2025-04-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">web技术</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="http交互过程"><a href="#http交互过程" class="headerlink" title="http交互过程"></a>http交互过程</h2><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221702611.png" alt="image-20250406221702611"></p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221720457.png" alt="image-20250406221720457"></p>
+<p>用wireshark抓包后利用百度ip地址过滤数据包ipv6.src &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296 || ipv6.dst &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296</p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221743565.png" alt="image-20250406221743565"></p>
+<h3 id="“三次握手”建立TCP连接"><a href="#“三次握手”建立TCP连接" class="headerlink" title="“三次握手”建立TCP连接"></a>“三次握手”建立TCP连接</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221755801.png" alt="image-20250406221755801"></p>
+<h3 id="客户端发送HTTP请求"><a href="#客户端发送HTTP请求" class="headerlink" title="客户端发送HTTP请求"></a>客户端发送HTTP请求</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221808248.png" alt="image-20250406221808248"></p>
+<p>客户端向服务器发送HTTP请求消息。请求消息通常包括以下部分：</p>
+<ul>
+<li>请求行：包含请求方法（如GET、POST）、请求的资源路径、HTTP版本。<ul>
+<li>Request Method：请求方法，这里的请求方法是GET；</li>
+<li>Request URI：请求的URI，没指定默认是&#x2F;，因为我们只请求了域名<a target="_blank" rel="noopener" href="http://www.baidu.com,并没指定要获取的资源,所以是默认的/%EF%BC%9B">www.baidu.com，并没指定要获取的资源，所以是默认的/；</a></li>
+<li>Request Version：请求的版本，因为用的是HTTP协议，所以这里显示HTTP协议的版本。</li>
+</ul>
+</li>
+<li>请求头：包含客户端信息、请求参数等，例如User-Agent、Accept、Cookie等。<ul>
+<li><p>Host：目标主机；</p>
+</li>
+<li><p>User-Agent：用户代理，也就是浏览器的类型。由于我们没用浏览器，所以这里显示的是命令curl，版本为8.4.0；</p>
+</li>
+<li><p>Accept：浏览器可接受的MIME（Multipurpose Internet Mail Extensions）类型。</p>
+</li>
+</ul>
+</li>
+<li>请求体：对于某些请求方法（如POST），可能包含额外的数据，用于向服务器发送信息。</li>
+</ul>
+<h3 id="服务器发送HTTP响应"><a href="#服务器发送HTTP响应" class="headerlink" title="服务器发送HTTP响应"></a>服务器发送HTTP响应</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221827193.png" alt="image-20250406221827193"></p>
+<p>服务器接收到请求后，会检查请求头和请求体，然后根据请求方法（如GET、POST）和资源路径来决定如何响应。服务器生成的响应消息，包括状态行、响应体。</p>
+<p>当打开响应体会发现它的内容是明文的，对于机密通信来说HTTP通信很容易产生信息泄露。另外，以上介绍的整个交互过程中并不验证通信方的身份，第三方可以冒充他人身份参与通信。</p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221839504.png" alt="image-20250406221839504"></p>
+<h4 id="HTTP-响应结构"><a href="#HTTP-响应结构" class="headerlink" title="HTTP 响应结构"></a>HTTP 响应结构</h4><p>这个内容是一个标准的HTTP响应示例，使用的是HTTP&#x2F;1.1协议。响应的结构主要分为几个部分：</p>
+<ol>
+<li><p><strong>状态行</strong>： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Response Version</strong>: 表示使用的HTTP协议版本（HTTP&#x2F;1.1）。</li>
+<li><strong>Status Code</strong>: 200，表示请求成功。</li>
+<li><strong>Status Code Description</strong>: “OK”是对状态代码的描述，表示没有错误。</li>
+</ul>
+</li>
+<li><p><strong>响应头部</strong>：<br>接下来是一系列以<code>字段名: 字段值</code>方式排列的响应头部信息，其中包括：</p>
+<ul>
+<li><strong>Connection</strong>: <code>keep-alive</code>指示连接是否保持活动状态，允许在一个TCP连接上处理多个请求。</li>
+<li><strong>Content-Length</strong>: <code>413830</code>表示响应主体的长度（字节数）。</li>
+<li><strong>Content-Type</strong>: <code>text/html; charset=utf-8</code>表明返回内容的类型为HTML，并使用UTF-8字符集编码。</li>
+<li><strong>Date</strong>: 指示服务器发送响应的日期和时间（GMT）。</li>
+<li><strong>Server</strong>: <code>BWS/1.1</code>表示服务器使用的Web服务器软件名称和版本。</li>
+<li><strong>Set-Cookie</strong>: 多个<code>Set-Cookie</code>字段设置会话 cookie，以便客户端可以在后续请求中识别用户。这些设置包括：<ul>
+<li><strong>BIDUPSID</strong>: 用于标识用户的会话 ID。</li>
+<li><strong>PSTM</strong>: 时间戳。</li>
+<li><strong>H_PS_PSSID</strong>: 字段用于会话跟踪。</li>
+<li><strong>BAIDUID</strong>: 用户ID，通常用于个性化和跟踪。</li>
+</ul>
+</li>
+<li><strong>Traceid</strong>: <code>1727528586052408013810636502756405498072</code>是用于跟踪请求的唯一标识符。</li>
+<li><strong>Vary</strong>: <code>Accept-Encoding</code>表示响应可能会根据请求头中的<code>Accept-Encoding</code>进行变化。</li>
+<li><strong>X-Ua-Compatible</strong>: 浏览器兼容性设置，指定最优渲染引擎。</li>
+<li><strong>X-Xss-Protection</strong>: <code>1;mode=block</code>用于防止跨站脚本攻击（XSS）。</li>
+</ul>
+</li>
+<li><p><strong>响应主体</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Response: True&gt;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="“四次挥手”断开TCP连接"><a href="#“四次挥手”断开TCP连接" class="headerlink" title="“四次挥手”断开TCP连接"></a>“四次挥手”断开TCP连接</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221855258.png" alt="image-20250406221855258"></p>
+<p>请求完成后，客户端和服务器可以关闭连接。通常情况下，HTTP 1.0使用的是短连接，请求完成后关闭连接。HTTP 1.1默认使用长连接，多个请求可以复用同一个连接，直到连接超时或被关闭。</p>
+<h2 id="https交互过程"><a href="#https交互过程" class="headerlink" title="https交互过程"></a>https交互过程</h2><p>HTTP协议有三大缺点：</p>
+<ul>
+<li><strong>机密性问题</strong>：通信使用了明文，第三方可以拦截并获悉通信内容；</li>
+<li><strong>完整性问题</strong>：未验证报文的完整性，第三方可以篡改通信内容；</li>
+<li><strong>认证问题</strong>：未验证对方的身份，第三方可以冒充他人身份参与通信。</li>
+</ul>
+<p>为了解决以上三个问题，便诞生了HTTPS。</p>
+<p>HTTPS 被称为 HTTP Over SSL (基于SSL加密的HTTP)，这里的SSL (Secure Socket Layer) 被称为安全套接层，它是一种加密协议，不仅可应用于HTTP协议、还可应用于POP3协议、SMTP协议、VPN等。</p>
+<p>TLS (Transport Layer Security) 被称为传输层安全，TLS相对于SSL 3.0版本做了些修改和功能增强，相当于SSL的升级版本，所以有时也一起统称为 SSL，接入来本文若不明显强调，SSL就默认表示SSL&#x2F;TLS。</p>
+<p>我们可以用公式HTTPS &#x3D; HTTP + SSL &#x2F; TLS来表示HTTPS。<br><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221911301.png" alt="image-20250406221911301"></p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221927735.png" alt="image-20250406221927735"></p>
+<h3 id="阶段一：TCP三次握手建立连接"><a href="#阶段一：TCP三次握手建立连接" class="headerlink" title="阶段一：TCP三次握手建立连接"></a>阶段一：TCP三次握手建立连接</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221942057.png" alt="image-20250406221942057"></p>
+<h3 id="阶段二：TLS握手建立安全通道"><a href="#阶段二：TLS握手建立安全通道" class="headerlink" title="阶段二：TLS握手建立安全通道"></a>阶段二：TLS握手建立安全通道</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221951935.png" alt="image-20250406221951935"></p>
+<p>第一次握手报文（72）：我-&gt;百度 发送TLS消息「Client Hello」；<br>第二次握手报文（74、79）：</p>
+<p>百度-&gt;我 发送TLS消息「Server Hello」；<br>百度-&gt;我 发送TLS消息「Certificate」，「Server Key Exchange」，「Server Hello Done」</p>
+<p>第三次握手报文（83）：我-&gt;百度 发送TLS消息「Client Key Exchange」，「Change Cipher Spec」，「Encrypted Handshake Message」<br>第四次握手报文（85）：百度-&gt;我 发送TLS消息「Change Cipher Spec」，「Encrypted Handshake Message」<br>为了直观展示TLS报文交互，基于抓包分析的数据包可以绘制得到下图。</p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222010322.png" alt="image-20250406222010322"></p>
+<h4 id="TLS第一次握手：client-server-Client-Hello"><a href="#TLS第一次握手：client-server-Client-Hello" class="headerlink" title="TLS第一次握手：client -&gt; server (Client Hello)"></a>TLS第一次握手：client -&gt; server (Client Hello)</h4><p>客户端向服务端发送：</p>
+<ol>
+<li>客户端支持的协议；</li>
+<li>已经使用的TLS版本；</li>
+<li>随机数Random；</li>
+<li>支持的密码套件。</li>
+</ol>
+<p>从下图中，我们也可以看出SSL层是基于TCP层又进行封装的一层协议。</p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222026174.png" alt="image-20250406222026174"></p>
+<p>接下来我们看几个TLS协议中的重要字段（Version、Random、SessionID和Cipher Suites）。</p>
+<ul>
+<li>version</li>
+</ul>
+<p>从上图中可以看到当前通信安全层协议版本（Version）为TLS 1.2。其实TLS共总有4个版本，最新为TLS 1.3，具体如下：</p>
+<p>TLS 1.3：发布于2018年，TLS 1.3是TLS协议的最新版本，大幅简化了握手过程，提高了性能和安全性。它删除了一些不安全的加密算法，并引入了0-RTT（零往返时间）握手，以减少延迟。<br>TLS 1.2：TLS 1.2发布于2008年，它引入了更强的加密算法和更灵活的密码套件选择，修复了许多安全漏洞，是目前广泛使用的版本。（当前样例中百度网站使用的就是TLS 1.2协议）<br>TLS 1.1：TLS 1.1发布于2006年，引入了一些改进，包括对CBC（Cipher Block Chaining）模式的安全性改进，但仍然存在一些已知的安全问题。<br>TLS 1.0：TLS 1.0于1999年发布，是SSL 3.0的升级版本，修复了一些安全漏洞，但仍然存在一些安全问题。</p>
+<ul>
+<li>Random</li>
+</ul>
+<p>Random用于密钥的制作。这里我们将第一次握手中客户端发送给服务端的随机数记为Client Random，记住这个随机数，后面还会用到。</p>
+<ul>
+<li>SessionID</li>
+</ul>
+<p>SessionID用来表示客户端是否想复用先前存在的session。如果不复用，则此字段为0；如果想要复用，则此字段为想要复用的sessionID。是否复用由服务端确定。</p>
+<ul>
+<li>Cipher Suites</li>
+</ul>
+<p>密码套件列表会全部发给服务端，服务端从中挑选一个最安全的密码套件返回客户端。</p>
+<p>将Cipher Suites字段展开，如下图。代表客户端支持的密码套件列表。</p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222044546.png" alt="image-20250406222044546"></p>
+<p>密码套件的格式通常由一系列的加密算法和相关参数组成。一般来说，它的格式包含以下几个部分：</p>
+<p>密钥交换算法：用于协商会话密钥，例如 Diffie-Hellman（DHE）、ECDHE等。<br>身份验证算法：也称签名算法用于验证对端身份，例如RSA。<br>加密算法：用于实际数据传输的加解密，例如 AES（Advanced Encryption Standard）、RC4 等。<br>数据摘要算法：用于计算哈希，主要是用于验证数据的完整性，防止信息被篡改。</p>
+<p>格式：「密钥交换算法 + 签名算法（认证算法） + 对称加密算法 + 摘要算法」。其中密钥交换算法和签名算法可以相同，此时就会合二为一。</p>
+<p>比如上面密码套件列表中的第9个TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384。<br><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222056722.png" alt="image-20250406222056722"></p>
+<p>在这个例子中：</p>
+<p>ECDHE表示密钥交换算法是基于椭圆曲线的 Diffie-Hellman（ECDHE）。<br>RSA表示使用RSA算法（私钥加密、公钥解密）验证对方身份。<br>AES_256_GCM表示使用 256 位的 AES 加密算法和 GCM 模式。<br>SHA384表示使用 SHA-384 作为消息摘要算法。</p>
+<p>不同的密码套件组合提供了不同的安全性和性能特点，服务器和客户端在进行 TLS 握手时会协商选择双方都支持的 Cipher Suite 来建立安全连接。</p>
+<p>客户端发送完「Client Hello」（第72个报文），第73个报文则是服务端向客户端发送的ACK确认消息，代表上面的「Client Hello」已经收到。这里也可以看出服务端是通过普通的TCP 的ACK消息去应答「Client Hello」。<br><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222111873.png" alt="image-20250406222111873"></p>
+<h4 id="TLS第二次握手：server-client-1-Server-Hello-2-Certificate-Server-key-Exchange-Server-Hello-Done"><a href="#TLS第二次握手：server-client-1-Server-Hello-2-Certificate-Server-key-Exchange-Server-Hello-Done" class="headerlink" title="TLS第二次握手：server -&gt; client (1.Server Hello; 2.Certificate,Server key Exchange,Server Hello Done)"></a>TLS第二次握手：server -&gt; client (1.Server Hello; 2.Certificate,Server key Exchange,Server Hello Done)</h4><p>这一次握手时，server向client连续发送了两个报文：</p>
+<p>Server Hello：服务端为了证明自己的身份，会发送「Server Certificate」给客户端，这个消息里含有数字证书；<br>Certificate,Server key Exchange,Server Hello Done：目的是告诉客户端，我已经把该给你的东西都给你了，本次打招呼完毕。</p>
+<h5 id="服务端发送报文：Server-Hello"><a href="#服务端发送报文：Server-Hello" class="headerlink" title="服务端发送报文：Server Hello"></a>服务端发送报文：Server Hello</h5><p>服务端向客户端发送：</p>
+<ol>
+<li>服务端支持的协议；</li>
+<li>使用的TLS版本；</li>
+<li>随机数Random；</li>
+<li>服务端选用的密码套件。</li>
+</ol>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222126505.png" alt="image-20250406222126505"></p>
+<p>上图中可以看到，服务端也生成了一个随机数，并发送给了客户端，服务端生成的随机数记为<code>Server Random</code>。</p>
+<p>客户端和服务端就已确认了 TLS 版本和使用的密码套件<code>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 </code>。</p>
+<h5 id="服务端发送报文：Certificate-Server-key-Exchange-Server-Hello-Done"><a href="#服务端发送报文：Certificate-Server-key-Exchange-Server-Hello-Done" class="headerlink" title="服务端发送报文：Certificate,Server key Exchange,Server Hello Done"></a>服务端发送报文：Certificate,Server key Exchange,Server Hello Done</h5><p>这里服务端在一个数据包中发送了三个TLS消息：</p>
+<ul>
+<li>Certificate</li>
+<li>Server key Exchange</li>
+<li>Server Hello Done</li>
+</ul>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222141946.png" alt="image-20250406222141946"></p>
+<h6 id="certificate"><a href="#certificate" class="headerlink" title="certificate"></a>certificate</h6><p>可以看到当前数据包中包含了三个数字证书，三个证书实际构成了一个完整的证书链。</p>
+<p>最下面的为根证书，最上面的为网站证书。</p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222153092.png" alt="image-20250406222153092"></p>
+<h6 id="Server-Key-Exchange"><a href="#Server-Key-Exchange" class="headerlink" title="Server Key Exchange"></a>Server Key Exchange</h6><p>之前由于服务端选用ECDHE进行密钥协商，所以可以看到「Sever Key Exchange」消息中主要包括密钥交换算法EC Diffie-Hellman（简称ECDHE）以及携带的额外数据（Server Params）。Server Params参数包含：Curve Type、Named Curve以及Pubkey，分别代表曲线类型、曲线名称以及椭圆曲线公钥（用于实现密钥交换算法）。为了防止公钥被篡改，这里服务端使用RSA私钥对椭圆曲线公钥进行签名并发送给客户端。<br><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222204616.png" alt="image-20250406222204616"></p>
+<p>实质上这个过程服务器做了三件事情：</p>
+<ol>
+<li>选择了名为 named_curve 的椭圆曲线，选好了椭圆曲线相当于椭圆曲线基点 G 也定好了，这些都会公开给客户端；</li>
+<li>生成随机数会作为服务端椭圆曲线的私钥，保留到本地；</li>
+<li>根据基点 G 和私钥计算出服务端的椭圆曲线公钥，这个会公开给客户端。</li>
+</ol>
+<h6 id="Server-Hello-Done"><a href="#Server-Hello-Done" class="headerlink" title="Server Hello Done"></a>Server Hello Done</h6><p>表明Server Hello消息结束，这个消息中没有额外的其他字段。</p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222217832.png" alt="image-20250406222217832"></p>
+<h4 id="TLS第三次握手client-server-Client-Key-Exchange-Change-Cipher-Spec-Encrypted-Handshake-Message"><a href="#TLS第三次握手client-server-Client-Key-Exchange-Change-Cipher-Spec-Encrypted-Handshake-Message" class="headerlink" title="TLS第三次握手client -&gt; server (Client Key Exchange, Change Cipher Spec, Encrypted Handshake Message)"></a>TLS第三次握手client -&gt; server (Client Key Exchange, Change Cipher Spec, Encrypted Handshake Message)</h4><p>该报文中，也是将TLS的三个消息合并到一个中发送。</p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222228493.png" alt="image-20250406222228493"></p>
+<h5 id="Client-Key-Exchange"><a href="#Client-Key-Exchange" class="headerlink" title="Client Key Exchange"></a>Client Key Exchange</h5><p>客户端收到了服务端的证书及「Server Hello Done」消息后，会先校验证书，校验通过后会将Client Params数据传递给服务端，其中包含自身生成的椭圆曲线公钥（Pubkey），数据内容如图所示：</p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222316867.png" alt="image-20250406222316867"></p>
+<p>客户端会生成一个随机数作为客户端椭圆曲线的私钥，然后再根据服务端前面给的信息，生成客户端的椭圆曲线公钥，然后用「Client Key Exchange」消息发给服务端。</p>
+<p>至此，双方都有对方的椭圆曲线公钥、自己的椭圆曲线私钥、椭圆曲线基点 G。于是，双方都可计算椭圆曲线的交点（x，y）。</p>
+<p>最终的会话密钥，就是用「客户端随机数 + 服务端随机数 + x（ECDHE 算法算出的共享密钥） 」三者结合生成的。</p>
+<h5 id="Change-Cipher-Spec"><a href="#Change-Cipher-Spec" class="headerlink" title="Change Cipher Spec"></a>Change Cipher Spec</h5><p>「Change Cipher Spec」消息表示客户端已经生成密钥，并切换到对称加密模式。</p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222328763.png" alt="image-20250406222328763"></p>
+<h5 id="Encrypted-Handshake-Message"><a href="#Encrypted-Handshake-Message" class="headerlink" title="Encrypted Handshake Message"></a>Encrypted Handshake Message</h5><p>发送这个消息有两个目的：</p>
+<p>告诉服务端，客户端在握手的过程中收到和发送的数据做一个摘要并用会话密钥加密发送给服务端做校验，保证TSL握手过程中报文没有被修改过；</p>
+<p>如果服务端收到这个消息并能解密成功，就能说明对称密钥是正确的。</p>
+<p>「Encrypted Handshake Message」消息其实不只是客户端会发送，之后服务端也会发送一个。</p>
+<h4 id="TLS-第四次握手server-client-Change-Cipher-Spec-Encrypted-Handshake-Message"><a href="#TLS-第四次握手server-client-Change-Cipher-Spec-Encrypted-Handshake-Message" class="headerlink" title="TLS 第四次握手server -&gt; client (Change Cipher Spec,Encrypted Handshake Message)"></a>TLS 第四次握手server -&gt; client (Change Cipher Spec,Encrypted Handshake Message)</h4><p>服务器也是同样的操作，发送「Change Cipher Spec」和「Encrypted Handshake Message」消息，如果双方都验证加密和解密没问题，那么TLS握手正式完成。</p>
+<p>最后，就用会话密钥加解密 HTTPS 请求和响应了，即开启了阶段三的加密通信。</p>
+<h3 id="阶段三：加密通信"><a href="#阶段三：加密通信" class="headerlink" title="阶段三：加密通信"></a>阶段三：加密通信</h3><p>TLS握手完成后，客户端与服务端的所有通信内容均被加密，如果没有会话密钥则无法解密通信内容。</p>
+<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222340929.png" alt="image-20250406222340929"></p>
+<h3 id="阶段四：TCP四次挥手断开连接"><a href="#阶段四：TCP四次挥手断开连接" class="headerlink" title="阶段四：TCP四次挥手断开连接"></a>阶段四：TCP四次挥手断开连接</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222350469.png" alt="image-20250406222350469"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%BD%9C%E4%B8%9A/" rel="tag"># 作业</a>
+              <a href="/tags/HTTP%E5%8D%8F%E8%AE%AE/" rel="tag"># HTTP协议</a>
+              <a href="/tags/HTTPS%E5%8D%8F%E8%AE%AE/" rel="tag"># HTTPS协议</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/" rel="prev" title="操作系统实验">
+      <i class="fa fa-chevron-left"></i> 操作系统实验
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#http%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">http交互过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%9C%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E2%80%9D%E5%BB%BA%E7%AB%8BTCP%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.1.</span> <span class="nav-text">“三次握手”建立TCP连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%8F%91%E9%80%81HTTP%E8%AF%B7%E6%B1%82"><span class="nav-number">1.2.</span> <span class="nav-text">客户端发送HTTP请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81HTTP%E5%93%8D%E5%BA%94"><span class="nav-number">1.3.</span> <span class="nav-text">服务器发送HTTP响应</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP-%E5%93%8D%E5%BA%94%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.1.</span> <span class="nav-text">HTTP 响应结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%9C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E2%80%9D%E6%96%AD%E5%BC%80TCP%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.4.</span> <span class="nav-text">“四次挥手”断开TCP连接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#https%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">https交互过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E4%B8%80%EF%BC%9ATCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.1.</span> <span class="nav-text">阶段一：TCP三次握手建立连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E4%BA%8C%EF%BC%9ATLS%E6%8F%A1%E6%89%8B%E5%BB%BA%E7%AB%8B%E5%AE%89%E5%85%A8%E9%80%9A%E9%81%93"><span class="nav-number">2.2.</span> <span class="nav-text">阶段二：TLS握手建立安全通道</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TLS%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%9Aclient-server-Client-Hello"><span class="nav-number">2.2.1.</span> <span class="nav-text">TLS第一次握手：client -&gt; server (Client Hello)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLS%E7%AC%AC%E4%BA%8C%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%9Aserver-client-1-Server-Hello-2-Certificate-Server-key-Exchange-Server-Hello-Done"><span class="nav-number">2.2.2.</span> <span class="nav-text">TLS第二次握手：server -&gt; client (1.Server Hello; 2.Certificate,Server key Exchange,Server Hello Done)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8F%91%E9%80%81%E6%8A%A5%E6%96%87%EF%BC%9AServer-Hello"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">服务端发送报文：Server Hello</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8F%91%E9%80%81%E6%8A%A5%E6%96%87%EF%BC%9ACertificate-Server-key-Exchange-Server-Hello-Done"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">服务端发送报文：Certificate,Server key Exchange,Server Hello Done</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#certificate"><span class="nav-number">2.2.2.2.1.</span> <span class="nav-text">certificate</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Server-Key-Exchange"><span class="nav-number">2.2.2.2.2.</span> <span class="nav-text">Server Key Exchange</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Server-Hello-Done"><span class="nav-number">2.2.2.2.3.</span> <span class="nav-text">Server Hello Done</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLS%E7%AC%AC%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8Bclient-server-Client-Key-Exchange-Change-Cipher-Spec-Encrypted-Handshake-Message"><span class="nav-number">2.2.3.</span> <span class="nav-text">TLS第三次握手client -&gt; server (Client Key Exchange, Change Cipher Spec, Encrypted Handshake Message)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Client-Key-Exchange"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">Client Key Exchange</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Change-Cipher-Spec"><span class="nav-number">2.2.3.2.</span> <span class="nav-text">Change Cipher Spec</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Encrypted-Handshake-Message"><span class="nav-number">2.2.3.3.</span> <span class="nav-text">Encrypted Handshake Message</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLS-%E7%AC%AC%E5%9B%9B%E6%AC%A1%E6%8F%A1%E6%89%8Bserver-client-Change-Cipher-Spec-Encrypted-Handshake-Message"><span class="nav-number">2.2.4.</span> <span class="nav-text">TLS 第四次握手server -&gt; client (Change Cipher Spec,Encrypted Handshake Message)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E4%B8%89%EF%BC%9A%E5%8A%A0%E5%AF%86%E9%80%9A%E4%BF%A1"><span class="nav-number">2.3.</span> <span class="nav-text">阶段三：加密通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E5%9B%9B%EF%BC%9ATCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E6%96%AD%E5%BC%80%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.4.</span> <span class="nav-text">阶段四：TCP四次挥手断开连接</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunny</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunny</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
