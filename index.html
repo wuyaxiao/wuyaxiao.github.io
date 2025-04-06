@@ -208,7 +208,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2025-04-07 00:30:24 / 修改时间：00:31:54" itemprop="dateCreated datePublished" datetime="2025-04-07T00:30:24+08:00">2025-04-07</time>
+              <time title="创建时间：2025-04-07 00:30:24 / 修改时间：00:35:39" itemprop="dateCreated datePublished" datetime="2025-04-07T00:30:24+08:00">2025-04-07</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -274,24 +274,24 @@
 <li><p>导出表：存储导入函数地址</p>
 <p>根据IMAGE_IMPORT_BY_NAME的序号或名称到导入的DLL(user32.dll)函数导出表中获取导入函数的地址。然后把这个地址替换掉FirstThunk所指向的函数输入地址表中的数据。</p>
 <p>可以按照序号导出也可以按照名称导出 </p>
-<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103214737276.png" alt="image-20250103214737276">
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103214737276.png">
 
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">typedef struct _IMAGE_EXPORT_DIRECTORY &#123;</span><br><span class="line"> DWORD  Characteristics;       // 一般为0</span><br><span class="line"> DWORD  TimeDateStamp;         // 文件生成时间</span><br><span class="line"> WORD   MajorVersion;          // 主版本号</span><br><span class="line"> WORD   MinorVersion;          // 次版本号</span><br><span class="line"> DWORD  Name;                  // 指向DLL的名字</span><br><span class="line"> DWORD  Base;                  // 基数，加上序数就是函数地址数组的索引值</span><br><span class="line"> DWORD  NumberOfFunctions;     // AddressOfFunctions数组的项数</span><br><span class="line"> DWORD  NumberOfNames;         // AddressOfNames数组的项数</span><br><span class="line"> DWORD  AddressOfFunctions;    // RVA from base of image（每个函数具体导出的地址值）</span><br><span class="line"> DWORD  AddressOfNames;        // RVA from base of image（按名称导出）</span><br><span class="line"> DWORD  AddressOfNameOrdinals; // RVA from base of image（把序号和名称做了一个对，使其能按序号导出）</span><br><span class="line">&#125; IMAGE_EXPORT_DIRECTORY, *PIMAGE_EXPORT_DIRECTORY;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>导入地址表：IAT</p>
 <p>而JMP DWORD PTR [XXXXXXXX]这条指令中的[XXXXXXXX]部分就是这个FirstThunk数组中的某个元素的值。由于被加载器覆盖的这个指针数组最终保存的是导入函数的地址，因此它被称为导入地址表（Import Address Table，IAT）。</p>
 <p>对应输入表位置和大小</p>
-<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/4d838f3ad4a25abbbf64a80aa161984b.png" alt="在这里插入图片描述" style="zoom:50%;">
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/4d838f3ad4a25abbbf64a80aa161984b.png">
 
 <p>采用PEinfo所查到输入表位置与大小  </p>
-<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/e674ae54460c7da4c8ce5c777996162c.png" alt="在这里插入图片描述" style="zoom:50%;"></li>
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/e674ae54460c7da4c8ce5c777996162c.png"></li>
 </ul>
 <h4 id="节表-区块表-IMAGE-SECTION-HEADER-一定数量"><a href="#节表-区块表-IMAGE-SECTION-HEADER-一定数量" class="headerlink" title="节表&#x2F;区块表:_IMAGE_SECTION_HEADER*一定数量"></a>节表&#x2F;区块表:_IMAGE_SECTION_HEADER*一定数量</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">typedef struct _IMAGE_SECTION_HEADER &#123;  </span><br><span class="line">Name                        //8个字节的块名  </span><br><span class="line">区块名。这是一个由8个ASCII码组成，用来定义区块的名称的数组。多数区块名都习惯性以一个“.”作为开头（例如：.text），这个“.”实际上是不是必须的。</span><br><span class="line">union//2选1                         </span><br><span class="line">&#123;  </span><br><span class="line">    DWORD PhysicalAddress;  </span><br><span class="line">    DWORD VirtualSize;  //本节的实际字节数，默认就是这个值</span><br><span class="line">&#125; Misc;                     //区块尺寸</span><br><span class="line">DWORD VirtualAddress;       //本节的相对虚拟地址</span><br><span class="line">该块时装载到内存中的RVA，注意这个地址是按内存页对齐的，她总是SectionAlignment的整数倍，在工具中第一个块默认RVA为1000，在OBJ中为0。</span><br><span class="line">DWORD SizeOfRawData;        //在文件中对齐后的尺寸  </span><br><span class="line">该块在磁盘中所占的大小,在可执行文件中，该字段包括经过FileAlignment调整后块的长度。例如FileAlignment的大小为200h，如果VirtualSize中的块长度为19Ah个字节，这一块保存的长度为200h个字节。  </span><br><span class="line">DWORD PointerToRawData;     //在文件中偏移  </span><br><span class="line">该块在磁盘文件中的偏移，程序编译或汇编后生成原始数据，这个字段用于给出原始数据块在文件的偏移，如果程序自装载PE或COFF文件（而不是由OS装载），这种情况，必须完全使用线性映像方法装入文件，需要在该块处找到块的数据。  </span><br><span class="line">DWORD PointerToRelocations; //在OBJ文件中使用，重定位的偏移  </span><br><span class="line">DWORD PointerToLinenumbers; //行号表的偏移（供调试使用地）  </span><br><span class="line">WORD NumberOfRelocations;   //在OBJ文件中使用，重定位项数目  </span><br><span class="line">WORD NumberOfLinenumbers;   //行号表中行号的数目  </span><br><span class="line">DWORD Characteristics;      //区块属性如可读，可写，可执行等  </span><br><span class="line">&#125; IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;  </span><br></pre></td></tr></table></figure>
 
-<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103215704121.png" alt="image-20250103215704121" style="zoom:50%;">
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103215704121.png">
 
 <h4 id="PE文件加载过程"><a href="#PE文件加载过程" class="headerlink" title="PE文件加载过程"></a>PE文件加载过程</h4><p>Windows 装载器在装载的时候仅仅建立好虚拟地址和PE文件之间的映射关系。当且仅当真正执行到某个内存页中的指令或者访问某一页中的数据时，这个页面才会被从磁盘提交到物理内存</p>
-<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/2f8dadfaa1513f15cffda7ce1576bb35.png" alt="在这里插入图片描述">  
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/2f8dadfaa1513f15cffda7ce1576bb35.png">  
 
 <p>当一个PE文件被加载到内存中以后，我们称之为“映象”（image），一般来说，PE文件在硬盘上和在内存里是不完全一样的，被加载到内存以后其占用的虚拟地址空间要比在硬盘上占用的空间大一些，这是因为各个节在硬盘上是连续的，而在内存中是按页对齐的，所以加载到内存以后节之间会出现一些“空洞”【补的0】。 </p>
 <p><img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250407003153563.png" alt="image-20250407003153563"></p>
@@ -337,10 +337,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-04-06 23:04:41 / 修改时间：23:05:43" itemprop="dateCreated datePublished" datetime="2025-04-06T23:04:41+08:00">2025-04-06</time>
+              <time title="创建时间：2025-04-06 23:04:41" itemprop="dateCreated datePublished" datetime="2025-04-06T23:04:41+08:00">2025-04-06</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-04-07 00:40:13" itemprop="dateModified" datetime="2025-04-07T00:40:13+08:00">2025-04-07</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -926,7 +932,7 @@
 <td>2</td>
 <td>管理信息系</td>
 <td>85860126</td>
-<td><a href="mailto:&#122;&#120;&#108;&#x40;&#x31;&#54;&#x33;&#x2e;&#x63;&#x6f;&#x6d;">zxl@163.com</a></td>
+<td><a href="mailto:&#122;&#x78;&#x6c;&#x40;&#x31;&#x36;&#x33;&#x2e;&#99;&#111;&#109;">zxl@163.com</a></td>
 </tr>
 <tr>
 <td>36405216</td>
@@ -936,7 +942,7 @@
 <td>1</td>
 <td>航海系</td>
 <td>85860729</td>
-<td><a href="mailto:&#x6c;&#x79;&#x40;&#x73;&#x69;&#110;&#97;&#46;&#x63;&#x6f;&#109;&#x2e;&#x63;&#x6e;">ly@sina.com.cn</a></td>
+<td><a href="mailto:&#108;&#121;&#x40;&#115;&#105;&#x6e;&#97;&#x2e;&#99;&#x6f;&#x6d;&#46;&#x63;&#110;">ly@sina.com.cn</a></td>
 </tr>
 <tr>
 <td>28308208</td>
@@ -946,7 +952,7 @@
 <td>1</td>
 <td>人文艺术系</td>
 <td>85860618</td>
-<td><a href="mailto:&#x77;&#x78;&#x71;&#64;&#121;&#97;&#x68;&#111;&#111;&#x2e;&#x63;&#x6e;">wxq@yahoo.cn</a></td>
+<td><a href="mailto:&#x77;&#120;&#x71;&#64;&#121;&#x61;&#104;&#111;&#111;&#x2e;&#99;&#x6e;">wxq@yahoo.cn</a></td>
 </tr>
 <tr>
 <td>16406236</td>
@@ -956,7 +962,7 @@
 <td>1</td>
 <td>轮机工程系</td>
 <td>85860913</td>
-<td><a href="mailto:&#122;&#106;&#x67;&#x40;&#49;&#54;&#x33;&#46;&#99;&#x6f;&#109;">zjg@163.com</a></td>
+<td><a href="mailto:&#x7a;&#106;&#x67;&#x40;&#49;&#54;&#51;&#46;&#99;&#x6f;&#x6d;">zjg@163.com</a></td>
 </tr>
 <tr>
 <td>16406247</td>
@@ -966,7 +972,7 @@
 <td></td>
 <td>轮机工程系</td>
 <td>85860916</td>
-<td><a href="mailto:&#x67;&#121;&#102;&#x40;&#x79;&#x61;&#x68;&#111;&#x6f;&#46;&#x63;&#110;">gyf@yahoo.cn</a></td>
+<td><a href="mailto:&#103;&#121;&#x66;&#64;&#x79;&#97;&#104;&#111;&#111;&#46;&#x63;&#110;">gyf@yahoo.cn</a></td>
 </tr>
 </tbody></table>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">-- 借还明细表</span><br><span class="line">CREATE TABLE 借还明细表 (</span><br><span class="line">    借书证号 VARCHAR(10),</span><br><span class="line">    图书编号 VARCHAR(10),</span><br><span class="line">    借还状态 ENUM(&#x27;还&#x27;,&#x27;借&#x27;),</span><br><span class="line">    借书日期 DATE,</span><br><span class="line">    还书日期 DATE,</span><br><span class="line">    数量 INT,</span><br><span class="line">    工号 VARCHAR(10),</span><br><span class="line">    CONSTRAINT check_borrow_date CHECK (借书日期 &lt;= &#x27;2024-12-31&#x27;),</span><br><span class="line">    FOREIGN KEY (借书证号) REFERENCES 读者信息表(借书证号)</span><br><span class="line">);</span><br><span class="line">INSERT INTO 借还明细表 (借书证号, 图书编号, 借还状态, 借书日期, 还书日期, 数量, 工号)</span><br><span class="line">VALUES</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;07108667&#x27;, &#x27;还&#x27;, &#x27;2008-03-28&#x27;, &#x27;2008-04-14&#x27;, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;99011818&#x27;, &#x27;借&#x27;, &#x27;2008-04-27&#x27;, NULL, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;36405216&#x27;, &#x27;07410802&#x27;, &#x27;借&#x27;, &#x27;2008-04-27&#x27;, NULL, 1, &#x27;002018&#x27;),</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;07410298&#x27;, &#x27;借&#x27;, &#x27;2008-04-28&#x27;, NULL, 1, &#x27;002018&#x27;),</span><br><span class="line">    (&#x27;36405216&#x27;, &#x27;00000746&#x27;, &#x27;还&#x27;, &#x27;2008-04-29&#x27;, &#x27;2008-05-09&#x27;, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;28308208&#x27;, &#x27;07410139&#x27;, &#x27;借&#x27;, &#x27;2008-05-10&#x27;, NULL, 1, &#x27;002019&#x27;),</span><br><span class="line">    (&#x27;16406236&#x27;, &#x27;07410139&#x27;, &#x27;借&#x27;, &#x27;2008-05-11&#x27;, NULL, 1, &#x27;002017&#x27;);</span><br></pre></td></tr></table></figure>
@@ -1150,7 +1156,7 @@
 <td>男</td>
 <td>1971-05-03</td>
 <td>85860715</td>
-<td><a href="mailto:&#122;&#120;&#x66;&#64;&#x31;&#54;&#x33;&#46;&#x63;&#x6f;&#x6d;">zxf@163.com</a></td>
+<td><a href="mailto:&#122;&#x78;&#x66;&#x40;&#49;&#x36;&#x33;&#x2e;&#x63;&#x6f;&#109;">zxf@163.com</a></td>
 </tr>
 <tr>
 <td>002017</td>
@@ -1158,7 +1164,7 @@
 <td>女</td>
 <td>1979-09-15</td>
 <td>85860716</td>
-<td><a href="mailto:&#x6c;&#106;&#x40;&#49;&#x36;&#x33;&#46;&#x63;&#111;&#x6d;">lj@163.com</a></td>
+<td><a href="mailto:&#x6c;&#106;&#64;&#x31;&#x36;&#x33;&#46;&#x63;&#111;&#109;">lj@163.com</a></td>
 </tr>
 <tr>
 <td>002018</td>
@@ -1166,7 +1172,7 @@
 <td>男</td>
 <td>1972-04-25</td>
 <td>85860717</td>
-<td><a href="mailto:&#x67;&#98;&#64;&#x79;&#x61;&#x68;&#x6f;&#x6f;&#46;&#99;&#110;">gb@yahoo.cn</a></td>
+<td><a href="mailto:&#103;&#98;&#64;&#x79;&#x61;&#104;&#x6f;&#111;&#x2e;&#99;&#x6e;">gb@yahoo.cn</a></td>
 </tr>
 <tr>
 <td>002019</td>
@@ -1174,7 +1180,7 @@
 <td>女</td>
 <td>1968-11-03</td>
 <td>85860718</td>
-<td><a href="mailto:&#99;&#120;&#64;&#115;&#105;&#x6e;&#x61;&#46;&#99;&#111;&#x6d;&#x2e;&#99;&#x6e;">cx@sina.com.cn</a></td>
+<td><a href="mailto:&#99;&#120;&#64;&#x73;&#x69;&#110;&#x61;&#46;&#x63;&#111;&#109;&#x2e;&#99;&#x6e;">cx@sina.com.cn</a></td>
 </tr>
 </tbody></table>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">-- 图书明细表 </span><br><span class="line">CREATE TABLE 图书明细表 (</span><br><span class="line">    类别号 VARCHAR(10),</span><br><span class="line">    图书编号 VARCHAR(10) PRIMARY KEY,</span><br><span class="line">    图书名称 VARCHAR(50),</span><br><span class="line">    作者 VARCHAR(50),</span><br><span class="line">    出版社 VARCHAR(50),</span><br><span class="line">    定价 DECIMAL(10, 2),</span><br><span class="line">    购进日期 DATE,</span><br><span class="line">    购入数 INT,</span><br><span class="line">    复本数 INT,</span><br><span class="line">    库存数 INT</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">INSERT INTO 图书明细表 (类别号, 图书编号, 图书名称, 作者, 出版社, 定价, 购进日期, 购入数, 复本数, 库存数)</span><br><span class="line">VALUES</span><br><span class="line">    (&#x27;I267&#x27;, &#x27;99011818&#x27;, &#x27;文化苦旅&#x27;, &#x27;余秋雨&#x27;, &#x27;知识出版社&#x27;, 16, &#x27;2000-03-19&#x27;, 8, 15, 14),</span><br><span class="line">    (&#x27;TP312&#x27;, &#x27;00000476&#x27;, &#x27;Delphi高级开发指南&#x27;, &#x27;坎图&#x27;, &#x27;电子工业出版社&#x27;, 80, &#x27;2000-03-19&#x27;, 15, 15, 15),</span><br><span class="line">    (&#x27;U66&#x27;, &#x27;01058589&#x27;, &#x27;船舶制造基础&#x27;, &#x27;杨敏&#x27;, &#x27;国防工业出版社&#x27;, 19, &#x27;2001-07-15&#x27;, 20, 20, 20),</span><br><span class="line">    (&#x27;I267&#x27;, &#x27;07410139&#x27;, &#x27;艺海潮音&#x27;, &#x27;李叔&#x27;, &#x27;江苏文艺出版社&#x27;, 19, &#x27;2007-04-12&#x27;, 15, 20, 18),</span><br><span class="line">    (&#x27;TP312&#x27;, &#x27;07410298&#x27;, &#x27;C++程序设计&#x27;, &#x27;成颖&#x27;, &#x27;东南大学出版社&#x27;, 38, &#x27;2007-05-08&#x27;, 10, 15, 14),</span><br><span class="line">    (&#x27;H31&#x27;, &#x27;07410802&#x27;, &#x27;航海英语&#x27;, &#x27;陈宏权&#x27;, &#x27;武汉工业大学出版社&#x27;, 42, &#x27;2007-10-20&#x27;, 25, 25, 24),</span><br><span class="line">    (&#x27;H31&#x27;, &#x27;07108667&#x27;, &#x27;大学英语学习辅导&#x27;, &#x27;姜丽蓉&#x27;, &#x27;北京理工大学出版社&#x27;, 23.5, &#x27;2008-02-06&#x27;, 25, 25, 25),</span><br><span class="line">    (&#x27;TP393&#x27;, &#x27;07410810&#x27;, &#x27;网络工程实用教程&#x27;, &#x27;汪新民&#x27;, &#x27;北京大学出版社&#x27;, 34.8, &#x27;2008-08-21&#x27;, 10, 15, 15);</span><br></pre></td></tr></table></figure>
@@ -3045,10 +3051,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-04-06 10:18:39 / 修改时间：10:28:32" itemprop="dateCreated datePublished" datetime="2025-04-06T10:18:39+08:00">2025-04-06</time>
+              <time title="创建时间：2025-04-06 10:18:39" itemprop="dateCreated datePublished" datetime="2025-04-06T10:18:39+08:00">2025-04-06</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-04-07 00:44:13" itemprop="dateModified" datetime="2025-04-07T00:44:13+08:00">2025-04-07</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -3125,6 +3137,7 @@
 <h3 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h3><p>在根目录下打开git bash，然后运行以下命令中的一个（我在网上查资料的时候发现这两个命令其中有一个可能实现不了，具体是哪个要看环境）</p>
 <figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install https:<span class="comment">//github.com/xcodebuild/hexo-asset-image.git</span></span><br><span class="line">npm install hexo-asset-image -- save</span><br></pre></td></tr></table></figure>
 
+<p>Note：由于本身Hexo带有缓存会导致插件第一次使用可能会出现无效果，请使用<code>hexo clean</code>清除缓存后即可正常使用；</p>
 <h2 id="设置博文目录"><a href="#设置博文目录" class="headerlink" title="设置博文目录"></a>设置博文目录</h2><p>Hexo 的 Next 主题是可以自动展开文章目录的，其在默认情况下并未开启，需要手动开启。</p>
 <h3 id="1-修改主题配置文件-config-yml"><a href="#1-修改主题配置文件-config-yml" class="headerlink" title="1.修改主题配置文件 _config.yml"></a>1.修改主题配置文件 _config.yml</h3><p>打开 next 主题的 <code>_config.yml</code> 文件，搜索 <code>custom_file_path</code>，可以看到如下内容：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">custom_file_path:</span><br><span class="line">  #head: source/_data/head.swig</span><br><span class="line">  #header: source/_data/header.swig</span><br><span class="line">  #sidebar: source/_data/sidebar.swig</span><br><span class="line">  #postMeta: source/_data/post-meta.swig</span><br><span class="line">  #postBodyEnd: source/_data/post-body-end.swig</span><br><span class="line">  #footer: source/_data/footer.swig</span><br><span class="line">  #bodyEnd: source/_data/body-end.swig</span><br><span class="line">  #variable: source/_data/variables.styl</span><br><span class="line">  #mixin: source/_data/mixins.styl</span><br><span class="line">  #style: source/_data/styles.styl</span><br></pre></td></tr></table></figure>
