@@ -183,6 +183,137 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunny">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学习小屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" class="post-title-link" itemprop="url">PE文件格式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-04-07 00:30:24 / 修改时间：00:31:54" itemprop="dateCreated datePublished" datetime="2025-04-07T00:30:24+08:00">2025-04-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">软件安全</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="PE文件格式"><a href="#PE文件格式" class="headerlink" title="PE文件格式"></a>PE文件格式</h2><img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103174529532.png" alt="image-20250103174529532" style="zoom:50%;">
+
+<h4 id="DOS头"><a href="#DOS头" class="headerlink" title="DOS头"></a>DOS头</h4><img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103181902992.png" alt="image-20250103181902992" style="zoom:50%;">
+
+<h5 id="MZ文件头：IMAGE-DOS-HEADER-结构体"><a href="#MZ文件头：IMAGE-DOS-HEADER-结构体" class="headerlink" title="MZ文件头：IMAGE_DOS_HEADER 结构体"></a>MZ文件头：IMAGE_DOS_HEADER 结构体</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">//注释掉的不需要重点分析</span><br><span class="line">struct _IMAGE_DOS_HEADER&#123;</span><br><span class="line">  0X00 WORD e_magic;      //※Magic DOS signature MZ(4Dh 5Ah):MZ标记:用于标记是否是可执行文件;用于判断PE文件的标识。如果不是MZ即不是十六进制值：0x5A4D。计算机存储顺序是低位在前高位在后，所以存储为：0x4D5A。  </span><br><span class="line">  //0X02 WORD e_cblp;     //Bytes on last page of file</span><br><span class="line">  //0X04 WORD e_cp;       //Pages in file</span><br><span class="line">  //0X06 WORD e_crlc;     //Relocations</span><br><span class="line">  //0X08 WORD e_cparhdr;  //Size of header in paragraphs</span><br><span class="line">  //0X0A WORD e_minalloc; //Minimun extra paragraphs needs</span><br><span class="line">  //0X0C WORD e_maxalloc; //Maximun extra paragraphs needs</span><br><span class="line">  //0X0E WORD e_ss;       //intial(relative)SS value</span><br><span class="line">  //0X10 WORD e_sp;       //intial SP value</span><br><span class="line">  //0X12 WORD e_csum;     //Checksum</span><br><span class="line">  //0X14 WORD e_ip;       //intial IP value</span><br><span class="line">  //0X16 WORD e_cs;       //intial(relative)CS value</span><br><span class="line">  //0X18 WORD e_lfarlc;   //File Address of relocation table</span><br><span class="line">  //0X1A WORD e_ovno;     //Overlay number</span><br><span class="line">  //0x1C WORD e_res[4];   //Reserved words</span><br><span class="line">  //0x24 WORD e_oemid;    //OEM identifier(for e_oeminfo)</span><br><span class="line">  //0x26 WORD e_oeminfo;  //OEM information;e_oemid specific</span><br><span class="line">  //0x28 WORD e_res2[10]; //Reserved words</span><br><span class="line">  0x3C DWORD e_lfanew;    //※Offset to start of PE header:定位PE文件，PE头相对于文件的偏移量</span><br><span class="line">&#125;;</span><br><span class="line">//一个word是对应2个字节，该结构体大小为64个字节，因为里面定义了两个word型数组。  </span><br></pre></td></tr></table></figure>
+
+<h5 id="Dos-Stub-汇编代码"><a href="#Dos-Stub-汇编代码" class="headerlink" title="Dos Stub:汇编代码"></a>Dos Stub:汇编代码</h5><p>其功能是当该EXE运行在16位环境下，输出一段文字：“This program cannot be run in DOS mode”，然后并退出该进程。  </p>
+<h4 id="PE头-IMAGE-NT-HEADERS"><a href="#PE头-IMAGE-NT-HEADERS" class="headerlink" title="PE头:IMAGE_NT_HEADERS"></a>PE头:IMAGE_NT_HEADERS</h4><p><code>PNTHeader = ImageBase + dosHeader-&gt;e_lfanew</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">typedef struct IMAGE_NT_HEADERS&#123;  </span><br><span class="line">  DWORD Signature;  </span><br><span class="line">  IMAGE_FILE_HEADER FileHeader;  </span><br><span class="line">  IMAGE_OPTIONAL_HEADER32 OptionalHeader;  </span><br><span class="line">&#125;IMAGE_NT_HEADERS,*PIMAGE_NT_HEADERS;   </span><br></pre></td></tr></table></figure>
+
+<h5 id="Signature"><a href="#Signature" class="headerlink" title="Signature"></a>Signature</h5><p>将文件标识为 PE 映像的 4 字节签名。字节为“PE\0\0”。</p>
+<h5 id="IMAGE-FILE-HEADER"><a href="#IMAGE-FILE-HEADER" class="headerlink" title="IMAGE_FILE_HEADER"></a>IMAGE_FILE_HEADER</h5><p>IMAGE_FILE_HEADER（映像头文件）结构包含了文件的物理层信息及文件属性。共20字节的数据，其结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">typedef struct _IMAGE_FILE_HEADER &#123;  </span><br><span class="line">WORD    Machine;                    //运行平台</span><br><span class="line">常见【机器：标识】：Intel I386 14ch、MIPS R3000 162h、Alpha AXP 184h、Power PC 1F0h、MIPS R4000 184h  </span><br><span class="line">比如这里的014c，就是在Intel I386机器上运行。  </span><br><span class="line">WORD    NumberOfSections;           //文件的区块数目  </span><br><span class="line">节表中 IMAGE\_SECTION\_HEADER结构的总数总是由PE文件头IMAGE\_NT\_HEADERS(注：即本资料中的NT头) 结构中的FileHeader.NumberOfSections 字段来指定的。</span><br><span class="line">DWORD   TimeDateStamp;              //文件创建日期和时间  </span><br><span class="line">DWORD   PointerToSymbolTable;       //指向符号表（用于调试）  </span><br><span class="line">DWORD   NumberOfSymbols;            //符号表中符号个数（用于调试）  </span><br><span class="line">WORD    SizeOfOptionalHeader;       //IMAGE_OPTIONAL_HEADER32结构大小  </span><br><span class="line">紧跟着IMAGE\_FILE\_HEADER后面的数据大小，这也是一个数据结构，它叫做IMAGE\_OPTIONAL\_HEADER,其大小依赖于是64位还是32位文件。32位文件值通常是00E0h，对于64位值通常为00F0h。  </span><br><span class="line">WORD    Characteristics;            //文件属性  </span><br><span class="line">Characteristics：文件属性，普通EXE文件这个字段值为010fh，DLL文件这个字段一般是0210h。保存在winnt.h头文件中有个有个表，然后其中有一些二进制及其代表的属性，可以用或的方式去组合这些属性。  </span><br><span class="line">&#125; IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;  </span><br></pre></td></tr></table></figure>
+
+<h5 id="IMAGE-OPTIONAL-HEADER32（可选映像头）"><a href="#IMAGE-OPTIONAL-HEADER32（可选映像头）" class="headerlink" title="IMAGE_OPTIONAL_HEADER32（可选映像头）"></a>IMAGE_OPTIONAL_HEADER32（可选映像头）</h5><p>程序入口点记录在这里，是imagebase+AddressOfEntryPoint</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">typedef struct _IMAGE_OPTIONAL_HEADER </span><br><span class="line">&#123;</span><br><span class="line">  //</span><br><span class="line">  // Standard fields. </span><br><span class="line">  //</span><br><span class="line">+18h  WORD  Magic;     // 标志字, ROM 映像（0107h）,普通可执行文件（010Bh）</span><br><span class="line">+1Ah  BYTE   MajorLinkerVersion;   // 链接程序的主版本号</span><br><span class="line">+1Bh  BYTE   MinorLinkerVersion;   // 链接程序的次版本号</span><br><span class="line">+1Ch  DWORD  SizeOfCode;   // 所有含代码的节的总大小</span><br><span class="line">+20h  DWORD  SizeOfInitializedData;  // 所有含已初始化数据的节的总大小</span><br><span class="line">+24h  DWORD  SizeOfUninitializedData; // 所有含未初始化数据的节的大小</span><br><span class="line">+28h  DWORD  AddressOfEntryPoint;  // 程序执行入口RVA</span><br><span class="line">程序入口的RVA，对于exe可以理解为WinMain的RVA。对于DLL可以理解为DllMain的RVA，对于驱动程序，可以理解为DriverEntry的RVA。写壳的时候这个地址相当重要。  </span><br><span class="line">+2Ch  DWORD  BaseOfCode;   // 代码的区块的起始RVA</span><br><span class="line">+30h  DWORD  BaseOfData;   // 数据的区块的起始RVA</span><br><span class="line">  //</span><br><span class="line">  // NT additional fields.  以下是属于NT结构增加的领域。</span><br><span class="line">  //</span><br><span class="line">+34h  DWORD  ImageBase;   // *********程序的首选装载地址</span><br><span class="line">+38h  DWORD  SectionAlignment;   // *********内存中的区块的对齐大小</span><br><span class="line">节对齐，PE中的节被加载到内存时会按照这个域指定的值来对齐，比如这个值是0x1000，那么每个节的起始地址的低12位都为0。  </span><br><span class="line">+3Ch  DWORD  FileAlignment;   // *********文件中的区块的对齐大小</span><br><span class="line">节在文件中按此值对齐，SectionAlignment必须大于或等于FileAlignment。  </span><br><span class="line">实际上这两个对齐方式很重要，在后续RVA和偏移地址的转化中有用到。  </span><br><span class="line">+40h  WORD  MajorOperatingSystemVersion; // 要求操作系统最低版本号的主版本号</span><br><span class="line">+42h  WORD  MinorOperatingSystemVersion; // 要求操作系统最低版本号的副版本号</span><br><span class="line">+44h  WORD  MajorImageVersion;    // 可运行于操作系统的主版本号</span><br><span class="line">+46h  WORD  MinorImageVersion;    // 可运行于操作系统的次版本号</span><br><span class="line">+48h  WORD  MajorSubsystemVersion; // 要求最低子系统版本的主版本号</span><br><span class="line">+4Ah  WORD  MinorSubsystemVersion; // 要求最低子系统版本的次版本号</span><br><span class="line">+4Ch  DWORD  Win32VersionValue;    // 莫须有字段，不被病毒利用的话一般为0</span><br><span class="line">+50h  DWORD  SizeOfImage;    // 映像装入内存后的总尺寸</span><br><span class="line">+54h  DWORD  SizeOfHeaders;    // 文件头的长度之和</span><br><span class="line">+58h  DWORD  CheckSum;    // 映像的校检和</span><br><span class="line">+5Ch  WORD  Subsystem;    // 可执行文件期望的GUI或CUI</span><br><span class="line">图形用户界面，字符用户界面</span><br><span class="line">+5Eh  WORD  DllCharacteristics;    // DllMain()函数何时被调用，默认为 0</span><br><span class="line">+60h  DWORD  SizeOfStackReserve;    // 初始化时的栈大小</span><br><span class="line">+64h  DWORD  SizeOfStackCommit;    // 初始化时实际提交的栈大小</span><br><span class="line">+68h  DWORD  SizeOfHeapReserve;    // 初始化时保留的堆大小</span><br><span class="line">+6Ch  DWORD  SizeOfHeapCommit;    // 初始化时实际提交的堆大小</span><br><span class="line">+70h  DWORD  LoaderFlags;    // 与调试有关，默认为 0 </span><br><span class="line">+74h  DWORD  NumberOfRvaAndSizes; // 下边数据目录的项数，这个字段自Windows NT 发布以来    // 一直是16</span><br><span class="line">+78h  DWORD  DataDirctory[16];     // ********* 数据目录表</span><br><span class="line">&#125; IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;</span><br></pre></td></tr></table></figure>
+
+<h6 id="DataDirectory"><a href="#DataDirectory" class="headerlink" title="DataDirectory"></a><strong>DataDirectory</strong></h6><p>构建原因：数据目录表-每个结构给出一个重要数据结构的起始RVA和大小信息。节表可以看作是PE文件各节的根目录的话，也可以认为 data directory 是存储在这些节里的逻辑元素的根目录。</p>
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103195427884.png" alt="image-20250103195427884" style="zoom: 33%;">
+
+<p>数据目录，这是一个数组，数组的项定义如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">typedefstruct _IMAGE_DATA_DIRECTORY &#123;</span><br><span class="line">DWORD   VirtualAddress;</span><br><span class="line">DWORD   Size;</span><br><span class="line">&#125; IMAGE_DATA_DIRECTORY,*PIMAGE_DATA_DIRECTORY;VirtualAddress</span><br></pre></td></tr></table></figure>
+
+<p>有16个这样的元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#define IMAGE_DIRECTORY_ENTRY_EXPORT          0   //0 导出表</span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_IMPORT          1   //1 导入表   </span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_RESOURCE        2   //2 资源目录</span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_EXCEPTION       3   //3 异常目录</span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_SECURITY        4   //4 安全目录</span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_BASERELOC       5   /5 重定位基本表</span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_DEBUG           6   // Debug Directory  </span><br><span class="line">   // IMAGE_DIRECTORY_ENTRY_COPYRIGHT       7   // (X86 usage)  </span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_ARCHITECTURE    7   // Architecture Specific Data  </span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_GLOBALPTR       8   // RVA of GP  </span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_TLS             9   // TLS Directory  </span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG    10   // Load Configuration Directory  </span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT   11   // Bound Import Directory in headers  </span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_IAT            12   // 导入地址表</span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT   13   // Delay Load Import Descriptors  </span><br><span class="line">#define IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR 14   // COM Runtime descriptor  </span><br></pre></td></tr></table></figure>
+
+<p><strong>动态链接</strong></p>
+<p>DataDirectory在动态链接过程中起着重要作用</p>
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103205655208.png" alt="image-20250103205655208">
+
+<p> 动态链接后IAT的内容会被替换为地址</p>
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103205711132.png" alt="image-20250103205711132">
+
+<p>该过程主要涉及以下三个表：</p>
+<ul>
+<li><p>导入表：一个引入函数是被某模块调用但又不在调用模块中的函数，位于一个或者更多的DLL里，因而要保留一些函数信息，包括函数名及其驻留的DLL名。（给出函数定义）</p>
+<p>装载器首先读入IMAGE_IMPORT_DESCRIPTOR，获得需要加载的动态库User32.DLL。</p>
+<p>然后如上图所示会创建两个并列的指向IMAGE_IMPORT_BY_NAME结构的指针数组。第一个数组（由Characteristics域指向的那一个）总是保留原样，系统并不修改。第二个数组（由FirstThunk域指向的那一个）要被PE加载器修改。改成引入函数真实地址 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">typedef struct _IMAGE_IMPORT_DESCRIPTOR &#123;</span><br><span class="line">    union &#123;</span><br><span class="line">        DWORD Characteristics; // 0 for terminating null import descriptor  别名</span><br><span class="line">        DWORD OriginalFirstThunk; // RVA to original unbound IAT，指向导入函数的定义</span><br><span class="line">         (指向IMAGE_THUNK_DATA结构数组的RVA)</span><br><span class="line">    &#125;;</span><br><span class="line">    DWORD TimeDateStamp; // 0 if not bound,</span><br><span class="line">    // -1 if bound, and real date\time stamp</span><br><span class="line">    // in IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT (new BIND)</span><br><span class="line">    // O.W. date/time stamp of DLL bound to (Old BIND)</span><br><span class="line"></span><br><span class="line">    DWORD ForwarderChain; // -1 if no forwarders</span><br><span class="line"></span><br><span class="line">    DWORD Name;  // RVA，指向字符串，是这个可执行文件的名字。指向名字的指针</span><br><span class="line">                                      例如“kernel32.dll&quot;</span><br><span class="line"></span><br><span class="line">    DWORD FirstThunk; // RVA to IAT (if bound this IAT has actual addresses)，在加载前给出导入函数的定义（对齐：前面函数对齐，后面就可以与其地址进行一一对应），在加载后指向导入函数的地址</span><br><span class="line">    (指向IMAGE_THUNK_DATA结构数组的RVA)</span><br><span class="line"></span><br><span class="line">&#125; IMAGE_IMPORT_DESCRIPTOR;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">typedef struct _IMAGE_THUNK_DATA32 &#123;</span><br><span class="line">    union &#123;</span><br><span class="line">        DWORD ForwarderString; // 一个RVA地址，指向forwarder string </span><br><span class="line">        DWORD Function; // PDWORD，被导入的函数的入口地址</span><br><span class="line">        DWORD Ordinal; // 该函数的序数</span><br><span class="line">        DWORD AddressOfData; // 一个RVA地址，指向IMAGE_IMPORT_BY_NAME</span><br><span class="line">    &#125; u1;</span><br><span class="line">&#125; IMAGE_THUNK_DATA32; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">typedef struct _IMAGE_IMPORT_BY_NAME&#123;</span><br><span class="line">     WORD Hint;// 函数输出序号</span><br><span class="line">     BYTE Name1[i];//输出函数名称</span><br><span class="line">&#125; IMAGE_IMPORT_BY_NAME,*PIMAGE_IMPORT_BY_NAME</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>导出表：存储导入函数地址</p>
+<p>根据IMAGE_IMPORT_BY_NAME的序号或名称到导入的DLL(user32.dll)函数导出表中获取导入函数的地址。然后把这个地址替换掉FirstThunk所指向的函数输入地址表中的数据。</p>
+<p>可以按照序号导出也可以按照名称导出 </p>
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103214737276.png" alt="image-20250103214737276">
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">typedef struct _IMAGE_EXPORT_DIRECTORY &#123;</span><br><span class="line"> DWORD  Characteristics;       // 一般为0</span><br><span class="line"> DWORD  TimeDateStamp;         // 文件生成时间</span><br><span class="line"> WORD   MajorVersion;          // 主版本号</span><br><span class="line"> WORD   MinorVersion;          // 次版本号</span><br><span class="line"> DWORD  Name;                  // 指向DLL的名字</span><br><span class="line"> DWORD  Base;                  // 基数，加上序数就是函数地址数组的索引值</span><br><span class="line"> DWORD  NumberOfFunctions;     // AddressOfFunctions数组的项数</span><br><span class="line"> DWORD  NumberOfNames;         // AddressOfNames数组的项数</span><br><span class="line"> DWORD  AddressOfFunctions;    // RVA from base of image（每个函数具体导出的地址值）</span><br><span class="line"> DWORD  AddressOfNames;        // RVA from base of image（按名称导出）</span><br><span class="line"> DWORD  AddressOfNameOrdinals; // RVA from base of image（把序号和名称做了一个对，使其能按序号导出）</span><br><span class="line">&#125; IMAGE_EXPORT_DIRECTORY, *PIMAGE_EXPORT_DIRECTORY;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>导入地址表：IAT</p>
+<p>而JMP DWORD PTR [XXXXXXXX]这条指令中的[XXXXXXXX]部分就是这个FirstThunk数组中的某个元素的值。由于被加载器覆盖的这个指针数组最终保存的是导入函数的地址，因此它被称为导入地址表（Import Address Table，IAT）。</p>
+<p>对应输入表位置和大小</p>
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/4d838f3ad4a25abbbf64a80aa161984b.png" alt="在这里插入图片描述" style="zoom:50%;">
+
+<p>采用PEinfo所查到输入表位置与大小  </p>
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/e674ae54460c7da4c8ce5c777996162c.png" alt="在这里插入图片描述" style="zoom:50%;"></li>
+</ul>
+<h4 id="节表-区块表-IMAGE-SECTION-HEADER-一定数量"><a href="#节表-区块表-IMAGE-SECTION-HEADER-一定数量" class="headerlink" title="节表&#x2F;区块表:_IMAGE_SECTION_HEADER*一定数量"></a>节表&#x2F;区块表:_IMAGE_SECTION_HEADER*一定数量</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">typedef struct _IMAGE_SECTION_HEADER &#123;  </span><br><span class="line">Name                        //8个字节的块名  </span><br><span class="line">区块名。这是一个由8个ASCII码组成，用来定义区块的名称的数组。多数区块名都习惯性以一个“.”作为开头（例如：.text），这个“.”实际上是不是必须的。</span><br><span class="line">union//2选1                         </span><br><span class="line">&#123;  </span><br><span class="line">    DWORD PhysicalAddress;  </span><br><span class="line">    DWORD VirtualSize;  //本节的实际字节数，默认就是这个值</span><br><span class="line">&#125; Misc;                     //区块尺寸</span><br><span class="line">DWORD VirtualAddress;       //本节的相对虚拟地址</span><br><span class="line">该块时装载到内存中的RVA，注意这个地址是按内存页对齐的，她总是SectionAlignment的整数倍，在工具中第一个块默认RVA为1000，在OBJ中为0。</span><br><span class="line">DWORD SizeOfRawData;        //在文件中对齐后的尺寸  </span><br><span class="line">该块在磁盘中所占的大小,在可执行文件中，该字段包括经过FileAlignment调整后块的长度。例如FileAlignment的大小为200h，如果VirtualSize中的块长度为19Ah个字节，这一块保存的长度为200h个字节。  </span><br><span class="line">DWORD PointerToRawData;     //在文件中偏移  </span><br><span class="line">该块在磁盘文件中的偏移，程序编译或汇编后生成原始数据，这个字段用于给出原始数据块在文件的偏移，如果程序自装载PE或COFF文件（而不是由OS装载），这种情况，必须完全使用线性映像方法装入文件，需要在该块处找到块的数据。  </span><br><span class="line">DWORD PointerToRelocations; //在OBJ文件中使用，重定位的偏移  </span><br><span class="line">DWORD PointerToLinenumbers; //行号表的偏移（供调试使用地）  </span><br><span class="line">WORD NumberOfRelocations;   //在OBJ文件中使用，重定位项数目  </span><br><span class="line">WORD NumberOfLinenumbers;   //行号表中行号的数目  </span><br><span class="line">DWORD Characteristics;      //区块属性如可读，可写，可执行等  </span><br><span class="line">&#125; IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;  </span><br></pre></td></tr></table></figure>
+
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103215704121.png" alt="image-20250103215704121" style="zoom:50%;">
+
+<h4 id="PE文件加载过程"><a href="#PE文件加载过程" class="headerlink" title="PE文件加载过程"></a>PE文件加载过程</h4><p>Windows 装载器在装载的时候仅仅建立好虚拟地址和PE文件之间的映射关系。当且仅当真正执行到某个内存页中的指令或者访问某一页中的数据时，这个页面才会被从磁盘提交到物理内存</p>
+<img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/2f8dadfaa1513f15cffda7ce1576bb35.png" alt="在这里插入图片描述">  
+
+<p>当一个PE文件被加载到内存中以后，我们称之为“映象”（image），一般来说，PE文件在硬盘上和在内存里是不完全一样的，被加载到内存以后其占用的虚拟地址空间要比在硬盘上占用的空间大一些，这是因为各个节在硬盘上是连续的，而在内存中是按页对齐的，所以加载到内存以后节之间会出现一些“空洞”【补的0】。 </p>
+<p><img src="/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250407003153563.png" alt="image-20250407003153563"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://wuyaxiao.com/2025/04/06/http-https%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -399,232 +530,6 @@
 <h3 id="阶段三：加密通信"><a href="#阶段三：加密通信" class="headerlink" title="阶段三：加密通信"></a>阶段三：加密通信</h3><p>TLS握手完成后，客户端与服务端的所有通信内容均被加密，如果没有会话密钥则无法解密通信内容。</p>
 <p><img src="/http-https%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222340929.png" alt="image-20250406222340929"></p>
 <h3 id="阶段四：TCP四次挥手断开连接"><a href="#阶段四：TCP四次挥手断开连接" class="headerlink" title="阶段四：TCP四次挥手断开连接"></a>阶段四：TCP四次挥手断开连接</h3><p><img src="/http-https%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222350469.png" alt="image-20250406222350469"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://wuyaxiao.com/2025/04/06/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Sunny">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="学习小屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/04/06/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">http和https交互过程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-04-06 22:14:01 / 修改时间：23:04:06" itemprop="dateCreated datePublished" datetime="2025-04-06T22:14:01+08:00">2025-04-06</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="http交互过程"><a href="#http交互过程" class="headerlink" title="http交互过程"></a>http交互过程</h2><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221702611.png" alt="image-20250406221702611"></p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221720457.png" alt="image-20250406221720457"></p>
-<p>用wireshark抓包后利用百度ip地址过滤数据包ipv6.src &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296 || ipv6.dst &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296</p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221743565.png" alt="image-20250406221743565"></p>
-<h3 id="“三次握手”建立TCP连接"><a href="#“三次握手”建立TCP连接" class="headerlink" title="“三次握手”建立TCP连接"></a>“三次握手”建立TCP连接</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221755801.png" alt="image-20250406221755801"></p>
-<h3 id="客户端发送HTTP请求"><a href="#客户端发送HTTP请求" class="headerlink" title="客户端发送HTTP请求"></a>客户端发送HTTP请求</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221808248.png" alt="image-20250406221808248"></p>
-<p>客户端向服务器发送HTTP请求消息。请求消息通常包括以下部分：</p>
-<ul>
-<li>请求行：包含请求方法（如GET、POST）、请求的资源路径、HTTP版本。<ul>
-<li>Request Method：请求方法，这里的请求方法是GET；</li>
-<li>Request URI：请求的URI，没指定默认是&#x2F;，因为我们只请求了域名<a target="_blank" rel="noopener" href="http://www.baidu.com,并没指定要获取的资源,所以是默认的/%EF%BC%9B">www.baidu.com，并没指定要获取的资源，所以是默认的/；</a></li>
-<li>Request Version：请求的版本，因为用的是HTTP协议，所以这里显示HTTP协议的版本。</li>
-</ul>
-</li>
-<li>请求头：包含客户端信息、请求参数等，例如User-Agent、Accept、Cookie等。<ul>
-<li><p>Host：目标主机；</p>
-</li>
-<li><p>User-Agent：用户代理，也就是浏览器的类型。由于我们没用浏览器，所以这里显示的是命令curl，版本为8.4.0；</p>
-</li>
-<li><p>Accept：浏览器可接受的MIME（Multipurpose Internet Mail Extensions）类型。</p>
-</li>
-</ul>
-</li>
-<li>请求体：对于某些请求方法（如POST），可能包含额外的数据，用于向服务器发送信息。</li>
-</ul>
-<h3 id="服务器发送HTTP响应"><a href="#服务器发送HTTP响应" class="headerlink" title="服务器发送HTTP响应"></a>服务器发送HTTP响应</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221827193.png" alt="image-20250406221827193"></p>
-<p>服务器接收到请求后，会检查请求头和请求体，然后根据请求方法（如GET、POST）和资源路径来决定如何响应。服务器生成的响应消息，包括状态行、响应体。</p>
-<p>当打开响应体会发现它的内容是明文的，对于机密通信来说HTTP通信很容易产生信息泄露。另外，以上介绍的整个交互过程中并不验证通信方的身份，第三方可以冒充他人身份参与通信。</p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221839504.png" alt="image-20250406221839504"></p>
-<h4 id="HTTP-响应结构"><a href="#HTTP-响应结构" class="headerlink" title="HTTP 响应结构"></a>HTTP 响应结构</h4><p>这个内容是一个标准的HTTP响应示例，使用的是HTTP&#x2F;1.1协议。响应的结构主要分为几个部分：</p>
-<ol>
-<li><p><strong>状态行</strong>： </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><strong>Response Version</strong>: 表示使用的HTTP协议版本（HTTP&#x2F;1.1）。</li>
-<li><strong>Status Code</strong>: 200，表示请求成功。</li>
-<li><strong>Status Code Description</strong>: “OK”是对状态代码的描述，表示没有错误。</li>
-</ul>
-</li>
-<li><p><strong>响应头部</strong>：<br>接下来是一系列以<code>字段名: 字段值</code>方式排列的响应头部信息，其中包括：</p>
-<ul>
-<li><strong>Connection</strong>: <code>keep-alive</code>指示连接是否保持活动状态，允许在一个TCP连接上处理多个请求。</li>
-<li><strong>Content-Length</strong>: <code>413830</code>表示响应主体的长度（字节数）。</li>
-<li><strong>Content-Type</strong>: <code>text/html; charset=utf-8</code>表明返回内容的类型为HTML，并使用UTF-8字符集编码。</li>
-<li><strong>Date</strong>: 指示服务器发送响应的日期和时间（GMT）。</li>
-<li><strong>Server</strong>: <code>BWS/1.1</code>表示服务器使用的Web服务器软件名称和版本。</li>
-<li><strong>Set-Cookie</strong>: 多个<code>Set-Cookie</code>字段设置会话 cookie，以便客户端可以在后续请求中识别用户。这些设置包括：<ul>
-<li><strong>BIDUPSID</strong>: 用于标识用户的会话 ID。</li>
-<li><strong>PSTM</strong>: 时间戳。</li>
-<li><strong>H_PS_PSSID</strong>: 字段用于会话跟踪。</li>
-<li><strong>BAIDUID</strong>: 用户ID，通常用于个性化和跟踪。</li>
-</ul>
-</li>
-<li><strong>Traceid</strong>: <code>1727528586052408013810636502756405498072</code>是用于跟踪请求的唯一标识符。</li>
-<li><strong>Vary</strong>: <code>Accept-Encoding</code>表示响应可能会根据请求头中的<code>Accept-Encoding</code>进行变化。</li>
-<li><strong>X-Ua-Compatible</strong>: 浏览器兼容性设置，指定最优渲染引擎。</li>
-<li><strong>X-Xss-Protection</strong>: <code>1;mode=block</code>用于防止跨站脚本攻击（XSS）。</li>
-</ul>
-</li>
-<li><p><strong>响应主体</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Response: True&gt;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h3 id="“四次挥手”断开TCP连接"><a href="#“四次挥手”断开TCP连接" class="headerlink" title="“四次挥手”断开TCP连接"></a>“四次挥手”断开TCP连接</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221855258.png" alt="image-20250406221855258"></p>
-<p>请求完成后，客户端和服务器可以关闭连接。通常情况下，HTTP 1.0使用的是短连接，请求完成后关闭连接。HTTP 1.1默认使用长连接，多个请求可以复用同一个连接，直到连接超时或被关闭。</p>
-<h2 id="https交互过程"><a href="#https交互过程" class="headerlink" title="https交互过程"></a>https交互过程</h2><p>HTTP协议有三大缺点：</p>
-<ul>
-<li><strong>机密性问题</strong>：通信使用了明文，第三方可以拦截并获悉通信内容；</li>
-<li><strong>完整性问题</strong>：未验证报文的完整性，第三方可以篡改通信内容；</li>
-<li><strong>认证问题</strong>：未验证对方的身份，第三方可以冒充他人身份参与通信。</li>
-</ul>
-<p>为了解决以上三个问题，便诞生了HTTPS。</p>
-<p>HTTPS 被称为 HTTP Over SSL (基于SSL加密的HTTP)，这里的SSL (Secure Socket Layer) 被称为安全套接层，它是一种加密协议，不仅可应用于HTTP协议、还可应用于POP3协议、SMTP协议、VPN等。</p>
-<p>TLS (Transport Layer Security) 被称为传输层安全，TLS相对于SSL 3.0版本做了些修改和功能增强，相当于SSL的升级版本，所以有时也一起统称为 SSL，接入来本文若不明显强调，SSL就默认表示SSL&#x2F;TLS。</p>
-<p>我们可以用公式HTTPS &#x3D; HTTP + SSL &#x2F; TLS来表示HTTPS。<br><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221911301.png" alt="image-20250406221911301"></p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221927735.png" alt="image-20250406221927735"></p>
-<h3 id="阶段一：TCP三次握手建立连接"><a href="#阶段一：TCP三次握手建立连接" class="headerlink" title="阶段一：TCP三次握手建立连接"></a>阶段一：TCP三次握手建立连接</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221942057.png" alt="image-20250406221942057"></p>
-<h3 id="阶段二：TLS握手建立安全通道"><a href="#阶段二：TLS握手建立安全通道" class="headerlink" title="阶段二：TLS握手建立安全通道"></a>阶段二：TLS握手建立安全通道</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406221951935.png" alt="image-20250406221951935"></p>
-<p>第一次握手报文（72）：我-&gt;百度 发送TLS消息「Client Hello」；<br>第二次握手报文（74、79）：</p>
-<p>百度-&gt;我 发送TLS消息「Server Hello」；<br>百度-&gt;我 发送TLS消息「Certificate」，「Server Key Exchange」，「Server Hello Done」</p>
-<p>第三次握手报文（83）：我-&gt;百度 发送TLS消息「Client Key Exchange」，「Change Cipher Spec」，「Encrypted Handshake Message」<br>第四次握手报文（85）：百度-&gt;我 发送TLS消息「Change Cipher Spec」，「Encrypted Handshake Message」<br>为了直观展示TLS报文交互，基于抓包分析的数据包可以绘制得到下图。</p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222010322.png" alt="image-20250406222010322"></p>
-<h4 id="TLS第一次握手：client-server-Client-Hello"><a href="#TLS第一次握手：client-server-Client-Hello" class="headerlink" title="TLS第一次握手：client -&gt; server (Client Hello)"></a>TLS第一次握手：client -&gt; server (Client Hello)</h4><p>客户端向服务端发送：</p>
-<ol>
-<li>客户端支持的协议；</li>
-<li>已经使用的TLS版本；</li>
-<li>随机数Random；</li>
-<li>支持的密码套件。</li>
-</ol>
-<p>从下图中，我们也可以看出SSL层是基于TCP层又进行封装的一层协议。</p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222026174.png" alt="image-20250406222026174"></p>
-<p>接下来我们看几个TLS协议中的重要字段（Version、Random、SessionID和Cipher Suites）。</p>
-<ul>
-<li>version</li>
-</ul>
-<p>从上图中可以看到当前通信安全层协议版本（Version）为TLS 1.2。其实TLS共总有4个版本，最新为TLS 1.3，具体如下：</p>
-<p>TLS 1.3：发布于2018年，TLS 1.3是TLS协议的最新版本，大幅简化了握手过程，提高了性能和安全性。它删除了一些不安全的加密算法，并引入了0-RTT（零往返时间）握手，以减少延迟。<br>TLS 1.2：TLS 1.2发布于2008年，它引入了更强的加密算法和更灵活的密码套件选择，修复了许多安全漏洞，是目前广泛使用的版本。（当前样例中百度网站使用的就是TLS 1.2协议）<br>TLS 1.1：TLS 1.1发布于2006年，引入了一些改进，包括对CBC（Cipher Block Chaining）模式的安全性改进，但仍然存在一些已知的安全问题。<br>TLS 1.0：TLS 1.0于1999年发布，是SSL 3.0的升级版本，修复了一些安全漏洞，但仍然存在一些安全问题。</p>
-<ul>
-<li>Random</li>
-</ul>
-<p>Random用于密钥的制作。这里我们将第一次握手中客户端发送给服务端的随机数记为Client Random，记住这个随机数，后面还会用到。</p>
-<ul>
-<li>SessionID</li>
-</ul>
-<p>SessionID用来表示客户端是否想复用先前存在的session。如果不复用，则此字段为0；如果想要复用，则此字段为想要复用的sessionID。是否复用由服务端确定。</p>
-<ul>
-<li>Cipher Suites</li>
-</ul>
-<p>密码套件列表会全部发给服务端，服务端从中挑选一个最安全的密码套件返回客户端。</p>
-<p>将Cipher Suites字段展开，如下图。代表客户端支持的密码套件列表。</p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222044546.png" alt="image-20250406222044546"></p>
-<p>密码套件的格式通常由一系列的加密算法和相关参数组成。一般来说，它的格式包含以下几个部分：</p>
-<p>密钥交换算法：用于协商会话密钥，例如 Diffie-Hellman（DHE）、ECDHE等。<br>身份验证算法：也称签名算法用于验证对端身份，例如RSA。<br>加密算法：用于实际数据传输的加解密，例如 AES（Advanced Encryption Standard）、RC4 等。<br>数据摘要算法：用于计算哈希，主要是用于验证数据的完整性，防止信息被篡改。</p>
-<p>格式：「密钥交换算法 + 签名算法（认证算法） + 对称加密算法 + 摘要算法」。其中密钥交换算法和签名算法可以相同，此时就会合二为一。</p>
-<p>比如上面密码套件列表中的第9个TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384。<br><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222056722.png" alt="image-20250406222056722"></p>
-<p>在这个例子中：</p>
-<p>ECDHE表示密钥交换算法是基于椭圆曲线的 Diffie-Hellman（ECDHE）。<br>RSA表示使用RSA算法（私钥加密、公钥解密）验证对方身份。<br>AES_256_GCM表示使用 256 位的 AES 加密算法和 GCM 模式。<br>SHA384表示使用 SHA-384 作为消息摘要算法。</p>
-<p>不同的密码套件组合提供了不同的安全性和性能特点，服务器和客户端在进行 TLS 握手时会协商选择双方都支持的 Cipher Suite 来建立安全连接。</p>
-<p>客户端发送完「Client Hello」（第72个报文），第73个报文则是服务端向客户端发送的ACK确认消息，代表上面的「Client Hello」已经收到。这里也可以看出服务端是通过普通的TCP 的ACK消息去应答「Client Hello」。<br><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222111873.png" alt="image-20250406222111873"></p>
-<h4 id="TLS第二次握手：server-client-1-Server-Hello-2-Certificate-Server-key-Exchange-Server-Hello-Done"><a href="#TLS第二次握手：server-client-1-Server-Hello-2-Certificate-Server-key-Exchange-Server-Hello-Done" class="headerlink" title="TLS第二次握手：server -&gt; client (1.Server Hello; 2.Certificate,Server key Exchange,Server Hello Done)"></a>TLS第二次握手：server -&gt; client (1.Server Hello; 2.Certificate,Server key Exchange,Server Hello Done)</h4><p>这一次握手时，server向client连续发送了两个报文：</p>
-<p>Server Hello：服务端为了证明自己的身份，会发送「Server Certificate」给客户端，这个消息里含有数字证书；<br>Certificate,Server key Exchange,Server Hello Done：目的是告诉客户端，我已经把该给你的东西都给你了，本次打招呼完毕。</p>
-<h5 id="服务端发送报文：Server-Hello"><a href="#服务端发送报文：Server-Hello" class="headerlink" title="服务端发送报文：Server Hello"></a>服务端发送报文：Server Hello</h5><p>服务端向客户端发送：</p>
-<ol>
-<li>服务端支持的协议；</li>
-<li>使用的TLS版本；</li>
-<li>随机数Random；</li>
-<li>服务端选用的密码套件。</li>
-</ol>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222126505.png" alt="image-20250406222126505"></p>
-<p>上图中可以看到，服务端也生成了一个随机数，并发送给了客户端，服务端生成的随机数记为<code>Server Random</code>。</p>
-<p>客户端和服务端就已确认了 TLS 版本和使用的密码套件<code>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 </code>。</p>
-<h5 id="服务端发送报文：Certificate-Server-key-Exchange-Server-Hello-Done"><a href="#服务端发送报文：Certificate-Server-key-Exchange-Server-Hello-Done" class="headerlink" title="服务端发送报文：Certificate,Server key Exchange,Server Hello Done"></a>服务端发送报文：Certificate,Server key Exchange,Server Hello Done</h5><p>这里服务端在一个数据包中发送了三个TLS消息：</p>
-<ul>
-<li>Certificate</li>
-<li>Server key Exchange</li>
-<li>Server Hello Done</li>
-</ul>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222141946.png" alt="image-20250406222141946"></p>
-<h6 id="certificate"><a href="#certificate" class="headerlink" title="certificate"></a>certificate</h6><p>可以看到当前数据包中包含了三个数字证书，三个证书实际构成了一个完整的证书链。</p>
-<p>最下面的为根证书，最上面的为网站证书。</p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222153092.png" alt="image-20250406222153092"></p>
-<h6 id="Server-Key-Exchange"><a href="#Server-Key-Exchange" class="headerlink" title="Server Key Exchange"></a>Server Key Exchange</h6><p>之前由于服务端选用ECDHE进行密钥协商，所以可以看到「Sever Key Exchange」消息中主要包括密钥交换算法EC Diffie-Hellman（简称ECDHE）以及携带的额外数据（Server Params）。Server Params参数包含：Curve Type、Named Curve以及Pubkey，分别代表曲线类型、曲线名称以及椭圆曲线公钥（用于实现密钥交换算法）。为了防止公钥被篡改，这里服务端使用RSA私钥对椭圆曲线公钥进行签名并发送给客户端。<br><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222204616.png" alt="image-20250406222204616"></p>
-<p>实质上这个过程服务器做了三件事情：</p>
-<ol>
-<li>选择了名为 named_curve 的椭圆曲线，选好了椭圆曲线相当于椭圆曲线基点 G 也定好了，这些都会公开给客户端；</li>
-<li>生成随机数会作为服务端椭圆曲线的私钥，保留到本地；</li>
-<li>根据基点 G 和私钥计算出服务端的椭圆曲线公钥，这个会公开给客户端。</li>
-</ol>
-<h6 id="Server-Hello-Done"><a href="#Server-Hello-Done" class="headerlink" title="Server Hello Done"></a>Server Hello Done</h6><p>表明Server Hello消息结束，这个消息中没有额外的其他字段。</p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222217832.png" alt="image-20250406222217832"></p>
-<h4 id="TLS第三次握手client-server-Client-Key-Exchange-Change-Cipher-Spec-Encrypted-Handshake-Message"><a href="#TLS第三次握手client-server-Client-Key-Exchange-Change-Cipher-Spec-Encrypted-Handshake-Message" class="headerlink" title="TLS第三次握手client -&gt; server (Client Key Exchange, Change Cipher Spec, Encrypted Handshake Message)"></a>TLS第三次握手client -&gt; server (Client Key Exchange, Change Cipher Spec, Encrypted Handshake Message)</h4><p>该报文中，也是将TLS的三个消息合并到一个中发送。</p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222228493.png" alt="image-20250406222228493"></p>
-<h5 id="Client-Key-Exchange"><a href="#Client-Key-Exchange" class="headerlink" title="Client Key Exchange"></a>Client Key Exchange</h5><p>客户端收到了服务端的证书及「Server Hello Done」消息后，会先校验证书，校验通过后会将Client Params数据传递给服务端，其中包含自身生成的椭圆曲线公钥（Pubkey），数据内容如图所示：</p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222316867.png" alt="image-20250406222316867"></p>
-<p>客户端会生成一个随机数作为客户端椭圆曲线的私钥，然后再根据服务端前面给的信息，生成客户端的椭圆曲线公钥，然后用「Client Key Exchange」消息发给服务端。</p>
-<p>至此，双方都有对方的椭圆曲线公钥、自己的椭圆曲线私钥、椭圆曲线基点 G。于是，双方都可计算椭圆曲线的交点（x，y）。</p>
-<p>最终的会话密钥，就是用「客户端随机数 + 服务端随机数 + x（ECDHE 算法算出的共享密钥） 」三者结合生成的。</p>
-<h5 id="Change-Cipher-Spec"><a href="#Change-Cipher-Spec" class="headerlink" title="Change Cipher Spec"></a>Change Cipher Spec</h5><p>「Change Cipher Spec」消息表示客户端已经生成密钥，并切换到对称加密模式。</p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222328763.png" alt="image-20250406222328763"></p>
-<h5 id="Encrypted-Handshake-Message"><a href="#Encrypted-Handshake-Message" class="headerlink" title="Encrypted Handshake Message"></a>Encrypted Handshake Message</h5><p>发送这个消息有两个目的：</p>
-<p>告诉服务端，客户端在握手的过程中收到和发送的数据做一个摘要并用会话密钥加密发送给服务端做校验，保证TSL握手过程中报文没有被修改过；</p>
-<p>如果服务端收到这个消息并能解密成功，就能说明对称密钥是正确的。</p>
-<p>「Encrypted Handshake Message」消息其实不只是客户端会发送，之后服务端也会发送一个。</p>
-<h4 id="TLS-第四次握手server-client-Change-Cipher-Spec-Encrypted-Handshake-Message"><a href="#TLS-第四次握手server-client-Change-Cipher-Spec-Encrypted-Handshake-Message" class="headerlink" title="TLS 第四次握手server -&gt; client (Change Cipher Spec,Encrypted Handshake Message)"></a>TLS 第四次握手server -&gt; client (Change Cipher Spec,Encrypted Handshake Message)</h4><p>服务器也是同样的操作，发送「Change Cipher Spec」和「Encrypted Handshake Message」消息，如果双方都验证加密和解密没问题，那么TLS握手正式完成。</p>
-<p>最后，就用会话密钥加解密 HTTPS 请求和响应了，即开启了阶段三的加密通信。</p>
-<h3 id="阶段三：加密通信"><a href="#阶段三：加密通信" class="headerlink" title="阶段三：加密通信"></a>阶段三：加密通信</h3><p>TLS握手完成后，客户端与服务端的所有通信内容均被加密，如果没有会话密钥则无法解密通信内容。</p>
-<p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222340929.png" alt="image-20250406222340929"></p>
-<h3 id="阶段四：TCP四次挥手断开连接"><a href="#阶段四：TCP四次挥手断开连接" class="headerlink" title="阶段四：TCP四次挥手断开连接"></a>阶段四：TCP四次挥手断开连接</h3><p><img src="/http%E5%92%8Chttps%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/image-20250406222350469.png" alt="image-20250406222350469"></p>
 
       
     </div>
@@ -3332,13 +3237,13 @@
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
