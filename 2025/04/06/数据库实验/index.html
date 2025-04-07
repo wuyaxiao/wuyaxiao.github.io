@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuyaxiao.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="实验项目一12CREATE DATABASE 实验项目一;USE 实验项目一;  创建后面给出的这6个表（20分）1234567891011121314151617181920-- 读者信息表CREATE TABLE 读者信息表 (    借书证号 CHAR(8) PRIMARY KEY,    姓名 VARCHAR(50),    性别 ENUM(&#x27;女&#x27;, &#x27;男&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库实验">
+<meta property="og:url" content="http://wuyaxiao.com/2025/04/06/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E9%AA%8C/index.html">
+<meta property="og:site_name" content="学习小屋">
+<meta property="og:description" content="实验项目一12CREATE DATABASE 实验项目一;USE 实验项目一;  创建后面给出的这6个表（20分）1234567891011121314151617181920-- 读者信息表CREATE TABLE 读者信息表 (    借书证号 CHAR(8) PRIMARY KEY,    姓名 VARCHAR(50),    性别 ENUM(&#x27;女&#x27;, &#x27;男&amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wuyaxiao.com/2025/04/06/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E9%AA%8C/B987B0639EA31FA3AB372B72C941534A.png">
+<meta property="og:image" content="http://wuyaxiao.com/2025/04/06/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E9%AA%8C/img.png">
+<meta property="article:published_time" content="2025-04-06T03:14:26.000Z">
+<meta property="article:modified_time" content="2025-04-06T03:25:11.587Z">
+<meta property="article:author" content="Sunny">
+<meta property="article:tag" content="实验">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wuyaxiao.com/2025/04/06/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E9%AA%8C/B987B0639EA31FA3AB372B72C941534A.png">
+
+<link rel="canonical" href="http://wuyaxiao.com/2025/04/06/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E9%AA%8C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数据库实验 | 学习小屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学习小屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wuyaxiao.com/2025/04/06/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E9%AA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunny">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学习小屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据库实验
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-04-06 11:14:26 / 修改时间：11:25:11" itemprop="dateCreated datePublished" datetime="2025-04-06T11:14:26+08:00">2025-04-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="实验项目一"><a href="#实验项目一" class="headerlink" title="实验项目一"></a>实验项目一</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE DATABASE 实验项目一;</span><br><span class="line">USE 实验项目一;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建后面给出的这6个表（20分）"><a href="#创建后面给出的这6个表（20分）" class="headerlink" title="创建后面给出的这6个表（20分）"></a>创建后面给出的这6个表（20分）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">-- 读者信息表</span><br><span class="line">CREATE TABLE 读者信息表 (</span><br><span class="line">    借书证号 CHAR(8) PRIMARY KEY,</span><br><span class="line">    姓名 VARCHAR(50),</span><br><span class="line">    性别 ENUM(&#x27;女&#x27;, &#x27;男&#x27;),</span><br><span class="line">    出生日期 DATE,</span><br><span class="line">    借书量 INT DEFAULT 0,</span><br><span class="line">    工作单位 VARCHAR(100),</span><br><span class="line">    电话 CHAR(11),</span><br><span class="line">    电子邮件 VARCHAR(50)</span><br><span class="line">);  </span><br><span class="line">INSERT INTO 读者信息表 (借书证号, 姓名, 性别, 出生日期, 借书量, 工作单位, 电话, 电子邮件)</span><br><span class="line">VALUES</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;张晓露&#x27;, &#x27;女&#x27;, &#x27;1989-02-01&#x27;, 2, &#x27;管理信息系&#x27;, &#x27;85860126&#x27;, &#x27;zxl@163.com&#x27;),</span><br><span class="line">    (&#x27;36405216&#x27;, &#x27;李阳&#x27;, &#x27;男&#x27;, &#x27;1988-12-26&#x27;, 1, &#x27;航海系&#x27;, &#x27;85860729&#x27;, &#x27;ly@sina.com.cn&#x27;),</span><br><span class="line">    (&#x27;28308208&#x27;, &#x27;王新全&#x27;, &#x27;男&#x27;, &#x27;1988-04-25&#x27;, 1, &#x27;人文艺术系&#x27;, &#x27;85860618&#x27;, &#x27;wxq@yahoo.cn&#x27;),</span><br><span class="line">    (&#x27;16406236&#x27;, &#x27;张继刚&#x27;, &#x27;男&#x27;, &#x27;1989-08-18&#x27;, 1, &#x27;轮机工程系&#x27;, &#x27;85860913&#x27;, &#x27;zjg@163.com&#x27;);</span><br><span class="line">INSERT INTO readerMessage (借书证号, 姓名, 性别, 出生日期,  工作单位, 电话, 电子邮件)</span><br><span class="line">VALUES</span><br><span class="line">	(&#x27;16406247&#x27;, &#x27;顾一帆&#x27;, &#x27;男&#x27;, &#x27;1981-12-30&#x27;, &#x27;轮机工程系&#x27;, &#x27;85860916&#x27;, &#x27;gyf@yahoo.cn&#x27;);</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>借书证号</th>
+<th>姓名</th>
+<th>性别</th>
+<th>出生日期</th>
+<th>借书量</th>
+<th>工作单位</th>
+<th>电话</th>
+<th>E-mail</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>29307142</td>
+<td>张晓露</td>
+<td>女</td>
+<td>1989-02-1</td>
+<td>2</td>
+<td>管理信息系</td>
+<td>85860126</td>
+<td><a href="mailto:&#122;&#x78;&#108;&#64;&#x31;&#x36;&#51;&#46;&#99;&#x6f;&#109;">zxl@163.com</a></td>
+</tr>
+<tr>
+<td>36405216</td>
+<td>李阳</td>
+<td>男</td>
+<td>1988-12-26</td>
+<td>1</td>
+<td>航海系</td>
+<td>85860729</td>
+<td><a href="mailto:&#108;&#121;&#64;&#115;&#x69;&#x6e;&#x61;&#x2e;&#x63;&#x6f;&#x6d;&#46;&#99;&#110;">ly@sina.com.cn</a></td>
+</tr>
+<tr>
+<td>28308208</td>
+<td>王新全</td>
+<td>男</td>
+<td>1988-04-25</td>
+<td>1</td>
+<td>人文艺术系</td>
+<td>85860618</td>
+<td><a href="mailto:&#119;&#x78;&#x71;&#64;&#121;&#97;&#104;&#111;&#111;&#x2e;&#x63;&#x6e;">wxq@yahoo.cn</a></td>
+</tr>
+<tr>
+<td>16406236</td>
+<td>张继刚</td>
+<td>男</td>
+<td>1989-08-18</td>
+<td>1</td>
+<td>轮机工程系</td>
+<td>85860913</td>
+<td><a href="mailto:&#122;&#x6a;&#x67;&#64;&#x31;&#54;&#x33;&#46;&#99;&#x6f;&#109;">zjg@163.com</a></td>
+</tr>
+<tr>
+<td>16406247</td>
+<td>顾一帆</td>
+<td>男</td>
+<td>1981-12-30</td>
+<td></td>
+<td>轮机工程系</td>
+<td>85860916</td>
+<td><a href="mailto:&#x67;&#x79;&#x66;&#x40;&#121;&#97;&#104;&#x6f;&#111;&#x2e;&#99;&#x6e;">gyf@yahoo.cn</a></td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">-- 借还明细表</span><br><span class="line">CREATE TABLE 借还明细表 (</span><br><span class="line">    借书证号 VARCHAR(10),</span><br><span class="line">    图书编号 VARCHAR(10),</span><br><span class="line">    借还状态 ENUM(&#x27;还&#x27;,&#x27;借&#x27;),</span><br><span class="line">    借书日期 DATE,</span><br><span class="line">    还书日期 DATE,</span><br><span class="line">    数量 INT,</span><br><span class="line">    工号 VARCHAR(10),</span><br><span class="line">    CONSTRAINT check_borrow_date CHECK (借书日期 &lt;= &#x27;2024-12-31&#x27;),</span><br><span class="line">    FOREIGN KEY (借书证号) REFERENCES 读者信息表(借书证号)</span><br><span class="line">);</span><br><span class="line">INSERT INTO 借还明细表 (借书证号, 图书编号, 借还状态, 借书日期, 还书日期, 数量, 工号)</span><br><span class="line">VALUES</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;07108667&#x27;, &#x27;还&#x27;, &#x27;2008-03-28&#x27;, &#x27;2008-04-14&#x27;, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;99011818&#x27;, &#x27;借&#x27;, &#x27;2008-04-27&#x27;, NULL, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;36405216&#x27;, &#x27;07410802&#x27;, &#x27;借&#x27;, &#x27;2008-04-27&#x27;, NULL, 1, &#x27;002018&#x27;),</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;07410298&#x27;, &#x27;借&#x27;, &#x27;2008-04-28&#x27;, NULL, 1, &#x27;002018&#x27;),</span><br><span class="line">    (&#x27;36405216&#x27;, &#x27;00000746&#x27;, &#x27;还&#x27;, &#x27;2008-04-29&#x27;, &#x27;2008-05-09&#x27;, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;28308208&#x27;, &#x27;07410139&#x27;, &#x27;借&#x27;, &#x27;2008-05-10&#x27;, NULL, 1, &#x27;002019&#x27;),</span><br><span class="line">    (&#x27;16406236&#x27;, &#x27;07410139&#x27;, &#x27;借&#x27;, &#x27;2008-05-11&#x27;, NULL, 1, &#x27;002017&#x27;);</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>借书证号</th>
+<th>图书编号</th>
+<th>借&#x2F;还</th>
+<th>借书日期</th>
+<th>还书日期</th>
+<th>数量</th>
+<th>工号</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>29307142</td>
+<td>07108667</td>
+<td>还</td>
+<td>2008-03-28</td>
+<td>2008-04-14</td>
+<td>1</td>
+<td>002016</td>
+</tr>
+<tr>
+<td>29307142</td>
+<td>99011818</td>
+<td>借</td>
+<td>2008-04-27</td>
+<td></td>
+<td>1</td>
+<td>002016</td>
+</tr>
+<tr>
+<td>36405216</td>
+<td>07410802</td>
+<td>借</td>
+<td>2008-04-27</td>
+<td></td>
+<td>1</td>
+<td>002018</td>
+</tr>
+<tr>
+<td>29307142</td>
+<td>07410298</td>
+<td>借</td>
+<td>2008-04-28</td>
+<td></td>
+<td>1</td>
+<td>002018</td>
+</tr>
+<tr>
+<td>36405216</td>
+<td>00000746</td>
+<td>还</td>
+<td>2008-04-29</td>
+<td>2008-05-09</td>
+<td>1</td>
+<td>002016</td>
+</tr>
+<tr>
+<td>28308208</td>
+<td>07410139</td>
+<td>借</td>
+<td>2008-05-10</td>
+<td></td>
+<td>1</td>
+<td>002019</td>
+</tr>
+<tr>
+<td>16406236</td>
+<td>07410139</td>
+<td>借</td>
+<td>2008-05-11</td>
+<td></td>
+<td>1</td>
+<td>002017</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">-- 图书类别</span><br><span class="line">CREATE TABLE 图书类别表 (</span><br><span class="line">	类别号 CHAR(10) ,</span><br><span class="line">	图书类别 CHAR(10)</span><br><span class="line">);</span><br><span class="line">INSERT INTO 图书类别表 (类别号,图书类别)</span><br><span class="line">VALUES</span><br><span class="line">	(&#x27;H31&#x27;,&#x27;英语&#x27;),</span><br><span class="line">	(&#x27;I267&#x27;,&#x27;当代作品&#x27;),</span><br><span class="line">	(&#x27;TP312&#x27;,&#x27;程序语言&#x27;),</span><br><span class="line">	(&#x27;TP393&#x27;,&#x27;计算机网络&#x27;),</span><br><span class="line">	(&#x27;U66&#x27;,&#x27;船舶工程&#x27;);</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>类别号</th>
+<th>图书类别</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>H31</td>
+<td>英语</td>
+</tr>
+<tr>
+<td>I267</td>
+<td>当代作品</td>
+</tr>
+<tr>
+<td>TP312</td>
+<td>程序语言</td>
+</tr>
+<tr>
+<td>TP393</td>
+<td>计算机网络</td>
+</tr>
+<tr>
+<td>U66</td>
+<td>船舶工程</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">-- 图书借阅表</span><br><span class="line">CREATE TABLE 图书借阅表(</span><br><span class="line">    图书编号 VARCHAR(10),</span><br><span class="line">    图书名称 CHAR(20),</span><br><span class="line">    借书证号 CHAR(8),</span><br><span class="line">    借出日期 DATE,</span><br><span class="line">    归还日期 DATE,</span><br><span class="line">    库存数 INT,</span><br><span class="line">    CONSTRAINT check_borrow_date CHECK (借出日期 &lt;= &#x27;2024-12-31&#x27;),</span><br><span class="line">    FOREIGN KEY (图书编号) REFERENCES 图书明细表(图书编号),</span><br><span class="line">    FOREIGN KEY (借书证号) REFERENCES 读者信息表(借书证号)</span><br><span class="line">);</span><br><span class="line">INSERT INTO 图书借阅表(图书编号,图书名称,借书证号,借出日期,库存数)</span><br><span class="line">VALUES</span><br><span class="line">	(&#x27;99011818&#x27;,&#x27;文化苦旅&#x27;,&#x27;29307142&#x27;,&#x27;2008-04-27&#x27;,14),</span><br><span class="line">	(&#x27;07410802&#x27;,&#x27;航海英语&#x27;,&#x27;36405216&#x27;,&#x27;2008-04-27&#x27;,24),</span><br><span class="line">	(&#x27;07410298&#x27;,&#x27;C++程序设计语言&#x27;,&#x27;29307142&#x27;,&#x27;2008-04-28&#x27;,14),</span><br><span class="line">	(&#x27;07410139&#x27;,&#x27;艺海潮音&#x27;,&#x27;28308208&#x27;,&#x27;2008-05-10&#x27;,18),</span><br><span class="line">	(&#x27;07410139&#x27;,&#x27;艺海潮音&#x27;,&#x27;16406236&#x27;,&#x27;2008-05-11&#x27;,17);</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>图书编号</th>
+<th>图书名称</th>
+<th>借书证号</th>
+<th>借出日期</th>
+<th>归还日期</th>
+<th>库存数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>99011818</td>
+<td>文化苦旅</td>
+<td>29307142</td>
+<td>2008-04-27</td>
+<td></td>
+<td>14</td>
+</tr>
+<tr>
+<td>07410802</td>
+<td>航海英语</td>
+<td>36405216</td>
+<td>2008-04-27</td>
+<td></td>
+<td>24</td>
+</tr>
+<tr>
+<td>07410298</td>
+<td>C++程序设计语言</td>
+<td>29307142</td>
+<td>2008-04-28</td>
+<td></td>
+<td>14</td>
+</tr>
+<tr>
+<td>07410139</td>
+<td>艺海潮音</td>
+<td>28308208</td>
+<td>2008-05-10</td>
+<td></td>
+<td>18</td>
+</tr>
+<tr>
+<td>07410139</td>
+<td>艺海潮音</td>
+<td>16406236</td>
+<td>2008-05-11</td>
+<td></td>
+<td>17</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">-- 工作人员</span><br><span class="line">CREATE TABLE 工作人员 (</span><br><span class="line">    工号 VARCHAR(10) PRIMARY KEY,</span><br><span class="line">    姓名 VARCHAR(50),</span><br><span class="line">    性别 VARCHAR(10),</span><br><span class="line">    出生日期 DATE,</span><br><span class="line">    联系电话 VARCHAR(20),</span><br><span class="line">    E_mail VARCHAR(50), ,</span><br><span class="line">    CONSTRAINT check_birth_date CHECK (出生日期 &lt;= &#x27;2024-12-31&#x27;)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">INSERT INTO 工作人员 (工号, 姓名, 性别, 出生日期, 联系电话, E_mail)</span><br><span class="line">VALUES</span><br><span class="line">    (&#x27;002016&#x27;, &#x27;周学飞&#x27;, &#x27;男&#x27;, &#x27;1971-05-03&#x27;, &#x27;85860715&#x27;, &#x27;zxf@163.com&#x27;),</span><br><span class="line">    (&#x27;002017&#x27;, &#x27;李晓静&#x27;, &#x27;女&#x27;, &#x27;1979-09-15&#x27;, &#x27;85860716&#x27;, &#x27;lj@163.com&#x27;),</span><br><span class="line">    (&#x27;002018&#x27;, &#x27;顾彬&#x27;, &#x27;男&#x27;, &#x27;1972-04-25&#x27;, &#x27;85860717&#x27;, &#x27;gb@yahoo.cn&#x27;),</span><br><span class="line">    (&#x27;002019&#x27;, &#x27;陈欣&#x27;, &#x27;女&#x27;, &#x27;1968-11-03&#x27;, &#x27;85860718&#x27;, &#x27;cx@sina.com.cn&#x27;);</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>工号</th>
+<th>姓名</th>
+<th>性别</th>
+<th>出生日期</th>
+<th>联系电话</th>
+<th>E-mail</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>002016</td>
+<td>周学飞</td>
+<td>男</td>
+<td>1971-05-03</td>
+<td>85860715</td>
+<td><a href="mailto:&#x7a;&#x78;&#x66;&#64;&#x31;&#x36;&#51;&#x2e;&#99;&#x6f;&#109;">zxf@163.com</a></td>
+</tr>
+<tr>
+<td>002017</td>
+<td>李晓静</td>
+<td>女</td>
+<td>1979-09-15</td>
+<td>85860716</td>
+<td><a href="mailto:&#x6c;&#106;&#x40;&#x31;&#x36;&#x33;&#x2e;&#x63;&#111;&#109;">lj@163.com</a></td>
+</tr>
+<tr>
+<td>002018</td>
+<td>顾彬</td>
+<td>男</td>
+<td>1972-04-25</td>
+<td>85860717</td>
+<td><a href="mailto:&#x67;&#98;&#64;&#x79;&#x61;&#x68;&#x6f;&#x6f;&#x2e;&#x63;&#110;">gb@yahoo.cn</a></td>
+</tr>
+<tr>
+<td>002019</td>
+<td>陈欣</td>
+<td>女</td>
+<td>1968-11-03</td>
+<td>85860718</td>
+<td><a href="mailto:&#x63;&#x78;&#64;&#115;&#105;&#110;&#x61;&#x2e;&#99;&#x6f;&#x6d;&#46;&#99;&#110;">cx@sina.com.cn</a></td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">-- 图书明细表 </span><br><span class="line">CREATE TABLE 图书明细表 (</span><br><span class="line">    类别号 VARCHAR(10),</span><br><span class="line">    图书编号 VARCHAR(10) PRIMARY KEY,</span><br><span class="line">    图书名称 VARCHAR(50),</span><br><span class="line">    作者 VARCHAR(50),</span><br><span class="line">    出版社 VARCHAR(50),</span><br><span class="line">    定价 DECIMAL(10, 2),</span><br><span class="line">    购进日期 DATE,</span><br><span class="line">    购入数 INT,</span><br><span class="line">    复本数 INT,</span><br><span class="line">    库存数 INT</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">INSERT INTO 图书明细表 (类别号, 图书编号, 图书名称, 作者, 出版社, 定价, 购进日期, 购入数, 复本数, 库存数)</span><br><span class="line">VALUES</span><br><span class="line">    (&#x27;I267&#x27;, &#x27;99011818&#x27;, &#x27;文化苦旅&#x27;, &#x27;余秋雨&#x27;, &#x27;知识出版社&#x27;, 16, &#x27;2000-03-19&#x27;, 8, 15, 14),</span><br><span class="line">    (&#x27;TP312&#x27;, &#x27;00000476&#x27;, &#x27;Delphi高级开发指南&#x27;, &#x27;坎图&#x27;, &#x27;电子工业出版社&#x27;, 80, &#x27;2000-03-19&#x27;, 15, 15, 15),</span><br><span class="line">    (&#x27;U66&#x27;, &#x27;01058589&#x27;, &#x27;船舶制造基础&#x27;, &#x27;杨敏&#x27;, &#x27;国防工业出版社&#x27;, 19, &#x27;2001-07-15&#x27;, 20, 20, 20),</span><br><span class="line">    (&#x27;I267&#x27;, &#x27;07410139&#x27;, &#x27;艺海潮音&#x27;, &#x27;李叔&#x27;, &#x27;江苏文艺出版社&#x27;, 19, &#x27;2007-04-12&#x27;, 15, 20, 18),</span><br><span class="line">    (&#x27;TP312&#x27;, &#x27;07410298&#x27;, &#x27;C++程序设计&#x27;, &#x27;成颖&#x27;, &#x27;东南大学出版社&#x27;, 38, &#x27;2007-05-08&#x27;, 10, 15, 14),</span><br><span class="line">    (&#x27;H31&#x27;, &#x27;07410802&#x27;, &#x27;航海英语&#x27;, &#x27;陈宏权&#x27;, &#x27;武汉工业大学出版社&#x27;, 42, &#x27;2007-10-20&#x27;, 25, 25, 24),</span><br><span class="line">    (&#x27;H31&#x27;, &#x27;07108667&#x27;, &#x27;大学英语学习辅导&#x27;, &#x27;姜丽蓉&#x27;, &#x27;北京理工大学出版社&#x27;, 23.5, &#x27;2008-02-06&#x27;, 25, 25, 25),</span><br><span class="line">    (&#x27;TP393&#x27;, &#x27;07410810&#x27;, &#x27;网络工程实用教程&#x27;, &#x27;汪新民&#x27;, &#x27;北京大学出版社&#x27;, 34.8, &#x27;2008-08-21&#x27;, 10, 15, 15);</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>类别号</th>
+<th>图书编号</th>
+<th>图书名称</th>
+<th>作者</th>
+<th>出版社</th>
+<th>定价</th>
+<th>购进日期</th>
+<th>购入数</th>
+<th>复本数</th>
+<th>库存数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>I267</td>
+<td>99011818</td>
+<td>文化苦旅</td>
+<td>余秋雨</td>
+<td>知识出版社</td>
+<td>16</td>
+<td>2000-03-19</td>
+<td>8</td>
+<td>15</td>
+<td>14</td>
+</tr>
+<tr>
+<td>TP312</td>
+<td>00000476</td>
+<td>Delphi高级开发指南</td>
+<td>坎图</td>
+<td>电子工业出版社</td>
+<td>80</td>
+<td>2000-03-19</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>U66</td>
+<td>01058589</td>
+<td>船舶制造基础</td>
+<td>杨敏</td>
+<td>国防工业出版社</td>
+<td>19</td>
+<td>2001-07-15</td>
+<td>20</td>
+<td>20</td>
+<td>20</td>
+</tr>
+<tr>
+<td>I267</td>
+<td>07410139</td>
+<td>艺海潮音</td>
+<td>李叔</td>
+<td>江苏文艺出版社</td>
+<td>19</td>
+<td>2007-04-12</td>
+<td>15</td>
+<td>20</td>
+<td>18</td>
+</tr>
+<tr>
+<td>TP312</td>
+<td>07410298</td>
+<td>C++程序设计</td>
+<td>成颖</td>
+<td>东南大学出版社</td>
+<td>38</td>
+<td>2007-05-08</td>
+<td>10</td>
+<td>15</td>
+<td>14</td>
+</tr>
+<tr>
+<td>H31</td>
+<td>07410802</td>
+<td>航海英语</td>
+<td>陈宏权</td>
+<td>武汉工业大学出版社</td>
+<td>42</td>
+<td>2007-10-20</td>
+<td>25</td>
+<td>25</td>
+<td>24</td>
+</tr>
+<tr>
+<td>H31</td>
+<td>07108667</td>
+<td>大学英语学习辅导</td>
+<td>姜丽蓉</td>
+<td>北京理工大学出版社</td>
+<td>23.5</td>
+<td>2008-02-06</td>
+<td>25</td>
+<td>25</td>
+<td>25</td>
+</tr>
+<tr>
+<td>TP393</td>
+<td>07410810</td>
+<td>网络工程实用教程</td>
+<td>汪新民</td>
+<td>北京大学出版社</td>
+<td>34.8</td>
+<td>2008-08-21</td>
+<td>10</td>
+<td>15</td>
+<td>15</td>
+</tr>
+</tbody></table>
+<h3 id="1-用不同的方法创建约束；2）查看和删除约束；-3）创建、删除默认和规则-3-5分"><a href="#1-用不同的方法创建约束；2）查看和删除约束；-3）创建、删除默认和规则-3-5分" class="headerlink" title="1)用不同的方法创建约束；2）查看和删除约束；(3）创建、删除默认和规则 (3*5分)"></a>1)用不同的方法创建约束；2）查看和删除约束；(3）创建、删除默认和规则 (3*5分)</h3><h4 id="用不同的方法创建约束-5分"><a href="#用不同的方法创建约束-5分" class="headerlink" title="用不同的方法创建约束(5分)"></a>用不同的方法创建约束(5分)</h4><ol>
+<li>在表定义时直接添加约束&amp;&amp;使用 CONSTRAINT 关键字命名约束</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">-- 借还明细表</span><br><span class="line">CREATE TABLE 借还明细表 (</span><br><span class="line">    借书证号 VARCHAR(10) NOT NULL,</span><br><span class="line">    图书编号 VARCHAR(10),</span><br><span class="line">    借还状态 ENUM(&#x27;还&#x27;,&#x27;借&#x27;),</span><br><span class="line">    借书日期 DATE,</span><br><span class="line">    还书日期 DATE,</span><br><span class="line">    数量 INT,</span><br><span class="line">    工号 VARCHAR(10),</span><br><span class="line">    CONSTRAINT check_borrow_date CHECK (借书日期 &lt;= &#x27;2024-12-31&#x27;),</span><br><span class="line">    FOREIGN KEY (图书编号) REFERENCES 图书明细表(图书编号),</span><br><span class="line">    FOREIGN KEY (借书证号) REFERENCES 读者信息表(借书证号)</span><br><span class="line">);</span><br><span class="line">-- 图书明细表</span><br><span class="line">CREATE TABLE 图书明细表 (</span><br><span class="line">    类别号 VARCHAR(10),</span><br><span class="line">    图书编号 VARCHAR(10) PRIMARY KEY,</span><br><span class="line">    图书名称 VARCHAR(50),</span><br><span class="line">    作者 VARCHAR(50),</span><br><span class="line">    出版社 VARCHAR(50),</span><br><span class="line">    定价 DECIMAL(10, 2),</span><br><span class="line">    购进日期 DATE,</span><br><span class="line">    购入数 INT,</span><br><span class="line">    复本数 INT,</span><br><span class="line">    库存数 INT</span><br><span class="line">);</span><br><span class="line">-- 读者信息表</span><br><span class="line">CREATE TABLE 读者信息表 (</span><br><span class="line">    借书证号 CHAR(8) PRIMARY KEY,</span><br><span class="line">    姓名 VARCHAR(50),</span><br><span class="line">    性别 ENUM(&#x27;女&#x27;, &#x27;男&#x27;),</span><br><span class="line">    出生日期 DATE,</span><br><span class="line">    借书量 INT,</span><br><span class="line">    工作单位 VARCHAR(100),</span><br><span class="line">    电话 CHAR(11),</span><br><span class="line">    电子邮件 VARCHAR(50)</span><br><span class="line">);  </span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>使用ALTER TABLE 语句添加约束</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE 读者信息表</span><br><span class="line">ADD CONSTRAINT check_birth_date CHECK (出生日期 &lt;= &#x27;2024-12-31&#x27;);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE 读者信息表 </span><br><span class="line">ADD CONSTRAINT RMP PRIMARY KEY (借书证号);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE 借还明细表</span><br><span class="line">ADD CONSTRAINT fk_借书证号 FOREIGN KEY (借书证号) REFERENCES 读者信息表(借书证号);</span><br></pre></td></tr></table></figure>
+
+<h4 id="用不同的方法查看和删除约束（5分）"><a href="#用不同的方法查看和删除约束（5分）" class="headerlink" title="用不同的方法查看和删除约束（5分）"></a>用不同的方法查看和删除约束（5分）</h4><h5 id="查看约束："><a href="#查看约束：" class="headerlink" title="查看约束："></a>查看约束：</h5><p>使用DESCRIBE命令查看表结构，约束信息通常会显示在表结构描述中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">DESCRIBE 表名;</span><br><span class="line">mysql&gt; DESCRIBE 借还明细表;</span><br><span class="line">+----------+-------------+------+-----+---------+-------+</span><br><span class="line">| Field    | Type        | Null | Key | Default | Extra |</span><br><span class="line">+----------+-------------+------+-----+---------+-------+</span><br><span class="line">| 借书证号 | varchar(10) | YES  | MUL | NULL    |       |</span><br><span class="line">| 图书编号 | varchar(10) | YES  |     | NULL    |       |</span><br><span class="line">| 借还状态 | varchar(5)  | YES  |     | NULL    |       |</span><br><span class="line">| 借书日期 | date        | YES  |     | NULL    |       |</span><br><span class="line">| 还书日期 | date        | YES  |     | NULL    |       |</span><br><span class="line">| 数量     | int         | YES  |     | NULL    |       |</span><br><span class="line">| 工号     | varchar(10) | YES  |     | NULL    |       |</span><br><span class="line">+----------+-------------+------+-----+---------+-------+</span><br></pre></td></tr></table></figure>
+
+<p>使用SHOW CREATE TABLE命令查看表的创建语句，约束信息会包含在创建语句中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">SHOW CREATE TABLE 表名;</span><br><span class="line">| 借还明细表 | CREATE TABLE `借还明细表` (</span><br><span class="line">  `借书证号` varchar(10) DEFAULT NULL,</span><br><span class="line">  `图书编号` varchar(10) DEFAULT NULL,</span><br><span class="line">  `借还状态` varchar(5) DEFAULT NULL,</span><br><span class="line">  `借书日期` date DEFAULT NULL,</span><br><span class="line">  `还书日期` date DEFAULT NULL,</span><br><span class="line">  `数量` int DEFAULT NULL,</span><br><span class="line">  `工号` varchar(10) DEFAULT NULL,</span><br><span class="line">  KEY `fk_借书证号` (`借书证号`),</span><br><span class="line">  CONSTRAINT `fk_借书证号` FOREIGN KEY (`借书证号`) REFERENCES `读者信息表` (`借书证号`)</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |</span><br></pre></td></tr></table></figure>
+
+<p>查看某个约束的具体信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT *</span><br><span class="line">FROM information_schema.table_constraints</span><br><span class="line">WHERE table_name = &#x27;借还明细表&#x27; AND table_schema = &#x27;实验项目一&#x27;;</span><br></pre></td></tr></table></figure>
+
+<h5 id="删除约束："><a href="#删除约束：" class="headerlink" title="删除约束："></a>删除约束：</h5><p>使用ALTER TABLE语句删除约束。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE 读者信息表</span><br><span class="line">DROP CONSTRAINT check_birth_date;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE 借还明细表 DROP FOREIGN KEY fk_借书证号;</span><br><span class="line">ALTER TABLE 读者信息表</span><br><span class="line">DROP PRIMARY KEY;</span><br></pre></td></tr></table></figure>
+
+<h4 id="用不同的方法创建、删除默认值和规则-（5分）"><a href="#用不同的方法创建、删除默认值和规则-（5分）" class="headerlink" title="用不同的方法创建、删除默认值和规则 （5分）"></a>用不同的方法创建、删除默认值和规则 （5分）</h4><h5 id="创建默认值："><a href="#创建默认值：" class="headerlink" title="创建默认值："></a>创建默认值：</h5><p>在CREATE TABLE语句中定义列时指定默认值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE 读者信息表 (</span><br><span class="line">    借书证号 CHAR(8) PRIMARY KEY,</span><br><span class="line">    姓名 VARCHAR(50),</span><br><span class="line">    性别 ENUM(&#x27;女&#x27;, &#x27;男&#x27;),</span><br><span class="line">    出生日期 DATE,</span><br><span class="line">    借书量 INT DEFAULT 0,</span><br><span class="line">    工作单位 VARCHAR(100),</span><br><span class="line">    电话 CHAR(11),</span><br><span class="line">    电子邮件 VARCHAR(50)</span><br><span class="line">);  </span><br></pre></td></tr></table></figure>
+
+<p>使用ALTER TABLE语句添加默认值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE 读者信息表 MODIFY COLUMN 借书量 INT DEFAULT 0;</span><br></pre></td></tr></table></figure>
+
+<h5 id="删除默认值："><a href="#删除默认值：" class="headerlink" title="删除默认值："></a>删除默认值：</h5><p>使用ALTER TABLE语句删除列的默认值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE 读者信息表 ALTER COLUMN 借书量 DROP DEFAULT;</span><br></pre></td></tr></table></figure>
+
+<p>使用ALTER TABLE语句修改列的默认值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE 读者信息表 ALTER COLUMN 借书量 SET DEFAULT NULL;</span><br></pre></td></tr></table></figure>
+
+<h5 id="创建规则："><a href="#创建规则：" class="headerlink" title="创建规则："></a>创建规则：</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建规则</span></span><br><span class="line"><span class="keyword">CREATE</span> RULE rule_name <span class="keyword">AS</span> <span class="keyword">ON</span> <span class="keyword">INSERT</span> <span class="keyword">TO</span> table_name</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span></span><br><span class="line">DO INSTEAD <span class="keyword">INSERT INTO</span> table_name <span class="keyword">VALUES</span> (value1, value2, ...);</span><br></pre></td></tr></table></figure>
+
+<p>在上面的示例中，您可以使用 <code>CREATE RULE</code> 语句来创建规则，规则会在满足条件时执行指定的操作。</p>
+<h5 id="删除规则："><a href="#删除规则：" class="headerlink" title="删除规则："></a>删除规则：</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 删除规则</span></span><br><span class="line"><span class="keyword">DROP</span> RULE rule_name <span class="keyword">ON</span> table_name;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的示例中，您可以使用 <code>DROP RULE</code> 语句来删除表上的规则。</p>
+<h3 id="1）掌握主键约束的特点和用法；2）掌握惟一性约束的用法；3）掌握默认约束和默认对象的用法；4）掌握CHECK约束和规则对象的用法；5）掌握利用主键与外键约束实现参照完整性的方法-5-5分-。"><a href="#1）掌握主键约束的特点和用法；2）掌握惟一性约束的用法；3）掌握默认约束和默认对象的用法；4）掌握CHECK约束和规则对象的用法；5）掌握利用主键与外键约束实现参照完整性的方法-5-5分-。" class="headerlink" title="1）掌握主键约束的特点和用法；2）掌握惟一性约束的用法；3）掌握默认约束和默认对象的用法；4）掌握CHECK约束和规则对象的用法；5）掌握利用主键与外键约束实现参照完整性的方法(5*5分)。"></a>1）掌握主键约束的特点和用法；2）掌握惟一性约束的用法；3）掌握默认约束和默认对象的用法；4）掌握CHECK约束和规则对象的用法；5）掌握利用主键与外键约束实现参照完整性的方法(5*5分)。</h3><h4 id="掌握主键约束的特点和用法（5分）"><a href="#掌握主键约束的特点和用法（5分）" class="headerlink" title="掌握主键约束的特点和用法（5分）"></a>掌握主键约束的特点和用法（5分）</h4><p>主键约束是关系型数据库中非常重要的概念，它具有以下特点和用法：</p>
+<ol>
+<li><p>唯一性：主键约束要求表中的每一行数据都具有唯一的主键值。这意味着主键值在整个表中必须是唯一的，不允许重复。</p>
+</li>
+<li><p>非空性：主键列的值不能为 NULL。主键值必须在每一行中存在且不为空。</p>
+</li>
+<li><p>数据完整性：主键约束确保了表中数据的完整性和一致性。通过主键约束，可以确保每一行数据都可以唯一地被标识和访问。</p>
+</li>
+<li><p>索引：主键约束会自动创建索引，以加速对主键列的查询和访问。这样可以提高数据检索的效率。</p>
+</li>
+<li><p>外键关系：主键约束常用于定义表与表之间的关系。在另一个表中，可以通过外键约束引用主键，建立表与表之间的关联关系。</p>
+</li>
+</ol>
+<p>用法：</p>
+<ul>
+<li>在创建表时定义主键约束：可以在 CREATE TABLE 语句中通过 PRIMARY KEY 关键字定义主键约束。</li>
+<li>修改表结构时添加主键约束：可以使用 ALTER TABLE 语句来添加主键约束。</li>
+<li>主键的选择：主键通常选择具有唯一性且不会经常变化的列作为主键，例如自增长的整数列。</li>
+<li>主键的作用：主键可以作为表中每一行数据的唯一标识符，便于数据的检索、更新和删除操作。</li>
+</ul>
+<p>总之，主键约束是数据库设计中非常重要的概念，它确保了数据的完整性和唯一性，并在数据库操作中起着重要的作用。</p>
+<h4 id="掌握惟一性约束的用法（5分）"><a href="#掌握惟一性约束的用法（5分）" class="headerlink" title="掌握惟一性约束的用法（5分）"></a>掌握惟一性约束的用法（5分）</h4><p>惟一性约束（Unique Constraint）是关系型数据库中的一种约束，用于确保表中某个列或一组列的取值在整个表中是唯一的。惟一性约束与主键约束类似，但不要求被约束的列是主键，可以是任意列或组合列。</p>
+<p>以下是关于惟一性约束的用法：</p>
+<ol>
+<li><strong>定义唯一性约束</strong>：在创建表时，可以使用 UNIQUE 关键字定义唯一性约束。语法如下：</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> 表名 (</span><br><span class="line">    列名<span class="number">1</span> 数据类型,</span><br><span class="line">    列名<span class="number">2</span> 数据类型,</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">UNIQUE</span> (列名<span class="number">1</span>, 列名<span class="number">2</span>, ...)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>添加唯一性约束</strong>：在已有表中添加唯一性约束，可以使用 ALTER TABLE 语句。语法如下：</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER TABLE</span> 表名 <span class="keyword">ADD CONSTRAINT</span> 约束名 <span class="keyword">UNIQUE</span> (列名);</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><p><strong>唯一性约束的作用</strong>：</p>
+<ul>
+<li>确保表中的某列或组合列的取值是唯一的，不允许重复。</li>
+<li>可以用于定义候选键（Candidate Key），即在主键外的另一个唯一标识符。</li>
+<li>可以提高数据的完整性和准确性，避免数据重复和冲突。</li>
+</ul>
+</li>
+<li><p><strong>唯一性约束与主键的区别</strong>：</p>
+<ul>
+<li>主键约束要求被约束的列是唯一的且不为空，而唯一性约束只要求唯一性，允许 NULL 值。</li>
+<li>表只能有一个主键，但可以有多个唯一性约束。</li>
+</ul>
+</li>
+<li><p><strong>唯一性约束的使用场景</strong>：</p>
+<ul>
+<li>用于确保某列或组合列的取值是唯一的，如用户名、邮箱等。</li>
+<li>用于定义候选键，提供多个唯一标识符供查询和关联。</li>
+</ul>
+</li>
+</ol>
+<p>总之，唯一性约束是一种重要的数据库约束，用于确保数据的唯一性和完整性。在设计数据库时，根据实际需求考虑是否需要添加唯一性约束来提高数据的质量和准确性。</p>
+<h4 id="掌握默认约束和默认对象的用法（5分）"><a href="#掌握默认约束和默认对象的用法（5分）" class="headerlink" title="掌握默认约束和默认对象的用法（5分）"></a>掌握默认约束和默认对象的用法（5分）</h4><p>默认约束（Default Constraint）和默认对象（Default Object）是关系型数据库中用于指定列默认值的概念。它们的主要作用是在插入数据时，如果未显式提供该列的值，则自动使用默认值。</p>
+<p>以下是关于默认约束和默认对象的用法：</p>
+<ol>
+<li><strong>默认约束的定义</strong>：默认约束是在创建表时定义的约束，用于指定列的默认值。语法如下：</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> 表名 (</span><br><span class="line">    列名 数据类型 <span class="keyword">DEFAULT</span> 默认值,</span><br><span class="line">    ...</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>添加默认约束</strong>：在已有表中添加默认约束，可以使用 ALTER TABLE 语句。语法如下：</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER TABLE</span> 表名 <span class="keyword">ALTER</span> <span class="keyword">COLUMN</span> 列名 <span class="keyword">SET</span> <span class="keyword">DEFAULT</span> 默认值;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><strong>默认对象的定义</strong>：默认对象是数据库中的一个对象，用于指定列的默认值。默认对象通常是一个函数或表达式，用于计算默认值。语法如下：</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> 默认对象名 ()</span><br><span class="line"><span class="keyword">RETURNS</span> 数据类型</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">RETURN</span> 默认值;</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">ALTER TABLE</span> 表名 <span class="keyword">ALTER</span> <span class="keyword">COLUMN</span> 列名 <span class="keyword">SET</span> <span class="keyword">DEFAULT</span> 默认对象名();</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li><p><strong>默认约束和默认对象的作用</strong>：</p>
+<ul>
+<li>确保在插入数据时，如果未提供指定列的值，则自动使用默认值。</li>
+<li>提高数据的完整性和准确性，避免数据缺失或错误。</li>
+</ul>
+</li>
+<li><p><strong>默认约束和默认对象的区别</strong>：</p>
+<ul>
+<li>默认约束直接指定默认值，而默认对象可以是一个函数或表达式。</li>
+<li>默认约束适用于简单的默认值设定，而默认对象适用于复杂的默认值计算。</li>
+</ul>
+</li>
+<li><p><strong>使用场景</strong>：</p>
+<ul>
+<li>默认约束适用于简单的默认值设置，如固定值或常量。</li>
+<li>默认对象适用于复杂的默认值计算，如根据其他列的值计算默认值。</li>
+</ul>
+</li>
+</ol>
+<p>总之，默认约束和默认对象是数据库中用于指定列默认值的重要概念。在设计数据库时，根据实际需求选择合适的方式来设置默认值，以提高数据的完整性和准确性。</p>
+<h4 id="掌握CHECK约束和规则对象的用法（5分）"><a href="#掌握CHECK约束和规则对象的用法（5分）" class="headerlink" title="掌握CHECK约束和规则对象的用法（5分）"></a>掌握CHECK约束和规则对象的用法（5分）</h4><p>CHECK 约束和规则对象是关系型数据库中用于限制列值的约束和规则。它们可以确保数据的完整性和准确性，只允许符合指定条件的数据被插入或更新。</p>
+<h5 id="CHECK-约束的用法："><a href="#CHECK-约束的用法：" class="headerlink" title="CHECK 约束的用法："></a>CHECK 约束的用法：</h5><ol>
+<li><strong>定义 CHECK 约束</strong>：在创建表时，可以使用 CHECK 约束限制列的取值范围或条件。语法如下：</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> 表名 (</span><br><span class="line">    列名 数据类型 <span class="keyword">CHECK</span> (条件),</span><br><span class="line">    ...</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>添加 CHECK 约束</strong>：在已有表中添加 CHECK 约束，可以使用 ALTER TABLE 语句。语法如下：</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER TABLE</span> 表名 <span class="keyword">ADD CONSTRAINT</span> 约束名 <span class="keyword">CHECK</span> (条件);</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><strong>使用场景</strong>：<ul>
+<li>限制列的取值范围，如年龄不能为负数。</li>
+<li>确保数据符合特定条件，如性别只能为”男”或”女”。</li>
+</ul>
+</li>
+</ol>
+<h5 id="规则对象的用法"><a href="#规则对象的用法" class="headerlink" title="规则对象的用法"></a>规则对象的用法</h5><ol>
+<li><strong>定义规则对象</strong>：规则对象是数据库中的一个对象，用于定义数据的规则或条件。语法如下：</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> RULE 规则名 <span class="keyword">AS</span> @条件;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>将规则对象应用到列上</strong>：可以通过 ALTER TABLE 添加规则对象到列上，用于限制数据的取值范围或条件。语法如下：</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER TABLE</span> 表名 <span class="keyword">ADD CONSTRAINT</span> 约束名 <span class="keyword">CHECK</span> (规则名(列名));</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><strong>使用场景</strong>：<ul>
+<li>定义复杂的数据规则，如联合多个列的取值条件。</li>
+<li>可以被多个列引用，提高数据的一致性和准确性。</li>
+</ul>
+</li>
+</ol>
+<p>总之，CHECK 约束和规则对象是数据库中重要的约束和规则定义工具，用于确保数据的完整性和准确性。在设计数据库时，根据实际需求选择合适的方式来定义数据规则，以提高数据的质量和准确性。</p>
+<h4 id="掌握利用主键与外键约束实现参照完整性的方法（5分）"><a href="#掌握利用主键与外键约束实现参照完整性的方法（5分）" class="headerlink" title="掌握利用主键与外键约束实现参照完整性的方法（5分）"></a>掌握利用主键与外键约束实现参照完整性的方法（5分）</h4><p>主键约束和外键约束是关系型数据库中用于实现参照完整性（Referential Integrity）的重要工具。通过主键约束和外键约束，可以确保数据之间的关联关系正确并且保持一致性。</p>
+<p>利用主键与外键约束实现参照完整性的方法：</p>
+<ol>
+<li><p><strong>主键约束</strong>：</p>
+<ul>
+<li>主键约束用于唯一标识表中的每条记录，确保每条记录都有唯一的标识符。</li>
+<li>在创建表时，通过指定主键约束可以将某列或某组列定义为主键。</li>
+<li>主键约束可以保证表中每条记录的唯一性，且不允许为空值。</li>
+</ul>
+</li>
+<li><p><strong>外键约束</strong>：</p>
+<ul>
+<li>外键约束用于建立表与表之间的关联关系，确保参照表中的外键值必须在被参照表的主键中存在。</li>
+<li>在创建表时，通过指定外键约束可以将某列定义为外键，参照另一张表的主键。</li>
+<li>外键约束可以确保数据之间的关联关系正确，防止出现不一致或无效的引用。</li>
+</ul>
+</li>
+<li><p><strong>实现参照完整性的步骤</strong>：</p>
+<ul>
+<li>在被参照表中定义主键约束，确保每条记录有唯一的标识符。</li>
+<li>在参照表中定义外键约束，将外键与被参照表的主键关联起来。</li>
+<li>当插入或更新数据时，数据库会自动检查外键约束，确保外键值在被参照表的主键中存在。</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<ul>
+<li>假设有两张表：<code>users</code> 和 <code>orders</code>，其中 <code>orders</code> 表中有一个 <code>user_id</code> 列用于表示订单所属用户。</li>
+<li>在 <code>users</code> 表中定义主键约束，将 <code>user_id</code> 列定义为主键。</li>
+<li>在 <code>orders</code> 表中定义外键约束，将 <code>user_id</code> 列定义为外键，参照 <code>users</code> 表的主键。</li>
+<li>这样可以确保每个订单都必须属于一个已存在的用户，保证数据的参照完整性。</li>
+</ul>
+</li>
+</ol>
+<p>总之，利用主键约束和外键约束可以实现参照完整性，确保数据之间的关联关系正确并保持一致性。在设计数据库时，合理设置主键和外键约束是保证数据完整性的重要步骤。</p>
+<h3 id="1-增加一个字段；2-删除一个字段-3-增加一个约束-4-修改字段的数据类型-4-5分-；"><a href="#1-增加一个字段；2-删除一个字段-3-增加一个约束-4-修改字段的数据类型-4-5分-；" class="headerlink" title="1)增加一个字段；2)删除一个字段; 3)增加一个约束; 4)修改字段的数据类型(4*5分)；"></a>1)增加一个字段；2)删除一个字段; 3)增加一个约束; 4)修改字段的数据类型(4*5分)；</h3><h4 id="增加一个字段-5分"><a href="#增加一个字段-5分" class="headerlink" title="增加一个字段(5分)"></a>增加一个字段(5分)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE 读者信息表</span><br><span class="line">ADD 身份证号 CHAR(29);</span><br></pre></td></tr></table></figure>
+
+<h4 id="删除一个字段-5分"><a href="#删除一个字段-5分" class="headerlink" title="删除一个字段(5分)"></a>删除一个字段(5分)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE 读者信息表</span><br><span class="line">DROP COLUMN 身份证号;</span><br></pre></td></tr></table></figure>
+
+<h4 id="增加一个约束-5分"><a href="#增加一个约束-5分" class="headerlink" title="增加一个约束(5分)"></a>增加一个约束(5分)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE 读者信息表 </span><br><span class="line">ADD CONSTRAINT RMP PRIMARY KEY (借书证号);</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改字段的数据类型-5分"><a href="#修改字段的数据类型-5分" class="headerlink" title="修改字段的数据类型(5分)"></a>修改字段的数据类型(5分)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE 图书明细表</span><br><span class="line">MODIFY 图书编号 VARCHAR(10);</span><br></pre></td></tr></table></figure>
+
+<h3 id="1）创建索引；2）重建索引-2-5分-。"><a href="#1）创建索引；2）重建索引-2-5分-。" class="headerlink" title="1）创建索引；2）重建索引(2*5分)。"></a>1）创建索引；2）重建索引(2*5分)。</h3><h4 id="创建索引-5分"><a href="#创建索引-5分" class="headerlink" title="创建索引(5分)"></a>创建索引(5分)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE INDEX idx_reader_card_number ON  读者信息表(借书证号);</span><br></pre></td></tr></table></figure>
+
+<h4 id="重建索引-5分"><a href="#重建索引-5分" class="headerlink" title="重建索引(5分)"></a>重建索引(5分)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DROP INDEX idx_reader_card_number;</span><br><span class="line">CREATE INDEX idx_reader_card_number</span><br><span class="line">ON 读者信息表(借书证号);</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-创建视图；-2）删除视图-2-5分-。"><a href="#1-创建视图；-2）删除视图-2-5分-。" class="headerlink" title="1) 创建视图； 2）删除视图(2*5分)。"></a>1) 创建视图； 2）删除视图(2*5分)。</h3><h4 id="创建视图-5分"><a href="#创建视图-5分" class="headerlink" title="创建视图(5分)"></a>创建视图(5分)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CREATE VIEW reader_borrow_return_view AS</span><br><span class="line">SELECT r.借书证号, r.姓名, r.性别, r.出生日期, r.借书量, r.工作单位, r.电话, r.电子邮件,</span><br><span class="line">b.图书编号, b.借还状态, b.借书日期, b.还书日期, b.数量, b.工号</span><br><span class="line">FROM 读者信息表 r,借还明细表 b </span><br><span class="line">WHERE r.借书证号 = b.借书证号;</span><br></pre></td></tr></table></figure>
+
+<h4 id="删除视图-5分"><a href="#删除视图-5分" class="headerlink" title="删除视图(5分)"></a>删除视图(5分)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DROP VIEW reader_borrow_return_view;</span><br></pre></td></tr></table></figure>
+
+<h2 id="实验项目二"><a href="#实验项目二" class="headerlink" title="实验项目二"></a>实验项目二</h2><h3 id="建表"><a href="#建表" class="headerlink" title="建表"></a>建表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建学生信息表</span></span><br><span class="line"><span class="keyword">CREATE TABLE</span> student (</span><br><span class="line">    sno <span class="type">CHAR</span>(<span class="number">3</span>),</span><br><span class="line">    sname <span class="type">VARCHAR</span>(<span class="number">20</span>),</span><br><span class="line">    sex <span class="type">CHAR</span>(<span class="number">1</span>),</span><br><span class="line">    birthday <span class="type">DATE</span>,</span><br><span class="line">    class <span class="type">CHAR</span>(<span class="number">5</span>)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 插入学生信息数据</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> student <span class="keyword">VALUES</span></span><br><span class="line">(<span class="string">&#x27;108&#x27;</span>, <span class="string">&#x27;曾华&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="string">&#x27;1977-09-01&#x27;</span>, <span class="string">&#x27;95033&#x27;</span>),</span><br><span class="line">(<span class="string">&#x27;105&#x27;</span>, <span class="string">&#x27;匡明&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="string">&#x27;1975-10-02&#x27;</span>, <span class="string">&#x27;95031&#x27;</span>),</span><br><span class="line">(<span class="string">&#x27;107&#x27;</span>, <span class="string">&#x27;王丽&#x27;</span>, <span class="string">&#x27;女&#x27;</span>, <span class="string">&#x27;1976-01-23&#x27;</span>, <span class="string">&#x27;95033&#x27;</span>),</span><br><span class="line">(<span class="string">&#x27;101&#x27;</span>, <span class="string">&#x27;李军&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="string">&#x27;1976-02-20&#x27;</span>, <span class="string">&#x27;95033&#x27;</span>),</span><br><span class="line">(<span class="string">&#x27;109&#x27;</span>, <span class="string">&#x27;王芳&#x27;</span>, <span class="string">&#x27;女&#x27;</span>, <span class="string">&#x27;1975-02-10&#x27;</span>, <span class="string">&#x27;95031&#x27;</span>),</span><br><span class="line">(<span class="string">&#x27;103&#x27;</span>, <span class="string">&#x27;陆军&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="string">&#x27;1974-06-03&#x27;</span>, <span class="string">&#x27;95031&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建老师信息表</span></span><br><span class="line"><span class="keyword">CREATE TABLE</span> teacher (</span><br><span class="line">    tno <span class="type">CHAR</span>(<span class="number">3</span>),</span><br><span class="line">    tname <span class="type">VARCHAR</span>(<span class="number">20</span>),</span><br><span class="line">    sex <span class="type">CHAR</span>(<span class="number">1</span>),</span><br><span class="line">    birthday <span class="type">DATE</span>,</span><br><span class="line">    prof <span class="type">VARCHAR</span>(<span class="number">10</span>),</span><br><span class="line">    depart <span class="type">VARCHAR</span>(<span class="number">20</span>)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 插入老师信息数据</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> teacher <span class="keyword">VALUES</span></span><br><span class="line">(<span class="string">&#x27;804&#x27;</span>, <span class="string">&#x27;李诚&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="string">&#x27;1958-12-02&#x27;</span>, <span class="string">&#x27;副教授&#x27;</span>, <span class="string">&#x27;计算机系&#x27;</span>),</span><br><span class="line">(<span class="string">&#x27;856&#x27;</span>, <span class="string">&#x27;李旭&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="string">&#x27;1969-03-12&#x27;</span>, <span class="string">&#x27;讲师&#x27;</span>, <span class="string">&#x27;电子工程系&#x27;</span>),</span><br><span class="line">(<span class="string">&#x27;825&#x27;</span>, <span class="string">&#x27;王萍&#x27;</span>, <span class="string">&#x27;女&#x27;</span>, <span class="string">&#x27;1972-05-05&#x27;</span>, <span class="string">&#x27;助教&#x27;</span>, <span class="string">&#x27;计算机系&#x27;</span>),</span><br><span class="line">(<span class="string">&#x27;831&#x27;</span>, <span class="string">&#x27;刘冰&#x27;</span>, <span class="string">&#x27;女&#x27;</span>, <span class="string">&#x27;1977-08-14&#x27;</span>, <span class="string">&#x27;助教&#x27;</span>, <span class="string">&#x27;电子工程系&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建课程表</span></span><br><span class="line"><span class="keyword">CREATE TABLE</span> course (</span><br><span class="line">    cno <span class="type">CHAR</span>(<span class="number">5</span>),</span><br><span class="line">    cname <span class="type">VARCHAR</span>(<span class="number">20</span>),</span><br><span class="line">    tno <span class="type">CHAR</span>(<span class="number">3</span>)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 插入课程信息数据</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> course <span class="keyword">VALUES</span></span><br><span class="line">(<span class="string">&#x27;3-105&#x27;</span>, <span class="string">&#x27;计算机导论&#x27;</span>, <span class="string">&#x27;825&#x27;</span>),</span><br><span class="line">(<span class="string">&#x27;3-245&#x27;</span>, <span class="string">&#x27;操作系统&#x27;</span>, <span class="string">&#x27;804&#x27;</span>),</span><br><span class="line">(<span class="string">&#x27;6-166&#x27;</span>, <span class="string">&#x27;数字电路&#x27;</span>, <span class="string">&#x27;856&#x27;</span>),</span><br><span class="line">(<span class="string">&#x27;9-888&#x27;</span>, <span class="string">&#x27;高等数学&#x27;</span>, <span class="string">&#x27;825&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建成绩表</span></span><br><span class="line"><span class="keyword">CREATE TABLE</span> score (</span><br><span class="line">    sno <span class="type">CHAR</span>(<span class="number">3</span>),</span><br><span class="line">    cno <span class="type">CHAR</span>(<span class="number">5</span>),</span><br><span class="line">    degree <span class="type">INT</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 插入成绩数据</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> score <span class="keyword">VALUES</span></span><br><span class="line">(<span class="string">&#x27;103&#x27;</span>, <span class="string">&#x27;3-245&#x27;</span>, <span class="number">86</span>),</span><br><span class="line">(<span class="string">&#x27;105&#x27;</span>, <span class="string">&#x27;3-245&#x27;</span>, <span class="number">75</span>),</span><br><span class="line">(<span class="string">&#x27;109&#x27;</span>, <span class="string">&#x27;3-245&#x27;</span>, <span class="number">68</span>),</span><br><span class="line">(<span class="string">&#x27;103&#x27;</span>, <span class="string">&#x27;3-105&#x27;</span>, <span class="number">92</span>),</span><br><span class="line">(<span class="string">&#x27;105&#x27;</span>, <span class="string">&#x27;3-105&#x27;</span>, <span class="number">88</span>),</span><br><span class="line">(<span class="string">&#x27;109&#x27;</span>, <span class="string">&#x27;3-105&#x27;</span>, <span class="number">76</span>),</span><br><span class="line">(<span class="string">&#x27;101&#x27;</span>, <span class="string">&#x27;3-105&#x27;</span>, <span class="number">64</span>),</span><br><span class="line">(<span class="string">&#x27;107&#x27;</span>, <span class="string">&#x27;3-105&#x27;</span>, <span class="number">91</span>),</span><br><span class="line">(<span class="string">&#x27;108&#x27;</span>, <span class="string">&#x27;3-105&#x27;</span>, <span class="number">78</span>),</span><br><span class="line">(<span class="string">&#x27;101&#x27;</span>, <span class="string">&#x27;6-166&#x27;</span>, <span class="number">85</span>),</span><br><span class="line">(<span class="string">&#x27;107&#x27;</span>, <span class="string">&#x27;6-166&#x27;</span>, <span class="number">79</span>),</span><br><span class="line">(<span class="string">&#x27;108&#x27;</span>, <span class="string">&#x27;6-166&#x27;</span>, <span class="number">81</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><h4 id="1-列出student表中所有记录的sname、sex和class列。"><a href="#1-列出student表中所有记录的sname、sex和class列。" class="headerlink" title="1. 列出student表中所有记录的sname、sex和class列。"></a>1. 列出student表中所有记录的sname、sex和class列。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> sname, sex, class</span><br><span class="line"><span class="keyword">FROM</span> student;</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+-------+-----+-------+</span><br><span class="line">| sname | sex | class |</span><br><span class="line">+-------+-----+-------+</span><br><span class="line">| 曾华  | 男  | 95033 |</span><br><span class="line">| 匡明  | 男  | 95031 |</span><br><span class="line">| 王丽  | 女  | 95033 |</span><br><span class="line">| 李军  | 男  | 95033 |</span><br><span class="line">| 王芳  | 女  | 95031 |</span><br><span class="line">| 陆军  | 男  | 95031 |</span><br><span class="line">+-------+-----+-------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-显示教师所有的单位即不重复的depart列。"><a href="#2-显示教师所有的单位即不重复的depart列。" class="headerlink" title="2. 显示教师所有的单位即不重复的depart列。"></a>2. 显示教师所有的单位即不重复的depart列。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> depart </span><br><span class="line"><span class="keyword">FROM</span> teacher;</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+------------+</span><br><span class="line">| depart     |</span><br><span class="line">+------------+</span><br><span class="line">| 计算机系   |</span><br><span class="line">| 电子工程系 |</span><br><span class="line">+------------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-显示学生表的所有记录。"><a href="#3-显示学生表的所有记录。" class="headerlink" title="3. 显示学生表的所有记录。"></a>3. 显示学生表的所有记录。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> student;</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+-----+------------+-------+</span><br><span class="line">| sno | sname | sex | birthday   | class |</span><br><span class="line">+-----+-------+-----+------------+-------+</span><br><span class="line">| 108 | 曾华  | 男  | 1977-09-01 | 95033 |</span><br><span class="line">| 105 | 匡明  | 男  | 1975-10-02 | 95031 |</span><br><span class="line">| 107 | 王丽  | 女  | 1976-01-23 | 95033 |</span><br><span class="line">| 101 | 李军  | 男  | 1976-02-20 | 95033 |</span><br><span class="line">| 109 | 王芳  | 女  | 1975-02-10 | 95031 |</span><br><span class="line">| 103 | 陆军  | 男  | 1974-06-03 | 95031 |</span><br><span class="line">+-----+-------+-----+------------+-------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-显示score表中成绩在60到80之间的所有记录。"><a href="#4-显示score表中成绩在60到80之间的所有记录。" class="headerlink" title="4. 显示score表中成绩在60到80之间的所有记录。"></a>4. 显示score表中成绩在60到80之间的所有记录。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> degree <span class="keyword">BETWEEN</span> <span class="number">60</span> <span class="keyword">AND</span> <span class="number">80</span>;</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+--------+</span><br><span class="line">| sno | cno   | degree |</span><br><span class="line">+-----+-------+--------+</span><br><span class="line">| 105 | 3-245 |     75 |</span><br><span class="line">| 109 | 3-245 |     68 |</span><br><span class="line">| 109 | 3-105 |     76 |</span><br><span class="line">| 101 | 3-105 |     64 |</span><br><span class="line">| 108 | 3-105 |     78 |</span><br><span class="line">| 107 | 6-166 |     79 |</span><br><span class="line">+-----+-------+--------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-显示score表中成绩为85，86或88的记录。"><a href="#5-显示score表中成绩为85，86或88的记录。" class="headerlink" title="5. 显示score表中成绩为85，86或88的记录。"></a>5. 显示score表中成绩为85，86或88的记录。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> degree <span class="keyword">IN</span> (<span class="number">85</span>, <span class="number">86</span>, <span class="number">88</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+--------+</span><br><span class="line">| sno | cno   | degree |</span><br><span class="line">+-----+-------+--------+</span><br><span class="line">| 103 | 3-245 |     86 |</span><br><span class="line">| 105 | 3-105 |     88 |</span><br><span class="line">| 101 | 6-166 |     85 |</span><br><span class="line">+-----+-------+--------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-显示student表中“95031”班或性别为“女”的同学记录。"><a href="#6-显示student表中“95031”班或性别为“女”的同学记录。" class="headerlink" title="6. 显示student表中“95031”班或性别为“女”的同学记录。"></a>6. 显示student表中“95031”班或性别为“女”的同学记录。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">WHERE</span> class <span class="operator">=</span> <span class="string">&#x27;95031&#x27;</span> <span class="keyword">OR</span> sex <span class="operator">=</span> <span class="string">&#x27;女&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+-----+------------+-------+</span><br><span class="line">| sno | sname | sex | birthday   | class |</span><br><span class="line">+-----+-------+-----+------------+-------+</span><br><span class="line">| 105 | 匡明  | 男  | 1975-10-02 | 95031 |</span><br><span class="line">| 107 | 王丽  | 女  | 1976-01-23 | 95033 |</span><br><span class="line">| 109 | 王芳  | 女  | 1975-02-10 | 95031 |</span><br><span class="line">| 103 | 陆军  | 男  | 1974-06-03 | 95031 |</span><br><span class="line">+-----+-------+-----+------------+-------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="7-以class降序显示student表的所有记录。"><a href="#7-以class降序显示student表的所有记录。" class="headerlink" title="7. 以class降序显示student表的所有记录。"></a>7. 以class降序显示student表的所有记录。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> class <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+-----+------------+-------+</span><br><span class="line">| sno | sname | sex | birthday   | class |</span><br><span class="line">+-----+-------+-----+------------+-------+</span><br><span class="line">| 108 | 曾华  | 男  | 1977-09-01 | 95033 |</span><br><span class="line">| 107 | 王丽  | 女  | 1976-01-23 | 95033 |</span><br><span class="line">| 101 | 李军  | 男  | 1976-02-20 | 95033 |</span><br><span class="line">| 105 | 匡明  | 男  | 1975-10-02 | 95031 |</span><br><span class="line">| 109 | 王芳  | 女  | 1975-02-10 | 95031 |</span><br><span class="line">| 103 | 陆军  | 男  | 1974-06-03 | 95031 |</span><br><span class="line">+-----+-------+-----+------------+-------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="8-以cno升序、degree降序显示score表的所有记录。"><a href="#8-以cno升序、degree降序显示score表的所有记录。" class="headerlink" title="8. 以cno升序、degree降序显示score表的所有记录。"></a>8. 以cno升序、degree降序显示score表的所有记录。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> cno <span class="keyword">ASC</span>, degree <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+--------+</span><br><span class="line">| sno | cno   | degree |</span><br><span class="line">+-----+-------+--------+</span><br><span class="line">| 103 | 3-105 |     92 |</span><br><span class="line">| 107 | 3-105 |     91 |</span><br><span class="line">| 105 | 3-105 |     88 |</span><br><span class="line">| 108 | 3-105 |     78 |</span><br><span class="line">| 109 | 3-105 |     76 |</span><br><span class="line">| 101 | 3-105 |     64 |</span><br><span class="line">| 103 | 3-245 |     86 |</span><br><span class="line">| 105 | 3-245 |     75 |</span><br><span class="line">| 109 | 3-245 |     68 |</span><br><span class="line">| 101 | 6-166 |     85 |</span><br><span class="line">| 108 | 6-166 |     81 |</span><br><span class="line">| 107 | 6-166 |     79 |</span><br><span class="line">+-----+-------+--------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="9-显示“98031”班的学生人数。"><a href="#9-显示“98031”班的学生人数。" class="headerlink" title="9. 显示“98031”班的学生人数。"></a>9. 显示“98031”班的学生人数。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>)</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">WHERE</span> class <span class="operator">=</span> <span class="string">&#x27;98031&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+----------+</span><br><span class="line">| COUNT(*) |</span><br><span class="line">+----------+</span><br><span class="line">|        0 |</span><br><span class="line">+----------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="10-显示score表中的最高分的学生学号和课程号。"><a href="#10-显示score表中的最高分的学生学号和课程号。" class="headerlink" title="10. 显示score表中的最高分的学生学号和课程号。"></a>10. 显示score表中的最高分的学生学号和课程号。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> sno, cno</span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> degree <span class="operator">=</span> (<span class="keyword">SELECT</span> <span class="built_in">MAX</span>(degree) <span class="keyword">FROM</span> score);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+</span><br><span class="line">| sno | cno   |</span><br><span class="line">+-----+-------+</span><br><span class="line">| 103 | 3-105 |</span><br><span class="line">+-----+-------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="11-显示“3-105”号课程的平均分。"><a href="#11-显示“3-105”号课程的平均分。" class="headerlink" title="11. 显示“3-105”号课程的平均分。"></a>11. 显示“3-105”号课程的平均分。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">AVG</span>(degree)</span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> cno <span class="operator">=</span> <span class="string">&#x27;3-105&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-------------+</span><br><span class="line">| AVG(degree) |</span><br><span class="line">+-------------+</span><br><span class="line">| 81.5000     |</span><br><span class="line">+-------------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="12-显示score表中至少有5名学生选修的并以3开头的课程号的平均分数。"><a href="#12-显示score表中至少有5名学生选修的并以3开头的课程号的平均分数。" class="headerlink" title="12. 显示score表中至少有5名学生选修的并以3开头的课程号的平均分数。"></a>12. 显示score表中至少有5名学生选修的并以3开头的课程号的平均分数。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> cno, <span class="built_in">AVG</span>(degree)</span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> cno <span class="keyword">LIKE</span> <span class="string">&#x27;3%&#x27;</span> </span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> cno</span><br><span class="line"><span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(sno) <span class="operator">&gt;=</span> <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-------+-------------+</span><br><span class="line">| cno   | AVG(degree) |</span><br><span class="line">+-------+-------------+</span><br><span class="line">| 3-105 | 81.5000     |</span><br><span class="line">+-------+-------------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="13-显示最低分大于70，最高分小于90-的sno列。"><a href="#13-显示最低分大于70，最高分小于90-的sno列。" class="headerlink" title="13. 显示最低分大于70，最高分小于90 的sno列。"></a>13. 显示最低分大于70，最高分小于90 的sno列。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> sno</span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> sno</span><br><span class="line"><span class="keyword">HAVING</span> <span class="built_in">MIN</span>(degree) <span class="operator">&gt;</span> <span class="number">70</span> <span class="keyword">AND</span> <span class="built_in">MAX</span>(degree) <span class="operator">&lt;</span> <span class="number">90</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+-----+</span><br><span class="line">| sno |</span><br><span class="line">+-----+</span><br><span class="line">| 105 |</span><br><span class="line">| 108 |</span><br><span class="line">+-----+</span><br></pre></td></tr></table></figure>
+
+<h4 id="14-显示所有学生的-sname、-cno和degree列。"><a href="#14-显示所有学生的-sname、-cno和degree列。" class="headerlink" title="14. 显示所有学生的 sname、 cno和degree列。"></a>14. 显示所有学生的 sname、 cno和degree列。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> student.sname, score.cno, score.degree</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">JOIN</span> score <span class="keyword">ON</span> student.sno <span class="operator">=</span> score.sno;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">+-------+-------+--------+</span><br><span class="line">| sname | cno   | degree |</span><br><span class="line">+-------+-------+--------+</span><br><span class="line">| 陆军  | 3-245 |     86 |</span><br><span class="line">| 匡明  | 3-245 |     75 |</span><br><span class="line">| 王芳  | 3-245 |     68 |</span><br><span class="line">| 陆军  | 3-105 |     92 |</span><br><span class="line">| 匡明  | 3-105 |     88 |</span><br><span class="line">| 王芳  | 3-105 |     76 |</span><br><span class="line">| 李军  | 3-105 |     64 |</span><br><span class="line">| 王丽  | 3-105 |     91 |</span><br><span class="line">| 曾华  | 3-105 |     78 |</span><br><span class="line">| 李军  | 6-166 |     85 |</span><br><span class="line">| 王丽  | 6-166 |     79 |</span><br><span class="line">| 曾华  | 6-166 |     81 |</span><br><span class="line">+-------+-------+--------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="15-显示所有学生的-sname、-cname和degree列。"><a href="#15-显示所有学生的-sname、-cname和degree列。" class="headerlink" title="15. 显示所有学生的 sname、 cname和degree列。"></a>15. 显示所有学生的 sname、 cname和degree列。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> student.sname, course.cname, score.degree</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">JOIN</span> score <span class="keyword">ON</span> student.sno <span class="operator">=</span> score.sno</span><br><span class="line"><span class="keyword">JOIN</span> course <span class="keyword">ON</span> score.cno <span class="operator">=</span> course.cno;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">+-------+------------+--------+</span><br><span class="line">| sname | cname      | degree |</span><br><span class="line">+-------+------------+--------+</span><br><span class="line">| 曾华  | 数字电路   |     81 |</span><br><span class="line">| 曾华  | 计算机导论 |     78 |</span><br><span class="line">| 匡明  | 计算机导论 |     88 |</span><br><span class="line">| 匡明  | 操作系统   |     75 |</span><br><span class="line">| 王丽  | 数字电路   |     79 |</span><br><span class="line">| 王丽  | 计算机导论 |     91 |</span><br><span class="line">| 李军  | 数字电路   |     85 |</span><br><span class="line">| 李军  | 计算机导论 |     64 |</span><br><span class="line">| 王芳  | 计算机导论 |     76 |</span><br><span class="line">| 王芳  | 操作系统   |     68 |</span><br><span class="line">| 陆军  | 计算机导论 |     92 |</span><br><span class="line">| 陆军  | 操作系统   |     86 |</span><br><span class="line">+-------+------------+--------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="16-列出“95033”班所选课程的平均分。"><a href="#16-列出“95033”班所选课程的平均分。" class="headerlink" title="16. 列出“95033”班所选课程的平均分。"></a>16. 列出“95033”班所选课程的平均分。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> cno, <span class="built_in">AVG</span>(degree)</span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> sno <span class="keyword">IN</span> (<span class="keyword">SELECT</span> sno <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> class <span class="operator">=</span> <span class="string">&#x27;95033&#x27;</span>)</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> cno;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+-------+-------------+</span><br><span class="line">| cno   | AVG(degree) |</span><br><span class="line">+-------+-------------+</span><br><span class="line">| 3-245 | 76.3333     |</span><br><span class="line">| 3-105 | 81.5000     |</span><br><span class="line">| 6-166 | 81.6667     |</span><br><span class="line">+-------+-------------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="17-显示选修“3-105”课程的成绩高于“109”号同学成绩的所有同学的记录。"><a href="#17-显示选修“3-105”课程的成绩高于“109”号同学成绩的所有同学的记录。" class="headerlink" title="17. 显示选修“3-105”课程的成绩高于“109”号同学成绩的所有同学的记录。"></a>17. 显示选修“3-105”课程的成绩高于“109”号同学成绩的所有同学的记录。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> cno <span class="operator">=</span> <span class="string">&#x27;3-105&#x27;</span> <span class="keyword">AND</span> degree <span class="operator">&gt;</span> (<span class="keyword">SELECT</span> degree <span class="keyword">FROM</span> score <span class="keyword">WHERE</span> sno <span class="operator">=</span> <span class="string">&#x27;109&#x27;</span> <span class="keyword">AND</span> cno <span class="operator">=</span> <span class="string">&#x27;3-105&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+--------+</span><br><span class="line">| sno | cno   | degree |</span><br><span class="line">+-----+-------+--------+</span><br><span class="line">| 103 | 3-105 |     92 |</span><br><span class="line">| 105 | 3-105 |     88 |</span><br><span class="line">| 107 | 3-105 |     91 |</span><br><span class="line">| 108 | 3-105 |     78 |</span><br><span class="line">+-----+-------+--------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="18-显示score中选修多门课程的同学中分数为非最高分成绩的记录。"><a href="#18-显示score中选修多门课程的同学中分数为非最高分成绩的记录。" class="headerlink" title="18. 显示score中选修多门课程的同学中分数为非最高分成绩的记录。"></a>18. 显示score中选修多门课程的同学中分数为非最高分成绩的记录。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> sno <span class="keyword">IN</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> sno </span><br><span class="line">    <span class="keyword">FROM</span> course </span><br><span class="line">    <span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="keyword">DISTINCT</span> cno) <span class="operator">&gt;</span> <span class="number">1</span></span><br><span class="line">) </span><br><span class="line"><span class="keyword">AND</span> sno <span class="keyword">IN</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> sno </span><br><span class="line">    <span class="keyword">FROM</span> score </span><br><span class="line">    <span class="keyword">WHERE</span> degree <span class="operator">&lt;</span> (<span class="keyword">SELECT</span> <span class="built_in">MAX</span>(degree) <span class="keyword">FROM</span> score)</span><br><span class="line">);<span class="comment">-- 注意AND只能这么连接</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+--------+</span><br><span class="line">| sno | cno   | degree |</span><br><span class="line">+-----+-------+--------+</span><br><span class="line">| 103 | 3-245 |     86 |</span><br><span class="line">| 105 | 3-245 |     75 |</span><br><span class="line">| 109 | 3-245 |     68 |</span><br><span class="line">| 103 | 3-105 |     92 |</span><br><span class="line">| 105 | 3-105 |     88 |</span><br><span class="line">| 109 | 3-105 |     76 |</span><br><span class="line">| 101 | 3-105 |     64 |</span><br><span class="line">| 107 | 3-105 |     91 |</span><br><span class="line">| 108 | 3-105 |     78 |</span><br><span class="line">| 101 | 6-166 |     85 |</span><br><span class="line">| 107 | 6-166 |     79 |</span><br><span class="line">| 108 | 6-166 |     81 |</span><br><span class="line">+-----+-------+--------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="19-显示成绩高于学号为“109”、课程号为“3-105”的成绩的所有记录。"><a href="#19-显示成绩高于学号为“109”、课程号为“3-105”的成绩的所有记录。" class="headerlink" title="19. 显示成绩高于学号为“109”、课程号为“3-105”的成绩的所有记录。"></a>19. 显示成绩高于学号为“109”、课程号为“3-105”的成绩的所有记录。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> degree <span class="operator">&gt;</span> (<span class="keyword">SELECT</span> degree <span class="keyword">FROM</span> score <span class="keyword">WHERE</span> sno <span class="operator">=</span> <span class="string">&#x27;109&#x27;</span> <span class="keyword">AND</span> cno <span class="operator">=</span> <span class="string">&#x27;3-105&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+--------+</span><br><span class="line">| sno | cno   | degree |</span><br><span class="line">+-----+-------+--------+</span><br><span class="line">| 103 | 3-245 |     86 |</span><br><span class="line">| 103 | 3-105 |     92 |</span><br><span class="line">| 105 | 3-105 |     88 |</span><br><span class="line">| 107 | 3-105 |     91 |</span><br><span class="line">| 108 | 3-105 |     78 |</span><br><span class="line">| 101 | 6-166 |     85 |</span><br><span class="line">| 107 | 6-166 |     79 |</span><br><span class="line">| 108 | 6-166 |     81 |</span><br><span class="line">+-----+-------+--------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="20-显示出和学号为“108”的同学同年出生的所有学生的sno、sname和-birthday列。"><a href="#20-显示出和学号为“108”的同学同年出生的所有学生的sno、sname和-birthday列。" class="headerlink" title="20. 显示出和学号为“108”的同学同年出生的所有学生的sno、sname和 birthday列。"></a>20. 显示出和学号为“108”的同学同年出生的所有学生的sno、sname和 birthday列。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> sno, sname, birthday</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">WHERE</span> birthday <span class="operator">=</span> (<span class="keyword">SELECT</span> birthday <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> sno <span class="operator">=</span> <span class="string">&#x27;108&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+------------+</span><br><span class="line">| sno | sname | birthday   |</span><br><span class="line">+-----+-------+------------+</span><br><span class="line">| 108 | 曾华  | 1977-09-01 |</span><br><span class="line">+-----+-------+------------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="21-显示“张旭”老师任课的学生成绩。"><a href="#21-显示“张旭”老师任课的学生成绩。" class="headerlink" title="21. 显示“张旭”老师任课的学生成绩。"></a>21. 显示“张旭”老师任课的学生成绩。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> score.degree</span><br><span class="line"><span class="keyword">FROM</span> student,score,teacher,course</span><br><span class="line"><span class="keyword">WHERE</span> student.sno <span class="operator">=</span> score.sno <span class="keyword">AND</span> score.cno <span class="operator">=</span> course.cno <span class="keyword">AND</span> course.tno <span class="operator">=</span> teacher.tno <span class="keyword">AND</span> teacher.tname <span class="operator">=</span> <span class="string">&#x27;张旭&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="22-显示选修某课程的同学人数多于5人的老师姓名。"><a href="#22-显示选修某课程的同学人数多于5人的老师姓名。" class="headerlink" title="22. 显示选修某课程的同学人数多于5人的老师姓名。"></a>22. 显示选修某课程的同学人数多于5人的老师姓名。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> teacher.tname</span><br><span class="line"><span class="keyword">FROM</span> teacher,course,score</span><br><span class="line"><span class="keyword">where</span> teacher.tno <span class="operator">=</span> course.tno <span class="keyword">AND</span> course.cno <span class="operator">=</span> score.cno</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> teacher.tname</span><br><span class="line"><span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="keyword">DISTINCT</span> score.sno) <span class="operator">&gt;</span> <span class="number">5</span>;</span><br><span class="line"><span class="comment">-- GROUP BY子句中指定的列应该与SELECT语句中选择的列相匹配。而且不能遗漏</span></span><br><span class="line"><span class="comment">-- IN也要有这种严格对应的规则</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-------+</span><br><span class="line">| tname |</span><br><span class="line">+-------+</span><br><span class="line">| 王萍  |</span><br><span class="line">+-------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="23-显示“95033”班和“95031”班全体学生的记录。"><a href="#23-显示“95033”班和“95031”班全体学生的记录。" class="headerlink" title="23. 显示“95033”班和“95031”班全体学生的记录。"></a>23. 显示“95033”班和“95031”班全体学生的记录。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">WHERE</span> class <span class="keyword">IN</span> (<span class="string">&#x27;95033&#x27;</span>, <span class="string">&#x27;95031&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+-----+------------+-------+</span><br><span class="line">| sno | sname | sex | birthday   | class |</span><br><span class="line">+-----+-------+-----+------------+-------+</span><br><span class="line">| 108 | 曾华  | 男  | 1977-09-01 | 95033 |</span><br><span class="line">| 105 | 匡明  | 男  | 1975-10-02 | 95031 |</span><br><span class="line">| 107 | 王丽  | 女  | 1976-01-23 | 95033 |</span><br><span class="line">| 101 | 李军  | 男  | 1976-02-20 | 95033 |</span><br><span class="line">| 109 | 王芳  | 女  | 1975-02-10 | 95031 |</span><br><span class="line">| 103 | 陆军  | 男  | 1974-06-03 | 95031 |</span><br><span class="line">+-----+-------+-----+------------+-------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="24-显示存在有85分以上成绩的课程cno。"><a href="#24-显示存在有85分以上成绩的课程cno。" class="headerlink" title="24. 显示存在有85分以上成绩的课程cno。"></a>24. 显示存在有85分以上成绩的课程cno。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> cno</span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> degree <span class="operator">&gt;</span> <span class="number">85</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+-------+</span><br><span class="line">| cno   |</span><br><span class="line">+-------+</span><br><span class="line">| 3-245 |</span><br><span class="line">| 3-105 |</span><br><span class="line">+-------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="25-显示“计算机系”老师所教课程的成绩表。"><a href="#25-显示“计算机系”老师所教课程的成绩表。" class="headerlink" title="25. 显示“计算机系”老师所教课程的成绩表。"></a>25. 显示“计算机系”老师所教课程的成绩表。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> cno <span class="keyword">IN</span> (<span class="keyword">SELECT</span> cno <span class="keyword">FROM</span> course <span class="keyword">WHERE</span> tno <span class="keyword">IN</span> (<span class="keyword">SELECT</span> tno <span class="keyword">FROM</span> teacher <span class="keyword">WHERE</span> depart <span class="operator">=</span> <span class="string">&#x27;计算机系&#x27;</span>));</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+-----+-------+--------+</span><br><span class="line">| sno | cno   | degree |</span><br><span class="line">+-----+-------+--------+</span><br><span class="line">| 108 | 3-105 |     78 |</span><br><span class="line">| 105 | 3-105 |     88 |</span><br><span class="line">| 105 | 3-245 |     75 |</span><br><span class="line">| 107 | 3-105 |     91 |</span><br><span class="line">| 101 | 3-105 |     64 |</span><br><span class="line">| 109 | 3-105 |     76 |</span><br><span class="line">| 109 | 3-245 |     68 |</span><br><span class="line">| 103 | 3-105 |     92 |</span><br><span class="line">| 103 | 3-245 |     86 |</span><br><span class="line">+-----+-------+--------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="26-显示“计算机系”和“电子工程系”不同职称的老师的tname和prof。"><a href="#26-显示“计算机系”和“电子工程系”不同职称的老师的tname和prof。" class="headerlink" title="26. 显示“计算机系”和“电子工程系”不同职称的老师的tname和prof。"></a>26. 显示“计算机系”和“电子工程系”不同职称的老师的tname和prof。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> tname, prof</span><br><span class="line"><span class="keyword">FROM</span> teacher</span><br><span class="line"><span class="keyword">WHERE</span> depart <span class="keyword">IN</span> (<span class="string">&#x27;计算机系&#x27;</span>, <span class="string">&#x27;电子工程系&#x27;</span>)</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> tname, prof;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+-------+--------+</span><br><span class="line">| tname | prof   |</span><br><span class="line">+-------+--------+</span><br><span class="line">| 李诚  | 副教授 |</span><br><span class="line">| 李旭  | 讲师   |</span><br><span class="line">| 王萍  | 助教   |</span><br><span class="line">| 刘冰  | 助教   |</span><br><span class="line">+-------+--------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="27-显示选修编号为“3-105”课程且成绩至少高于“3-245”课程的同学的cno、sno和degree，并按degree从高到低次序排列。"><a href="#27-显示选修编号为“3-105”课程且成绩至少高于“3-245”课程的同学的cno、sno和degree，并按degree从高到低次序排列。" class="headerlink" title="27. 显示选修编号为“3-105”课程且成绩至少高于“3-245”课程的同学的cno、sno和degree，并按degree从高到低次序排列。"></a>27. 显示选修编号为“3-105”课程且成绩至少高于“3-245”课程的同学的cno、sno和degree，并按degree从高到低次序排列。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> score.cno, score.sno, score.degree</span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> cno <span class="operator">=</span> <span class="string">&#x27;3-105&#x27;</span> <span class="keyword">AND</span> degree <span class="operator">&gt;</span> (<span class="keyword">SELECT</span> <span class="built_in">MIN</span>(degree) <span class="keyword">FROM</span> score <span class="keyword">WHERE</span> cno <span class="operator">=</span> <span class="string">&#x27;3-245&#x27;</span>)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> degree <span class="keyword">DESC</span>; </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+-------+-----+--------+</span><br><span class="line">| cno   | sno | degree |</span><br><span class="line">+-------+-----+--------+</span><br><span class="line">| 3-105 | 103 |     92 |</span><br><span class="line">| 3-105 | 107 |     91 |</span><br><span class="line">| 3-105 | 105 |     88 |</span><br><span class="line">| 3-105 | 108 |     78 |</span><br><span class="line">| 3-105 | 109 |     76 |</span><br><span class="line">+-------+-----+--------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="28-显示选修编号为“3-105”课程且成绩高于“3-245”课程的同学的cno、sno和degree。"><a href="#28-显示选修编号为“3-105”课程且成绩高于“3-245”课程的同学的cno、sno和degree。" class="headerlink" title="28. 显示选修编号为“3-105”课程且成绩高于“3-245”课程的同学的cno、sno和degree。"></a>28. 显示选修编号为“3-105”课程且成绩高于“3-245”课程的同学的cno、sno和degree。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> score.cno, score.sno, score.degree</span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> cno <span class="operator">=</span> <span class="string">&#x27;3-105&#x27;</span> <span class="keyword">AND</span> degree <span class="operator">&gt;</span> (<span class="keyword">SELECT</span> <span class="built_in">MAX</span>(degree) <span class="keyword">FROM</span> score <span class="keyword">WHERE</span> cno <span class="operator">=</span> <span class="string">&#x27;3-245&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+-------+-----+--------+</span><br><span class="line">| cno   | sno | degree |</span><br><span class="line">+-------+-----+--------+</span><br><span class="line">| 3-105 | 103 |     92 |</span><br><span class="line">| 3-105 | 105 |     88 |</span><br><span class="line">| 3-105 | 107 |     91 |</span><br><span class="line">+-------+-----+--------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="29-列出所有任课老师的-tname-和-depart。"><a href="#29-列出所有任课老师的-tname-和-depart。" class="headerlink" title="29. 列出所有任课老师的 tname 和 depart。"></a>29. 列出所有任课老师的 tname 和 depart。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> tname, depart</span><br><span class="line"><span class="keyword">FROM</span> teacher</span><br><span class="line"><span class="keyword">WHERE</span> tno <span class="keyword">IN</span> (<span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> tno <span class="keyword">FROM</span> course);</span><br></pre></td></tr></table></figure>
+
+<h4 id="30-列出所有未讲课老师的-tname-和-depart。"><a href="#30-列出所有未讲课老师的-tname-和-depart。" class="headerlink" title="30. 列出所有未讲课老师的 tname 和 depart。"></a>30. 列出所有未讲课老师的 tname 和 depart。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> tname, depart</span><br><span class="line"><span class="keyword">FROM</span> teacher</span><br><span class="line"><span class="keyword">WHERE</span> tno <span class="keyword">NOT</span> <span class="keyword">IN</span> (<span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> tno <span class="keyword">FROM</span> course);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-------+------------+</span><br><span class="line">| tname | depart     |</span><br><span class="line">+-------+------------+</span><br><span class="line">| 刘冰  | 电子工程系 |</span><br><span class="line">+-------+------------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="31-列出所有老师和同学的姓名、性别和生日。"><a href="#31-列出所有老师和同学的姓名、性别和生日。" class="headerlink" title="31. 列出所有老师和同学的姓名、性别和生日。(*)"></a>31. 列出所有老师和同学的姓名、性别和生日。(*)</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> tname <span class="keyword">AS</span> name, sex, birthday</span><br><span class="line"><span class="keyword">FROM</span> teacher</span><br><span class="line"><span class="keyword">UNION</span></span><br><span class="line"><span class="keyword">SELECT</span> sname <span class="keyword">AS</span> name, sex, birthday</span><br><span class="line"><span class="keyword">FROM</span> student;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">+------+-----+------------+</span><br><span class="line">| name | sex | birthday   |</span><br><span class="line">+------+-----+------------+</span><br><span class="line">| 李诚 | 男  | 1958-12-02 |</span><br><span class="line">| 李旭 | 男  | 1969-03-12 |</span><br><span class="line">| 王萍 | 女  | 1972-05-05 |</span><br><span class="line">| 刘冰 | 女  | 1977-08-14 |</span><br><span class="line">| 曾华 | 男  | 1977-09-01 |</span><br><span class="line">| 匡明 | 男  | 1975-10-02 |</span><br><span class="line">| 王丽 | 女  | 1976-01-23 |</span><br><span class="line">| 李军 | 男  | 1976-02-20 |</span><br><span class="line">| 王芳 | 女  | 1975-02-10 |</span><br><span class="line">| 陆军 | 男  | 1974-06-03 |</span><br><span class="line">+------+-----+------------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="32-检索所学课程包含学生“103”所学课程的学生学号。"><a href="#32-检索所学课程包含学生“103”所学课程的学生学号。" class="headerlink" title="32. 检索所学课程包含学生“103”所学课程的学生学号。"></a>32. 检索所学课程包含学生“103”所学课程的学生学号。</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> sno</span><br><span class="line"><span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> cno <span class="keyword">IN</span> (<span class="keyword">SELECT</span> cno <span class="keyword">FROM</span> score <span class="keyword">WHERE</span> sno <span class="operator">=</span> <span class="string">&#x27;103&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+-----+</span><br><span class="line">| sno |</span><br><span class="line">+-----+</span><br><span class="line">| 103 |</span><br><span class="line">| 105 |</span><br><span class="line">| 109 |</span><br><span class="line">| 101 |</span><br><span class="line">| 107 |</span><br><span class="line">| 108 |</span><br><span class="line">+-----+</span><br></pre></td></tr></table></figure>
+
+<h4 id="33-检索选修所有课程的学生姓名。"><a href="#33-检索选修所有课程的学生姓名。" class="headerlink" title="33. 检索选修所有课程的学生姓名。(*)"></a>33. 检索选修所有课程的学生姓名。(*)</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> sname</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> cno</span><br><span class="line">    <span class="keyword">FROM</span> course</span><br><span class="line">    <span class="keyword">WHERE</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> (</span><br><span class="line">        <span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">        <span class="keyword">FROM</span> score</span><br><span class="line">        <span class="keyword">WHERE</span> student.sno <span class="operator">=</span> score.sno <span class="keyword">AND</span> course.cno <span class="operator">=</span> score.cno</span><br><span class="line">    )</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Empty set</span><br></pre></td></tr></table></figure>
+
+<h2 id="实验项目三"><a href="#实验项目三" class="headerlink" title="实验项目三"></a>实验项目三</h2><h3 id="1-创建一个查询图书库存量的存储过程“cx-tskcl-proc”（如果是SQL-server数据库的话起这个名字，是其它数据库则按数据库的要求起名字，下面同），输出的内容包含类别号、图书编号、图书名称、库存数等数据内容。"><a href="#1-创建一个查询图书库存量的存储过程“cx-tskcl-proc”（如果是SQL-server数据库的话起这个名字，是其它数据库则按数据库的要求起名字，下面同），输出的内容包含类别号、图书编号、图书名称、库存数等数据内容。" class="headerlink" title="1.创建一个查询图书库存量的存储过程“cx_tskcl_proc”（如果是SQL server数据库的话起这个名字，是其它数据库则按数据库的要求起名字，下面同），输出的内容包含类别号、图书编号、图书名称、库存数等数据内容。"></a>1.创建一个查询图书库存量的存储过程“cx_tskcl_proc”（如果是SQL server数据库的话起这个名字，是其它数据库则按数据库的要求起名字，下面同），输出的内容包含类别号、图书编号、图书名称、库存数等数据内容。</h3><p>存储过程示例（MySQL）：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> cx_tskcl_proc()</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SELECT</span> 类别号, 图书编号, 图书名称, 库存数</span><br><span class="line">    <span class="keyword">FROM</span> 图书明细表;</span><br><span class="line"><span class="keyword">END</span> <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-创建一个名为TS-CX-PROC的存储过程，它带有一个输入参数，用于接受图书编号，显示该图书的名称、作者、出版和复本数。"><a href="#2-创建一个名为TS-CX-PROC的存储过程，它带有一个输入参数，用于接受图书编号，显示该图书的名称、作者、出版和复本数。" class="headerlink" title="2.创建一个名为TS_CX_PROC的存储过程，它带有一个输入参数，用于接受图书编号，显示该图书的名称、作者、出版和复本数。"></a>2.创建一个名为TS_CX_PROC的存储过程，它带有一个输入参数，用于接受图书编号，显示该图书的名称、作者、出版和复本数。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> TS_CX_PROC (<span class="keyword">IN</span> book_id <span class="type">INT</span>)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SELECT</span> 图书名称, 作者, 出版社, 复本数</span><br><span class="line">    <span class="keyword">FROM</span> 图书明细表</span><br><span class="line">    <span class="keyword">WHERE</span> 图书编号 <span class="operator">=</span> book_id;</span><br><span class="line"><span class="keyword">END</span> ;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-修改存储修改TS-CX-PROC存储过程，使之能按图书名称查询图书的相关信息。"><a href="#3-修改存储修改TS-CX-PROC存储过程，使之能按图书名称查询图书的相关信息。" class="headerlink" title="3.修改存储修改TS_CX_PROC存储过程，使之能按图书名称查询图书的相关信息。"></a>3.修改存储修改TS_CX_PROC存储过程，使之能按图书名称查询图书的相关信息。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> IF <span class="keyword">EXISTS</span> TS_CX_PROC ;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> TS_CX_PROC (<span class="keyword">IN</span> book_name <span class="type">VARCHAR</span>(<span class="number">255</span>))</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SELECT</span> 图书名称, 作者, 出版社, 复本数</span><br><span class="line">    <span class="keyword">FROM</span> 图书明细表</span><br><span class="line">    <span class="keyword">WHERE</span> 图书名称 <span class="operator">=</span> book_name;</span><br><span class="line"><span class="keyword">END</span> ;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询“航海英语”图书的信息</span></span><br><span class="line"><span class="keyword">CALL</span> TS_CX_PROC(<span class="string">&#x27;航海英语&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查询“艺海潮音”图书的信息</span></span><br><span class="line"><span class="keyword">CALL</span> TS_CX_PROC(<span class="string">&#x27;艺海潮音&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="operator">+</span><span class="comment">----------+--------+--------------------+--------+</span></span><br><span class="line"><span class="operator">|</span> 图书名称 <span class="operator">|</span> 作者   <span class="operator">|</span> 出版社             <span class="operator">|</span> 复本数 <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------+--------+--------------------+--------+</span></span><br><span class="line"><span class="operator">|</span> 航海英语 <span class="operator">|</span> 陈宏权 <span class="operator">|</span> 武汉工业大学出版社 <span class="operator">|</span>     <span class="number">25</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------+--------+--------------------+--------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.05</span> sec)</span><br><span class="line"></span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"><span class="operator">+</span><span class="comment">----------+------+----------------+--------+</span></span><br><span class="line"><span class="operator">|</span> 图书名称 <span class="operator">|</span> 作者 <span class="operator">|</span> 出版社         <span class="operator">|</span> 复本数 <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------+------+----------------+--------+</span></span><br><span class="line"><span class="operator">|</span> 艺海潮音 <span class="operator">|</span> 李叔 <span class="operator">|</span> 江苏文艺出版社 <span class="operator">|</span>     <span class="number">20</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------+------+----------------+--------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.04</span> sec)</span><br><span class="line"></span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-删除存储过程"><a href="#4-删除存储过程" class="headerlink" title="4.删除存储过程"></a>4.删除存储过程</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> IF <span class="keyword">EXISTS</span> TS_CX_PROC;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-图书类别表上创建一个名为tslb-insert-trigger的触发器，当执行INSERT操作时，该触发器被触发，禁止插入记录。"><a href="#5-图书类别表上创建一个名为tslb-insert-trigger的触发器，当执行INSERT操作时，该触发器被触发，禁止插入记录。" class="headerlink" title="5.图书类别表上创建一个名为tslb_insert_trigger的触发器，当执行INSERT操作时，该触发器被触发，禁止插入记录。"></a>5.图书类别表上创建一个名为tslb_insert_trigger的触发器，当执行INSERT操作时，该触发器被触发，禁止插入记录。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> tslb_insert_trigger</span><br><span class="line">BEFORE <span class="keyword">INSERT</span> <span class="keyword">ON</span> 图书类别表</span><br><span class="line"><span class="keyword">FOR</span> <span class="keyword">EACH</span> <span class="type">ROW</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    SIGNAL <span class="keyword">SQLSTATE</span> <span class="string">&#x27;45000&#x27;</span></span><br><span class="line">    <span class="keyword">SET</span> MESSAGE_TEXT <span class="operator">=</span> <span class="string">&#x27;插入记录被禁止&#x27;</span>;</span><br><span class="line"><span class="keyword">END</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-在图书明细表上创建一个名为ts-delete-trigger的触发器，当执行DELETE操作时，该触发器被触发，禁止删除记录。"><a href="#6-在图书明细表上创建一个名为ts-delete-trigger的触发器，当执行DELETE操作时，该触发器被触发，禁止删除记录。" class="headerlink" title="6.在图书明细表上创建一个名为ts_delete_trigger的触发器，当执行DELETE操作时，该触发器被触发，禁止删除记录。"></a>6.在图书明细表上创建一个名为ts_delete_trigger的触发器，当执行DELETE操作时，该触发器被触发，禁止删除记录。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> ts_delete_trigger</span><br><span class="line">BEFORE <span class="keyword">DELETE</span> <span class="keyword">ON</span> 图书明细表</span><br><span class="line"><span class="keyword">FOR</span> <span class="keyword">EACH</span> <span class="type">ROW</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    SIGNAL <span class="keyword">SQLSTATE</span> <span class="string">&#x27;45000&#x27;</span></span><br><span class="line">    <span class="keyword">SET</span> MESSAGE_TEXT <span class="operator">=</span> <span class="string">&#x27;删除记录被禁止&#x27;</span>;</span><br><span class="line"><span class="keyword">END</span> ;</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-在读者信息表上创建一个名为dzxx-insert-trigger的触发器，当在读者信息表中插入记录时，将该记录中的借书证号自动插入借还明细表中。"><a href="#7-在读者信息表上创建一个名为dzxx-insert-trigger的触发器，当在读者信息表中插入记录时，将该记录中的借书证号自动插入借还明细表中。" class="headerlink" title="7.在读者信息表上创建一个名为dzxx_insert_trigger的触发器，当在读者信息表中插入记录时，将该记录中的借书证号自动插入借还明细表中。"></a>7.在读者信息表上创建一个名为dzxx_insert_trigger的触发器，当在读者信息表中插入记录时，将该记录中的借书证号自动插入借还明细表中。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> dzxx_insert_trigger</span><br><span class="line">AFTER <span class="keyword">INSERT</span> <span class="keyword">ON</span> 读者信息表</span><br><span class="line"><span class="keyword">FOR</span> <span class="keyword">EACH</span> <span class="type">ROW</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">INSERT INTO</span> 借还明细表 (借书证号)</span><br><span class="line">    <span class="keyword">VALUES</span> (NEW.借书证号);</span><br><span class="line"><span class="keyword">END</span> ;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-删除触发器"><a href="#8-删除触发器" class="headerlink" title="8.删除触发器"></a>8.删除触发器</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TRIGGER</span> IF <span class="keyword">EXISTS</span> dzxx_insert_trigger;</span><br></pre></td></tr></table></figure>
+
+<h2 id="实验项目四"><a href="#实验项目四" class="headerlink" title="实验项目四"></a>实验项目四</h2><h3 id="数据库设计报告：教材管理系统"><a href="#数据库设计报告：教材管理系统" class="headerlink" title="数据库设计报告：教材管理系统"></a>数据库设计报告：教材管理系统</h3><h4 id="系统需求分析报告"><a href="#系统需求分析报告" class="headerlink" title="系统需求分析报告"></a>系统需求分析报告</h4><p><strong>项目名称：教材管理系统</strong></p>
+<p><strong>项目背景：</strong> 教材管理系统旨在帮助学校或教育机构管理教材的信息，包括教材的库存、借阅、归还等操作，以提高教材管理的效率和准确性。</p>
+<p><strong>功能需求：</strong></p>
+<ol>
+<li>教材信息维护：包括教材信息的添加、修改、删除等操作。</li>
+<li>学生信息维护：包括学生信息的添加、修改、删除等操作。</li>
+<li>借阅管理：记录学生借阅教材的信息，包括借阅日期、归还日期等。</li>
+<li>教材库存管理：跟踪教材的库存数量，及时更新库存信息。</li>
+</ol>
+<p><strong>非功能需求：</strong></p>
+<ol>
+<li>界面简洁清晰，易于操作。</li>
+<li>数据安全性和保密性。</li>
+<li>高效的数据查询和管理功能。</li>
+</ol>
+<h4 id="2-概念模型的设计（E-R图）"><a href="#2-概念模型的设计（E-R图）" class="headerlink" title="2. 概念模型的设计（E-R图）"></a>2. 概念模型的设计（E-R图）</h4><p>在概念模型设计中，我们定义以下实体和它们之间的关系：</p>
+<ul>
+<li><p>实体：教材、学生、借阅记录、教材库存</p>
+</li>
+<li><p>属性：每个实体的属性，如教材的编号、名称等，学生的学号、姓名等</p>
+</li>
+<li><p><img src="/2025/04/06/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E9%AA%8C/B987B0639EA31FA3AB372B72C941534A.png"></p>
+</li>
+</ul>
+<p>在这个E-R图中：</p>
+<ul>
+<li>学生（Student）和教材（Textbook）之间是多对多的关系，用关联实体借阅记录（BorrowRecord）表示。</li>
+<li>教材（Textbook）和教材库存（Inventory）是一对多的关系，即一个教材可以有多本库存。</li>
+<li>借阅记录（BorrowRecord）包含了学生借阅教材的信息，如借阅日期、归还日期等。</li>
+</ul>
+<h4 id="3-关系数据模型的设计"><a href="#3-关系数据模型的设计" class="headerlink" title="3. 关系数据模型的设计"></a>3. 关系数据模型的设计</h4><ul>
+<li>学生表（学生学号,姓名,性别）</li>
+<li>教材表（编号,教材名,作者，出版日期，出版社）</li>
+<li>借阅记录表（借阅日期,归还日期，学生学号，教材编号）</li>
+<li>教材库存表（教材编号，数量，位置）</li>
+</ul>
+<h3 id="图书馆日常事务管理系统数据库设计"><a href="#图书馆日常事务管理系统数据库设计" class="headerlink" title="图书馆日常事务管理系统数据库设计"></a>图书馆日常事务管理系统数据库设计</h3><h4 id="（1）图书馆日常事务管理系统功能简析"><a href="#（1）图书馆日常事务管理系统功能简析" class="headerlink" title="（1）图书馆日常事务管理系统功能简析"></a>（1）图书馆日常事务管理系统功能简析</h4><ul>
+<li>图书信息维护：主要完成图书信息登记、修改、删除等操作。</li>
+<li>读者信息维护：主要完成读者信息的添加、修改和删除等操作。</li>
+<li>工作人员信息维护：主要完成工作人员信息的添加、修改和删除等操作。</li>
+<li>图书类别的管理：主要完成图书类别的添加、修改和删除等操作</li>
+<li>图书借还管理：主要完成读者图书借还信息的记录。</li>
+</ul>
+<h4 id="（2）图书馆日常事务管理系统中的实体和属性的设计"><a href="#（2）图书馆日常事务管理系统中的实体和属性的设计" class="headerlink" title="（2）图书馆日常事务管理系统中的实体和属性的设计"></a>（2）图书馆日常事务管理系统中的实体和属性的设计</h4><ul>
+<li><p>读者（借书证号，姓名，性别，出生日期，借书量，单位，电话，E-mail）</p>
+</li>
+<li><p>图书（图书编号，图书名称，作者，出版社，定价，购进日期，购入数，复本数，库存数）</p>
+</li>
+<li><p>工作人员（工号，姓名，性别，出生日期，联系电话，E-mail）</p>
+</li>
+<li><p>图书类别（类别号，图书类别）</p>
+</li>
+</ul>
+<p>其中，每本图书都有惟一的一个图书类别，每个图书类别有多本图书；每个读者可以借阅多本图书；工作人员负责读者的借、还工作。</p>
+<h4 id="（3）设计该系统数据库的E-R图"><a href="#（3）设计该系统数据库的E-R图" class="headerlink" title="（3）设计该系统数据库的E-R图"></a>（3）设计该系统数据库的E-R图</h4><p><img src="/2025/04/06/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E9%AA%8C/img.png" alt="img"></p>
+<h4 id="（4）将设计好的E-R图转换为关系模式"><a href="#（4）将设计好的E-R图转换为关系模式" class="headerlink" title="（4）将设计好的E-R图转换为关系模式"></a>（4）将设计好的E-R图转换为关系模式</h4><ul>
+<li>读者（借书证号，姓名，性别，出生日期，借书量，单位，电话，E-mail）</li>
+<li>图书（图书编号，图书名称，作者，出版社，定价，购进日期，购入数，复本数，库存数）</li>
+<li>工作人员（工号，姓名，性别，出生日期，联系电话，E-mail）</li>
+<li>图书类别（类别号，图书类别）</li>
+<li>图书借阅（图书编号，借书证号，借出日期，归还日期）</li>
+<li>图书借还（图书编号，工号，借还，数量，借书日期，还书日期）</li>
+</ul>
+<h4 id="（5-对设计好的关系模式进行规范化的处理"><a href="#（5-对设计好的关系模式进行规范化的处理" class="headerlink" title="（5)对设计好的关系模式进行规范化的处理"></a>（5)对设计好的关系模式进行规范化的处理</h4><p>上述的关系模式已经符合第三范式，在这里不需要进行规范化处理。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Sunny 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="Sunny 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AE%9E%E9%AA%8C/" rel="tag"># 实验</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/04/06/%E6%88%91%E7%9A%84%E7%94%B5%E8%84%91%E7%9A%84%E7%A3%81%E7%9B%98%E8%AE%BE%E7%BD%AE/" rel="prev" title="我的电脑的磁盘设置">
+      <i class="fa fa-chevron-left"></i> 我的电脑的磁盘设置
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/" rel="next" title="操作系统实验">
+      操作系统实验 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+            
+    
+  
+
+  <!-- 应使用 elif 而不是 else if -->  
+  <div class="comments" id="comments">  
+    
+  <script src="https://utteranc.es/client.js"
+    repo="wuyaxiao/wuyaxiao.github.io"
+    issue-term="title"
+    theme="github-light"
+    crossorigin="anonymous"
+    async>
+  </script>
+  
+  </div>  
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E9%A1%B9%E7%9B%AE%E4%B8%80"><span class="nav-number">1.</span> <span class="nav-text">实验项目一</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%90%8E%E9%9D%A2%E7%BB%99%E5%87%BA%E7%9A%84%E8%BF%996%E4%B8%AA%E8%A1%A8%EF%BC%8820%E5%88%86%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">创建后面给出的这6个表（20分）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%94%A8%E4%B8%8D%E5%90%8C%E7%9A%84%E6%96%B9%E6%B3%95%E5%88%9B%E5%BB%BA%E7%BA%A6%E6%9D%9F%EF%BC%9B2%EF%BC%89%E6%9F%A5%E7%9C%8B%E5%92%8C%E5%88%A0%E9%99%A4%E7%BA%A6%E6%9D%9F%EF%BC%9B-3%EF%BC%89%E5%88%9B%E5%BB%BA%E3%80%81%E5%88%A0%E9%99%A4%E9%BB%98%E8%AE%A4%E5%92%8C%E8%A7%84%E5%88%99-3-5%E5%88%86"><span class="nav-number">1.2.</span> <span class="nav-text">1)用不同的方法创建约束；2）查看和删除约束；(3）创建、删除默认和规则 (3*5分)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E4%B8%8D%E5%90%8C%E7%9A%84%E6%96%B9%E6%B3%95%E5%88%9B%E5%BB%BA%E7%BA%A6%E6%9D%9F-5%E5%88%86"><span class="nav-number">1.2.1.</span> <span class="nav-text">用不同的方法创建约束(5分)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E4%B8%8D%E5%90%8C%E7%9A%84%E6%96%B9%E6%B3%95%E6%9F%A5%E7%9C%8B%E5%92%8C%E5%88%A0%E9%99%A4%E7%BA%A6%E6%9D%9F%EF%BC%885%E5%88%86%EF%BC%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">用不同的方法查看和删除约束（5分）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%BA%A6%E6%9D%9F%EF%BC%9A"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">查看约束：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E7%BA%A6%E6%9D%9F%EF%BC%9A"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">删除约束：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E4%B8%8D%E5%90%8C%E7%9A%84%E6%96%B9%E6%B3%95%E5%88%9B%E5%BB%BA%E3%80%81%E5%88%A0%E9%99%A4%E9%BB%98%E8%AE%A4%E5%80%BC%E5%92%8C%E8%A7%84%E5%88%99-%EF%BC%885%E5%88%86%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">用不同的方法创建、删除默认值和规则 （5分）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%BB%98%E8%AE%A4%E5%80%BC%EF%BC%9A"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">创建默认值：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%BB%98%E8%AE%A4%E5%80%BC%EF%BC%9A"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">删除默认值：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%A7%84%E5%88%99%EF%BC%9A"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">创建规则：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E8%A7%84%E5%88%99%EF%BC%9A"><span class="nav-number">1.2.3.4.</span> <span class="nav-text">删除规则：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%89%E6%8E%8C%E6%8F%A1%E4%B8%BB%E9%94%AE%E7%BA%A6%E6%9D%9F%E7%9A%84%E7%89%B9%E7%82%B9%E5%92%8C%E7%94%A8%E6%B3%95%EF%BC%9B2%EF%BC%89%E6%8E%8C%E6%8F%A1%E6%83%9F%E4%B8%80%E6%80%A7%E7%BA%A6%E6%9D%9F%E7%9A%84%E7%94%A8%E6%B3%95%EF%BC%9B3%EF%BC%89%E6%8E%8C%E6%8F%A1%E9%BB%98%E8%AE%A4%E7%BA%A6%E6%9D%9F%E5%92%8C%E9%BB%98%E8%AE%A4%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%94%A8%E6%B3%95%EF%BC%9B4%EF%BC%89%E6%8E%8C%E6%8F%A1CHECK%E7%BA%A6%E6%9D%9F%E5%92%8C%E8%A7%84%E5%88%99%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%94%A8%E6%B3%95%EF%BC%9B5%EF%BC%89%E6%8E%8C%E6%8F%A1%E5%88%A9%E7%94%A8%E4%B8%BB%E9%94%AE%E4%B8%8E%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F%E5%AE%9E%E7%8E%B0%E5%8F%82%E7%85%A7%E5%AE%8C%E6%95%B4%E6%80%A7%E7%9A%84%E6%96%B9%E6%B3%95-5-5%E5%88%86-%E3%80%82"><span class="nav-number">1.3.</span> <span class="nav-text">1）掌握主键约束的特点和用法；2）掌握惟一性约束的用法；3）掌握默认约束和默认对象的用法；4）掌握CHECK约束和规则对象的用法；5）掌握利用主键与外键约束实现参照完整性的方法(5*5分)。</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%8C%E6%8F%A1%E4%B8%BB%E9%94%AE%E7%BA%A6%E6%9D%9F%E7%9A%84%E7%89%B9%E7%82%B9%E5%92%8C%E7%94%A8%E6%B3%95%EF%BC%885%E5%88%86%EF%BC%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">掌握主键约束的特点和用法（5分）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%8C%E6%8F%A1%E6%83%9F%E4%B8%80%E6%80%A7%E7%BA%A6%E6%9D%9F%E7%9A%84%E7%94%A8%E6%B3%95%EF%BC%885%E5%88%86%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">掌握惟一性约束的用法（5分）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%8C%E6%8F%A1%E9%BB%98%E8%AE%A4%E7%BA%A6%E6%9D%9F%E5%92%8C%E9%BB%98%E8%AE%A4%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%94%A8%E6%B3%95%EF%BC%885%E5%88%86%EF%BC%89"><span class="nav-number">1.3.3.</span> <span class="nav-text">掌握默认约束和默认对象的用法（5分）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%8C%E6%8F%A1CHECK%E7%BA%A6%E6%9D%9F%E5%92%8C%E8%A7%84%E5%88%99%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%94%A8%E6%B3%95%EF%BC%885%E5%88%86%EF%BC%89"><span class="nav-number">1.3.4.</span> <span class="nav-text">掌握CHECK约束和规则对象的用法（5分）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CHECK-%E7%BA%A6%E6%9D%9F%E7%9A%84%E7%94%A8%E6%B3%95%EF%BC%9A"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">CHECK 约束的用法：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%84%E5%88%99%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%94%A8%E6%B3%95"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">规则对象的用法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%8C%E6%8F%A1%E5%88%A9%E7%94%A8%E4%B8%BB%E9%94%AE%E4%B8%8E%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F%E5%AE%9E%E7%8E%B0%E5%8F%82%E7%85%A7%E5%AE%8C%E6%95%B4%E6%80%A7%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%885%E5%88%86%EF%BC%89"><span class="nav-number">1.3.5.</span> <span class="nav-text">掌握利用主键与外键约束实现参照完整性的方法（5分）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%A2%9E%E5%8A%A0%E4%B8%80%E4%B8%AA%E5%AD%97%E6%AE%B5%EF%BC%9B2-%E5%88%A0%E9%99%A4%E4%B8%80%E4%B8%AA%E5%AD%97%E6%AE%B5-3-%E5%A2%9E%E5%8A%A0%E4%B8%80%E4%B8%AA%E7%BA%A6%E6%9D%9F-4-%E4%BF%AE%E6%94%B9%E5%AD%97%E6%AE%B5%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-4-5%E5%88%86-%EF%BC%9B"><span class="nav-number">1.4.</span> <span class="nav-text">1)增加一个字段；2)删除一个字段; 3)增加一个约束; 4)修改字段的数据类型(4*5分)；</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E4%B8%80%E4%B8%AA%E5%AD%97%E6%AE%B5-5%E5%88%86"><span class="nav-number">1.4.1.</span> <span class="nav-text">增加一个字段(5分)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E4%B8%80%E4%B8%AA%E5%AD%97%E6%AE%B5-5%E5%88%86"><span class="nav-number">1.4.2.</span> <span class="nav-text">删除一个字段(5分)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E4%B8%80%E4%B8%AA%E7%BA%A6%E6%9D%9F-5%E5%88%86"><span class="nav-number">1.4.3.</span> <span class="nav-text">增加一个约束(5分)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%AD%97%E6%AE%B5%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-5%E5%88%86"><span class="nav-number">1.4.4.</span> <span class="nav-text">修改字段的数据类型(5分)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%89%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95%EF%BC%9B2%EF%BC%89%E9%87%8D%E5%BB%BA%E7%B4%A2%E5%BC%95-2-5%E5%88%86-%E3%80%82"><span class="nav-number">1.5.</span> <span class="nav-text">1）创建索引；2）重建索引(2*5分)。</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95-5%E5%88%86"><span class="nav-number">1.5.1.</span> <span class="nav-text">创建索引(5分)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E5%BB%BA%E7%B4%A2%E5%BC%95-5%E5%88%86"><span class="nav-number">1.5.2.</span> <span class="nav-text">重建索引(5分)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E8%A7%86%E5%9B%BE%EF%BC%9B-2%EF%BC%89%E5%88%A0%E9%99%A4%E8%A7%86%E5%9B%BE-2-5%E5%88%86-%E3%80%82"><span class="nav-number">1.6.</span> <span class="nav-text">1) 创建视图； 2）删除视图(2*5分)。</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%A7%86%E5%9B%BE-5%E5%88%86"><span class="nav-number">1.6.1.</span> <span class="nav-text">创建视图(5分)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E8%A7%86%E5%9B%BE-5%E5%88%86"><span class="nav-number">1.6.2.</span> <span class="nav-text">删除视图(5分)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E9%A1%B9%E7%9B%AE%E4%BA%8C"><span class="nav-number">2.</span> <span class="nav-text">实验项目二</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E8%A1%A8"><span class="nav-number">2.1.</span> <span class="nav-text">建表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-number">2.2.</span> <span class="nav-text">题目</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%88%97%E5%87%BAstudent%E8%A1%A8%E4%B8%AD%E6%89%80%E6%9C%89%E8%AE%B0%E5%BD%95%E7%9A%84sname%E3%80%81sex%E5%92%8Cclass%E5%88%97%E3%80%82"><span class="nav-number">2.2.1.</span> <span class="nav-text">1. 列出student表中所有记录的sname、sex和class列。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%98%BE%E7%A4%BA%E6%95%99%E5%B8%88%E6%89%80%E6%9C%89%E7%9A%84%E5%8D%95%E4%BD%8D%E5%8D%B3%E4%B8%8D%E9%87%8D%E5%A4%8D%E7%9A%84depart%E5%88%97%E3%80%82"><span class="nav-number">2.2.2.</span> <span class="nav-text">2. 显示教师所有的单位即不重复的depart列。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%98%BE%E7%A4%BA%E5%AD%A6%E7%94%9F%E8%A1%A8%E7%9A%84%E6%89%80%E6%9C%89%E8%AE%B0%E5%BD%95%E3%80%82"><span class="nav-number">2.2.3.</span> <span class="nav-text">3. 显示学生表的所有记录。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%98%BE%E7%A4%BAscore%E8%A1%A8%E4%B8%AD%E6%88%90%E7%BB%A9%E5%9C%A860%E5%88%B080%E4%B9%8B%E9%97%B4%E7%9A%84%E6%89%80%E6%9C%89%E8%AE%B0%E5%BD%95%E3%80%82"><span class="nav-number">2.2.4.</span> <span class="nav-text">4. 显示score表中成绩在60到80之间的所有记录。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E6%98%BE%E7%A4%BAscore%E8%A1%A8%E4%B8%AD%E6%88%90%E7%BB%A9%E4%B8%BA85%EF%BC%8C86%E6%88%9688%E7%9A%84%E8%AE%B0%E5%BD%95%E3%80%82"><span class="nav-number">2.2.5.</span> <span class="nav-text">5. 显示score表中成绩为85，86或88的记录。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-%E6%98%BE%E7%A4%BAstudent%E8%A1%A8%E4%B8%AD%E2%80%9C95031%E2%80%9D%E7%8F%AD%E6%88%96%E6%80%A7%E5%88%AB%E4%B8%BA%E2%80%9C%E5%A5%B3%E2%80%9D%E7%9A%84%E5%90%8C%E5%AD%A6%E8%AE%B0%E5%BD%95%E3%80%82"><span class="nav-number">2.2.6.</span> <span class="nav-text">6. 显示student表中“95031”班或性别为“女”的同学记录。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-%E4%BB%A5class%E9%99%8D%E5%BA%8F%E6%98%BE%E7%A4%BAstudent%E8%A1%A8%E7%9A%84%E6%89%80%E6%9C%89%E8%AE%B0%E5%BD%95%E3%80%82"><span class="nav-number">2.2.7.</span> <span class="nav-text">7. 以class降序显示student表的所有记录。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-%E4%BB%A5cno%E5%8D%87%E5%BA%8F%E3%80%81degree%E9%99%8D%E5%BA%8F%E6%98%BE%E7%A4%BAscore%E8%A1%A8%E7%9A%84%E6%89%80%E6%9C%89%E8%AE%B0%E5%BD%95%E3%80%82"><span class="nav-number">2.2.8.</span> <span class="nav-text">8. 以cno升序、degree降序显示score表的所有记录。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#9-%E6%98%BE%E7%A4%BA%E2%80%9C98031%E2%80%9D%E7%8F%AD%E7%9A%84%E5%AD%A6%E7%94%9F%E4%BA%BA%E6%95%B0%E3%80%82"><span class="nav-number">2.2.9.</span> <span class="nav-text">9. 显示“98031”班的学生人数。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#10-%E6%98%BE%E7%A4%BAscore%E8%A1%A8%E4%B8%AD%E7%9A%84%E6%9C%80%E9%AB%98%E5%88%86%E7%9A%84%E5%AD%A6%E7%94%9F%E5%AD%A6%E5%8F%B7%E5%92%8C%E8%AF%BE%E7%A8%8B%E5%8F%B7%E3%80%82"><span class="nav-number">2.2.10.</span> <span class="nav-text">10. 显示score表中的最高分的学生学号和课程号。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#11-%E6%98%BE%E7%A4%BA%E2%80%9C3-105%E2%80%9D%E5%8F%B7%E8%AF%BE%E7%A8%8B%E7%9A%84%E5%B9%B3%E5%9D%87%E5%88%86%E3%80%82"><span class="nav-number">2.2.11.</span> <span class="nav-text">11. 显示“3-105”号课程的平均分。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#12-%E6%98%BE%E7%A4%BAscore%E8%A1%A8%E4%B8%AD%E8%87%B3%E5%B0%91%E6%9C%895%E5%90%8D%E5%AD%A6%E7%94%9F%E9%80%89%E4%BF%AE%E7%9A%84%E5%B9%B6%E4%BB%A53%E5%BC%80%E5%A4%B4%E7%9A%84%E8%AF%BE%E7%A8%8B%E5%8F%B7%E7%9A%84%E5%B9%B3%E5%9D%87%E5%88%86%E6%95%B0%E3%80%82"><span class="nav-number">2.2.12.</span> <span class="nav-text">12. 显示score表中至少有5名学生选修的并以3开头的课程号的平均分数。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#13-%E6%98%BE%E7%A4%BA%E6%9C%80%E4%BD%8E%E5%88%86%E5%A4%A7%E4%BA%8E70%EF%BC%8C%E6%9C%80%E9%AB%98%E5%88%86%E5%B0%8F%E4%BA%8E90-%E7%9A%84sno%E5%88%97%E3%80%82"><span class="nav-number">2.2.13.</span> <span class="nav-text">13. 显示最低分大于70，最高分小于90 的sno列。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#14-%E6%98%BE%E7%A4%BA%E6%89%80%E6%9C%89%E5%AD%A6%E7%94%9F%E7%9A%84-sname%E3%80%81-cno%E5%92%8Cdegree%E5%88%97%E3%80%82"><span class="nav-number">2.2.14.</span> <span class="nav-text">14. 显示所有学生的 sname、 cno和degree列。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#15-%E6%98%BE%E7%A4%BA%E6%89%80%E6%9C%89%E5%AD%A6%E7%94%9F%E7%9A%84-sname%E3%80%81-cname%E5%92%8Cdegree%E5%88%97%E3%80%82"><span class="nav-number">2.2.15.</span> <span class="nav-text">15. 显示所有学生的 sname、 cname和degree列。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#16-%E5%88%97%E5%87%BA%E2%80%9C95033%E2%80%9D%E7%8F%AD%E6%89%80%E9%80%89%E8%AF%BE%E7%A8%8B%E7%9A%84%E5%B9%B3%E5%9D%87%E5%88%86%E3%80%82"><span class="nav-number">2.2.16.</span> <span class="nav-text">16. 列出“95033”班所选课程的平均分。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#17-%E6%98%BE%E7%A4%BA%E9%80%89%E4%BF%AE%E2%80%9C3-105%E2%80%9D%E8%AF%BE%E7%A8%8B%E7%9A%84%E6%88%90%E7%BB%A9%E9%AB%98%E4%BA%8E%E2%80%9C109%E2%80%9D%E5%8F%B7%E5%90%8C%E5%AD%A6%E6%88%90%E7%BB%A9%E7%9A%84%E6%89%80%E6%9C%89%E5%90%8C%E5%AD%A6%E7%9A%84%E8%AE%B0%E5%BD%95%E3%80%82"><span class="nav-number">2.2.17.</span> <span class="nav-text">17. 显示选修“3-105”课程的成绩高于“109”号同学成绩的所有同学的记录。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#18-%E6%98%BE%E7%A4%BAscore%E4%B8%AD%E9%80%89%E4%BF%AE%E5%A4%9A%E9%97%A8%E8%AF%BE%E7%A8%8B%E7%9A%84%E5%90%8C%E5%AD%A6%E4%B8%AD%E5%88%86%E6%95%B0%E4%B8%BA%E9%9D%9E%E6%9C%80%E9%AB%98%E5%88%86%E6%88%90%E7%BB%A9%E7%9A%84%E8%AE%B0%E5%BD%95%E3%80%82"><span class="nav-number">2.2.18.</span> <span class="nav-text">18. 显示score中选修多门课程的同学中分数为非最高分成绩的记录。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#19-%E6%98%BE%E7%A4%BA%E6%88%90%E7%BB%A9%E9%AB%98%E4%BA%8E%E5%AD%A6%E5%8F%B7%E4%B8%BA%E2%80%9C109%E2%80%9D%E3%80%81%E8%AF%BE%E7%A8%8B%E5%8F%B7%E4%B8%BA%E2%80%9C3-105%E2%80%9D%E7%9A%84%E6%88%90%E7%BB%A9%E7%9A%84%E6%89%80%E6%9C%89%E8%AE%B0%E5%BD%95%E3%80%82"><span class="nav-number">2.2.19.</span> <span class="nav-text">19. 显示成绩高于学号为“109”、课程号为“3-105”的成绩的所有记录。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#20-%E6%98%BE%E7%A4%BA%E5%87%BA%E5%92%8C%E5%AD%A6%E5%8F%B7%E4%B8%BA%E2%80%9C108%E2%80%9D%E7%9A%84%E5%90%8C%E5%AD%A6%E5%90%8C%E5%B9%B4%E5%87%BA%E7%94%9F%E7%9A%84%E6%89%80%E6%9C%89%E5%AD%A6%E7%94%9F%E7%9A%84sno%E3%80%81sname%E5%92%8C-birthday%E5%88%97%E3%80%82"><span class="nav-number">2.2.20.</span> <span class="nav-text">20. 显示出和学号为“108”的同学同年出生的所有学生的sno、sname和 birthday列。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#21-%E6%98%BE%E7%A4%BA%E2%80%9C%E5%BC%A0%E6%97%AD%E2%80%9D%E8%80%81%E5%B8%88%E4%BB%BB%E8%AF%BE%E7%9A%84%E5%AD%A6%E7%94%9F%E6%88%90%E7%BB%A9%E3%80%82"><span class="nav-number">2.2.21.</span> <span class="nav-text">21. 显示“张旭”老师任课的学生成绩。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#22-%E6%98%BE%E7%A4%BA%E9%80%89%E4%BF%AE%E6%9F%90%E8%AF%BE%E7%A8%8B%E7%9A%84%E5%90%8C%E5%AD%A6%E4%BA%BA%E6%95%B0%E5%A4%9A%E4%BA%8E5%E4%BA%BA%E7%9A%84%E8%80%81%E5%B8%88%E5%A7%93%E5%90%8D%E3%80%82"><span class="nav-number">2.2.22.</span> <span class="nav-text">22. 显示选修某课程的同学人数多于5人的老师姓名。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#23-%E6%98%BE%E7%A4%BA%E2%80%9C95033%E2%80%9D%E7%8F%AD%E5%92%8C%E2%80%9C95031%E2%80%9D%E7%8F%AD%E5%85%A8%E4%BD%93%E5%AD%A6%E7%94%9F%E7%9A%84%E8%AE%B0%E5%BD%95%E3%80%82"><span class="nav-number">2.2.23.</span> <span class="nav-text">23. 显示“95033”班和“95031”班全体学生的记录。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#24-%E6%98%BE%E7%A4%BA%E5%AD%98%E5%9C%A8%E6%9C%8985%E5%88%86%E4%BB%A5%E4%B8%8A%E6%88%90%E7%BB%A9%E7%9A%84%E8%AF%BE%E7%A8%8Bcno%E3%80%82"><span class="nav-number">2.2.24.</span> <span class="nav-text">24. 显示存在有85分以上成绩的课程cno。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#25-%E6%98%BE%E7%A4%BA%E2%80%9C%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E2%80%9D%E8%80%81%E5%B8%88%E6%89%80%E6%95%99%E8%AF%BE%E7%A8%8B%E7%9A%84%E6%88%90%E7%BB%A9%E8%A1%A8%E3%80%82"><span class="nav-number">2.2.25.</span> <span class="nav-text">25. 显示“计算机系”老师所教课程的成绩表。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#26-%E6%98%BE%E7%A4%BA%E2%80%9C%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E2%80%9D%E5%92%8C%E2%80%9C%E7%94%B5%E5%AD%90%E5%B7%A5%E7%A8%8B%E7%B3%BB%E2%80%9D%E4%B8%8D%E5%90%8C%E8%81%8C%E7%A7%B0%E7%9A%84%E8%80%81%E5%B8%88%E7%9A%84tname%E5%92%8Cprof%E3%80%82"><span class="nav-number">2.2.26.</span> <span class="nav-text">26. 显示“计算机系”和“电子工程系”不同职称的老师的tname和prof。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#27-%E6%98%BE%E7%A4%BA%E9%80%89%E4%BF%AE%E7%BC%96%E5%8F%B7%E4%B8%BA%E2%80%9C3-105%E2%80%9D%E8%AF%BE%E7%A8%8B%E4%B8%94%E6%88%90%E7%BB%A9%E8%87%B3%E5%B0%91%E9%AB%98%E4%BA%8E%E2%80%9C3-245%E2%80%9D%E8%AF%BE%E7%A8%8B%E7%9A%84%E5%90%8C%E5%AD%A6%E7%9A%84cno%E3%80%81sno%E5%92%8Cdegree%EF%BC%8C%E5%B9%B6%E6%8C%89degree%E4%BB%8E%E9%AB%98%E5%88%B0%E4%BD%8E%E6%AC%A1%E5%BA%8F%E6%8E%92%E5%88%97%E3%80%82"><span class="nav-number">2.2.27.</span> <span class="nav-text">27. 显示选修编号为“3-105”课程且成绩至少高于“3-245”课程的同学的cno、sno和degree，并按degree从高到低次序排列。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#28-%E6%98%BE%E7%A4%BA%E9%80%89%E4%BF%AE%E7%BC%96%E5%8F%B7%E4%B8%BA%E2%80%9C3-105%E2%80%9D%E8%AF%BE%E7%A8%8B%E4%B8%94%E6%88%90%E7%BB%A9%E9%AB%98%E4%BA%8E%E2%80%9C3-245%E2%80%9D%E8%AF%BE%E7%A8%8B%E7%9A%84%E5%90%8C%E5%AD%A6%E7%9A%84cno%E3%80%81sno%E5%92%8Cdegree%E3%80%82"><span class="nav-number">2.2.28.</span> <span class="nav-text">28. 显示选修编号为“3-105”课程且成绩高于“3-245”课程的同学的cno、sno和degree。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#29-%E5%88%97%E5%87%BA%E6%89%80%E6%9C%89%E4%BB%BB%E8%AF%BE%E8%80%81%E5%B8%88%E7%9A%84-tname-%E5%92%8C-depart%E3%80%82"><span class="nav-number">2.2.29.</span> <span class="nav-text">29. 列出所有任课老师的 tname 和 depart。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#30-%E5%88%97%E5%87%BA%E6%89%80%E6%9C%89%E6%9C%AA%E8%AE%B2%E8%AF%BE%E8%80%81%E5%B8%88%E7%9A%84-tname-%E5%92%8C-depart%E3%80%82"><span class="nav-number">2.2.30.</span> <span class="nav-text">30. 列出所有未讲课老师的 tname 和 depart。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#31-%E5%88%97%E5%87%BA%E6%89%80%E6%9C%89%E8%80%81%E5%B8%88%E5%92%8C%E5%90%8C%E5%AD%A6%E7%9A%84%E5%A7%93%E5%90%8D%E3%80%81%E6%80%A7%E5%88%AB%E5%92%8C%E7%94%9F%E6%97%A5%E3%80%82"><span class="nav-number">2.2.31.</span> <span class="nav-text">31. 列出所有老师和同学的姓名、性别和生日。(*)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#32-%E6%A3%80%E7%B4%A2%E6%89%80%E5%AD%A6%E8%AF%BE%E7%A8%8B%E5%8C%85%E5%90%AB%E5%AD%A6%E7%94%9F%E2%80%9C103%E2%80%9D%E6%89%80%E5%AD%A6%E8%AF%BE%E7%A8%8B%E7%9A%84%E5%AD%A6%E7%94%9F%E5%AD%A6%E5%8F%B7%E3%80%82"><span class="nav-number">2.2.32.</span> <span class="nav-text">32. 检索所学课程包含学生“103”所学课程的学生学号。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#33-%E6%A3%80%E7%B4%A2%E9%80%89%E4%BF%AE%E6%89%80%E6%9C%89%E8%AF%BE%E7%A8%8B%E7%9A%84%E5%AD%A6%E7%94%9F%E5%A7%93%E5%90%8D%E3%80%82"><span class="nav-number">2.2.33.</span> <span class="nav-text">33. 检索选修所有课程的学生姓名。(*)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E9%A1%B9%E7%9B%AE%E4%B8%89"><span class="nav-number">3.</span> <span class="nav-text">实验项目三</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%9F%A5%E8%AF%A2%E5%9B%BE%E4%B9%A6%E5%BA%93%E5%AD%98%E9%87%8F%E7%9A%84%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E2%80%9Ccx-tskcl-proc%E2%80%9D%EF%BC%88%E5%A6%82%E6%9E%9C%E6%98%AFSQL-server%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E8%AF%9D%E8%B5%B7%E8%BF%99%E4%B8%AA%E5%90%8D%E5%AD%97%EF%BC%8C%E6%98%AF%E5%85%B6%E5%AE%83%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%99%E6%8C%89%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E8%A6%81%E6%B1%82%E8%B5%B7%E5%90%8D%E5%AD%97%EF%BC%8C%E4%B8%8B%E9%9D%A2%E5%90%8C%EF%BC%89%EF%BC%8C%E8%BE%93%E5%87%BA%E7%9A%84%E5%86%85%E5%AE%B9%E5%8C%85%E5%90%AB%E7%B1%BB%E5%88%AB%E5%8F%B7%E3%80%81%E5%9B%BE%E4%B9%A6%E7%BC%96%E5%8F%B7%E3%80%81%E5%9B%BE%E4%B9%A6%E5%90%8D%E7%A7%B0%E3%80%81%E5%BA%93%E5%AD%98%E6%95%B0%E7%AD%89%E6%95%B0%E6%8D%AE%E5%86%85%E5%AE%B9%E3%80%82"><span class="nav-number">3.1.</span> <span class="nav-text">1.创建一个查询图书库存量的存储过程“cx_tskcl_proc”（如果是SQL server数据库的话起这个名字，是其它数据库则按数据库的要求起名字，下面同），输出的内容包含类别号、图书编号、图书名称、库存数等数据内容。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%90%8D%E4%B8%BATS-CX-PROC%E7%9A%84%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%EF%BC%8C%E5%AE%83%E5%B8%A6%E6%9C%89%E4%B8%80%E4%B8%AA%E8%BE%93%E5%85%A5%E5%8F%82%E6%95%B0%EF%BC%8C%E7%94%A8%E4%BA%8E%E6%8E%A5%E5%8F%97%E5%9B%BE%E4%B9%A6%E7%BC%96%E5%8F%B7%EF%BC%8C%E6%98%BE%E7%A4%BA%E8%AF%A5%E5%9B%BE%E4%B9%A6%E7%9A%84%E5%90%8D%E7%A7%B0%E3%80%81%E4%BD%9C%E8%80%85%E3%80%81%E5%87%BA%E7%89%88%E5%92%8C%E5%A4%8D%E6%9C%AC%E6%95%B0%E3%80%82"><span class="nav-number">3.2.</span> <span class="nav-text">2.创建一个名为TS_CX_PROC的存储过程，它带有一个输入参数，用于接受图书编号，显示该图书的名称、作者、出版和复本数。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%BF%AE%E6%94%B9%E5%AD%98%E5%82%A8%E4%BF%AE%E6%94%B9TS-CX-PROC%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%EF%BC%8C%E4%BD%BF%E4%B9%8B%E8%83%BD%E6%8C%89%E5%9B%BE%E4%B9%A6%E5%90%8D%E7%A7%B0%E6%9F%A5%E8%AF%A2%E5%9B%BE%E4%B9%A6%E7%9A%84%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF%E3%80%82"><span class="nav-number">3.3.</span> <span class="nav-text">3.修改存储修改TS_CX_PROC存储过程，使之能按图书名称查询图书的相关信息。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%88%A0%E9%99%A4%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">3.4.</span> <span class="nav-text">4.删除存储过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%9B%BE%E4%B9%A6%E7%B1%BB%E5%88%AB%E8%A1%A8%E4%B8%8A%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%90%8D%E4%B8%BAtslb-insert-trigger%E7%9A%84%E8%A7%A6%E5%8F%91%E5%99%A8%EF%BC%8C%E5%BD%93%E6%89%A7%E8%A1%8CINSERT%E6%93%8D%E4%BD%9C%E6%97%B6%EF%BC%8C%E8%AF%A5%E8%A7%A6%E5%8F%91%E5%99%A8%E8%A2%AB%E8%A7%A6%E5%8F%91%EF%BC%8C%E7%A6%81%E6%AD%A2%E6%8F%92%E5%85%A5%E8%AE%B0%E5%BD%95%E3%80%82"><span class="nav-number">3.5.</span> <span class="nav-text">5.图书类别表上创建一个名为tslb_insert_trigger的触发器，当执行INSERT操作时，该触发器被触发，禁止插入记录。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E5%9C%A8%E5%9B%BE%E4%B9%A6%E6%98%8E%E7%BB%86%E8%A1%A8%E4%B8%8A%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%90%8D%E4%B8%BAts-delete-trigger%E7%9A%84%E8%A7%A6%E5%8F%91%E5%99%A8%EF%BC%8C%E5%BD%93%E6%89%A7%E8%A1%8CDELETE%E6%93%8D%E4%BD%9C%E6%97%B6%EF%BC%8C%E8%AF%A5%E8%A7%A6%E5%8F%91%E5%99%A8%E8%A2%AB%E8%A7%A6%E5%8F%91%EF%BC%8C%E7%A6%81%E6%AD%A2%E5%88%A0%E9%99%A4%E8%AE%B0%E5%BD%95%E3%80%82"><span class="nav-number">3.6.</span> <span class="nav-text">6.在图书明细表上创建一个名为ts_delete_trigger的触发器，当执行DELETE操作时，该触发器被触发，禁止删除记录。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E5%9C%A8%E8%AF%BB%E8%80%85%E4%BF%A1%E6%81%AF%E8%A1%A8%E4%B8%8A%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%90%8D%E4%B8%BAdzxx-insert-trigger%E7%9A%84%E8%A7%A6%E5%8F%91%E5%99%A8%EF%BC%8C%E5%BD%93%E5%9C%A8%E8%AF%BB%E8%80%85%E4%BF%A1%E6%81%AF%E8%A1%A8%E4%B8%AD%E6%8F%92%E5%85%A5%E8%AE%B0%E5%BD%95%E6%97%B6%EF%BC%8C%E5%B0%86%E8%AF%A5%E8%AE%B0%E5%BD%95%E4%B8%AD%E7%9A%84%E5%80%9F%E4%B9%A6%E8%AF%81%E5%8F%B7%E8%87%AA%E5%8A%A8%E6%8F%92%E5%85%A5%E5%80%9F%E8%BF%98%E6%98%8E%E7%BB%86%E8%A1%A8%E4%B8%AD%E3%80%82"><span class="nav-number">3.7.</span> <span class="nav-text">7.在读者信息表上创建一个名为dzxx_insert_trigger的触发器，当在读者信息表中插入记录时，将该记录中的借书证号自动插入借还明细表中。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E5%88%A0%E9%99%A4%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">3.8.</span> <span class="nav-text">8.删除触发器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E9%A1%B9%E7%9B%AE%E5%9B%9B"><span class="nav-number">4.</span> <span class="nav-text">实验项目四</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A%EF%BC%9A%E6%95%99%E6%9D%90%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.1.</span> <span class="nav-text">数据库设计报告：教材管理系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A"><span class="nav-number">4.1.1.</span> <span class="nav-text">系统需求分析报告</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%A6%82%E5%BF%B5%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%AE%BE%E8%AE%A1%EF%BC%88E-R%E5%9B%BE%EF%BC%89"><span class="nav-number">4.1.2.</span> <span class="nav-text">2. 概念模型的设计（E-R图）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">4.1.3.</span> <span class="nav-text">3. 关系数据模型的设计</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E4%B9%A6%E9%A6%86%E6%97%A5%E5%B8%B8%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1"><span class="nav-number">4.2.</span> <span class="nav-text">图书馆日常事务管理系统数据库设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%9B%BE%E4%B9%A6%E9%A6%86%E6%97%A5%E5%B8%B8%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E5%8A%9F%E8%83%BD%E7%AE%80%E6%9E%90"><span class="nav-number">4.2.1.</span> <span class="nav-text">（1）图书馆日常事务管理系统功能简析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%9B%BE%E4%B9%A6%E9%A6%86%E6%97%A5%E5%B8%B8%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E4%B8%AD%E7%9A%84%E5%AE%9E%E4%BD%93%E5%92%8C%E5%B1%9E%E6%80%A7%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">4.2.2.</span> <span class="nav-text">（2）图书馆日常事务管理系统中的实体和属性的设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E8%AE%BE%E8%AE%A1%E8%AF%A5%E7%B3%BB%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84E-R%E5%9B%BE"><span class="nav-number">4.2.3.</span> <span class="nav-text">（3）设计该系统数据库的E-R图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E5%B0%86%E8%AE%BE%E8%AE%A1%E5%A5%BD%E7%9A%84E-R%E5%9B%BE%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.2.4.</span> <span class="nav-text">（4）将设计好的E-R图转换为关系模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%885-%E5%AF%B9%E8%AE%BE%E8%AE%A1%E5%A5%BD%E7%9A%84%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%BC%8F%E8%BF%9B%E8%A1%8C%E8%A7%84%E8%8C%83%E5%8C%96%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">4.2.5.</span> <span class="nav-text">（5)对设计好的关系模式进行规范化的处理</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunny</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunny</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

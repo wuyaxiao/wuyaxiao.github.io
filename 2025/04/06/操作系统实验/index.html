@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuyaxiao.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="rCore-Tutorial-v3实验 lab1编程作业总结编程内容Log Info 实现自定义日志记录器结构体 SimpleLogger：  创建一个名为 SimpleLogger 的结构体，实现 Log trait 中的方法： enabled、 log 和 flush。这些方法用于判断日志记录是否启用、记录日志消息以及刷新日志。 在 enabled 方法中，始终返回 true，表示日志记录一直">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统实验">
+<meta property="og:url" content="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/index.html">
+<meta property="og:site_name" content="学习小屋">
+<meta property="og:description" content="rCore-Tutorial-v3实验 lab1编程作业总结编程内容Log Info 实现自定义日志记录器结构体 SimpleLogger：  创建一个名为 SimpleLogger 的结构体，实现 Log trait 中的方法： enabled、 log 和 flush。这些方法用于判断日志记录是否启用、记录日志消息以及刷新日志。 在 enabled 方法中，始终返回 true，表示日志记录一直">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240525213549206.png">
+<meta property="og:image" content="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/Cache_-b461d57e7cbe281..jpg">
+<meta property="og:image" content="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240525204941485.png">
+<meta property="og:image" content="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240525214501761.png">
+<meta property="og:image" content="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240526173032754.png">
+<meta property="og:image" content="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240526173119390.png">
+<meta property="og:image" content="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240526173236555.png">
+<meta property="og:image" content="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240526173252748.png">
+<meta property="og:image" content="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240526173620130.png">
+<meta property="article:published_time" content="2025-04-06T14:03:48.000Z">
+<meta property="article:modified_time" content="2025-04-06T14:10:39.375Z">
+<meta property="article:author" content="Sunny">
+<meta property="article:tag" content="实验">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240525213549206.png">
+
+<link rel="canonical" href="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>操作系统实验 | 学习小屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学习小屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wuyaxiao.com/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sunny">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学习小屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          操作系统实验
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-04-06 22:03:48 / 修改时间：22:10:39" itemprop="dateCreated datePublished" datetime="2025-04-06T22:03:48+08:00">2025-04-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8F%8A%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">操作系统及安全</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>rCore-Tutorial-v3实验</p>
+<h1 id="lab1"><a href="#lab1" class="headerlink" title="lab1"></a>lab1</h1><h2 id="编程作业"><a href="#编程作业" class="headerlink" title="编程作业"></a>编程作业</h2><h3 id="总结编程内容"><a href="#总结编程内容" class="headerlink" title="总结编程内容"></a>总结编程内容</h3><h4 id="Log-Info"><a href="#Log-Info" class="headerlink" title="Log Info"></a>Log Info</h4><ol>
+<li><p>实现自定义日志记录器结构体 SimpleLogger：</p>
+<ul>
+<li>创建一个名为 <code>SimpleLogger</code> 的结构体，实现 Log trait 中的方法： <code>enabled</code>、 <code>log</code> 和 <code>flush</code>。这些方法用于判断日志记录是否启用、记录日志消息以及刷新日志。</li>
+<li>在 <code>enabled</code> 方法中，始终返回 <code>true</code>，表示日志记录一直是启用状态。</li>
+<li>在 <code>log</code> 方法中，根据日志级别设置不同的终端文字颜色，然后使用 <code>println!</code> 打印彩色日志消息。</li>
+<li><code>flush</code> 方法在这里留空。</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">Log</span> <span class="keyword">for</span> <span class="title class_">SimpleLogger</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">enabled</span>(&amp;<span class="keyword">self</span>, _metadata: &amp;Metadata) <span class="punctuation">-&gt;</span> <span class="type">bool</span> &#123;</span><br><span class="line">        <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">log</span>(&amp;<span class="keyword">self</span>, record: &amp;Record) &#123;</span><br><span class="line">        <span class="keyword">if</span> !<span class="keyword">self</span>.<span class="title function_ invoke__">enabled</span>(record.<span class="title function_ invoke__">metadata</span>()) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">color</span> = <span class="keyword">match</span> record.<span class="title function_ invoke__">level</span>() &#123;</span><br><span class="line">            Level::Error =&gt; <span class="number">31</span>, <span class="comment">// Red</span></span><br><span class="line">            Level::Warn =&gt; <span class="number">93</span>,  <span class="comment">// BrightYellow</span></span><br><span class="line">            Level::Info =&gt; <span class="number">34</span>,  <span class="comment">// Blue</span></span><br><span class="line">            Level::<span class="built_in">Debug</span> =&gt; <span class="number">32</span>, <span class="comment">// Green</span></span><br><span class="line">            Level::Trace =&gt; <span class="number">90</span>, <span class="comment">// BrightBlack</span></span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="comment">//&quot;\x1b[31mhello world\x1b[0m&quot;</span></span><br><span class="line">        <span class="built_in">println!</span>(</span><br><span class="line">            <span class="string">&quot;\u&#123;1B&#125;[&#123;&#125;m[&#123;:&gt;5&#125;] &#123;&#125;\u&#123;1B&#125;[0m&quot;</span>,</span><br><span class="line">            color,</span><br><span class="line">            record.<span class="title function_ invoke__">level</span>(),</span><br><span class="line">            record.<span class="title function_ invoke__">args</span>(),</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">flush</span>(&amp;<span class="keyword">self</span>) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化日志记录器：</p>
+</li>
+</ol>
+<ul>
+<li>创建一个 <code>init</code> 函数，在函数内部进行日志记录器的初始化工作。</li>
+<li>定义一个静态变量 <code>LOGGER</code>，其类型为生成的 <code>SimpleLogger</code> 实例。</li>
+<li>将 <code>LOGGER</code> 设置为全局默认的日志记录器，确保它在整个程序生命周期中使用相同的日志实例。</li>
+<li>使用 log crate 中的 <code>set_max_level</code> 方法，根据环境变量 “LOG” 的值，选择相应的日志级别。通过 match 匹配语句将环境变量的值转换为对应的 log crate 中的 <code>LevelFilter</code> 类型的日志级别。</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">init</span>() &#123;</span><br><span class="line">    <span class="keyword">static</span> LOGGER: SimpleLogger = SimpleLogger;</span><br><span class="line">    log::<span class="title function_ invoke__">set_logger</span>(&amp;LOGGER).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    log::<span class="title function_ invoke__">set_max_level</span>(<span class="keyword">match</span> <span class="built_in">option_env!</span>(<span class="string">&quot;LOG&quot;</span>) &#123;</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(<span class="string">&quot;ERROR&quot;</span>) =&gt; LevelFilter::Error,</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(<span class="string">&quot;WARN&quot;</span>) =&gt; LevelFilter::Warn,</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(<span class="string">&quot;INFO&quot;</span>) =&gt; LevelFilter::Info,</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(<span class="string">&quot;DEBUG&quot;</span>) =&gt; LevelFilter::<span class="built_in">Debug</span>,</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(<span class="string">&quot;TRACE&quot;</span>) =&gt; LevelFilter::Trace,</span><br><span class="line">        _ =&gt; LevelFilter::Off,</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Kernel-Info"><a href="#Kernel-Info" class="headerlink" title="Kernel Info"></a>Kernel Info</h4><ol>
+<li>实验思路总结：</li>
+</ol>
+<ul>
+<li>在 <code>rust_main</code> 函数中，首先通过 <code>extern &quot;C&quot;</code> 声明了一系列外部函数，这些函数用于获取内核各个段（text、rodata、data、bss）的起止地址，以及栈的上下界。</li>
+<li>调用 <code>logging::init()</code> 函数，初始化日志记录器。</li>
+<li>使用 <code>info!</code>、 <code>error!</code>、 <code>warn!</code>、 <code>debug!</code> 宏输出不同级别的日志信息，包括各个段的起止地址等内核信息。使用println输出”hello world”。</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">rust_main</span>() <span class="punctuation">-&gt;</span> ! &#123;</span><br><span class="line">    <span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">stext</span>(); <span class="comment">// begin addr of text segment</span></span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">etext</span>(); <span class="comment">// end addr of text segment</span></span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">srodata</span>(); <span class="comment">// start addr of Read-Only data segment</span></span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">erodata</span>(); <span class="comment">// end addr of Read-Only data ssegment</span></span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">sdata</span>(); <span class="comment">// start addr of data segment</span></span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">edata</span>(); <span class="comment">// end addr of data segment</span></span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">sbss</span>(); <span class="comment">// start addr of BSS segment</span></span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">ebss</span>(); <span class="comment">// end addr of BSS segment</span></span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">boot_stack_lower_bound</span>(); <span class="comment">// stack lower bound</span></span><br><span class="line">        <span class="keyword">fn</span> <span class="title function_">boot_stack_top</span>(); <span class="comment">// stack top</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_ invoke__">clear_bss</span>();</span><br><span class="line">    logging::<span class="title function_ invoke__">init</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;[kernel] Hello, world!&quot;</span>);</span><br><span class="line">    info!(</span><br><span class="line">        <span class="string">&quot;[kernel] .text [&#123;:#x&#125;, &#123;:#x&#125;)&quot;</span>,</span><br><span class="line">        stext <span class="keyword">as</span> <span class="type">usize</span>,</span><br><span class="line">        etext <span class="keyword">as</span> <span class="type">usize</span></span><br><span class="line">    );</span><br><span class="line">    error!(</span><br><span class="line">        <span class="string">&quot;[kernel] .rodata [&#123;:#x&#125;, &#123;:#x&#125;)&quot;</span>,</span><br><span class="line">        srodata <span class="keyword">as</span> <span class="type">usize</span>, erodata <span class="keyword">as</span> <span class="type">usize</span></span><br><span class="line">    );</span><br><span class="line">    warn!(</span><br><span class="line">        <span class="string">&quot;[kernel] .data [&#123;:#x&#125;, &#123;:#x&#125;)&quot;</span>,</span><br><span class="line">        sdata <span class="keyword">as</span> <span class="type">usize</span>, edata <span class="keyword">as</span> <span class="type">usize</span></span><br><span class="line">    );</span><br><span class="line">    debug!(</span><br><span class="line">        <span class="string">&quot;[kernel] boot_stack top=bottom=&#123;:#x&#125;, lower_bound=&#123;:#x&#125;&quot;</span>,</span><br><span class="line">        boot_stack_top <span class="keyword">as</span> <span class="type">usize</span>, boot_stack_lower_bound <span class="keyword">as</span> <span class="type">usize</span></span><br><span class="line">    );</span><br><span class="line">    info!(<span class="string">&quot;[kernel] .bss [&#123;:#x&#125;, &#123;:#x&#125;)&quot;</span>, sbss <span class="keyword">as</span> <span class="type">usize</span>, ebss <span class="keyword">as</span> <span class="type">usize</span>);</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="运行截图"><a href="#运行截图" class="headerlink" title="运行截图"></a>运行截图</h3><p><img src="/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240525213549206.png" alt="image-20240525213549206"></p>
+<h2 id="问答作业"><a href="#问答作业" class="headerlink" title="问答作业"></a>问答作业</h2><h3 id="请学习-gdb-调试工具的使用-这对后续调试很重要-，并通过-gdb-简单跟踪从机器加电到跳转到-0x80200000-的简单过程。只需要描述重要的跳转即可，只需要描述在-qemu-上的情况。"><a href="#请学习-gdb-调试工具的使用-这对后续调试很重要-，并通过-gdb-简单跟踪从机器加电到跳转到-0x80200000-的简单过程。只需要描述重要的跳转即可，只需要描述在-qemu-上的情况。" class="headerlink" title="请学习 gdb 调试工具的使用(这对后续调试很重要)，并通过 gdb 简单跟踪从机器加电到跳转到 0x80200000 的简单过程。只需要描述重要的跳转即可，只需要描述在 qemu 上的情况。"></a>请学习 gdb 调试工具的使用(这对后续调试很重要)，并通过 gdb 简单跟踪从机器加电到跳转到 0x80200000 的简单过程。只需要描述重要的跳转即可，只需要描述在 qemu 上的情况。</h3><p>Qemu 启动后 PC 被初始化为 <code>0x1000</code> 。我们可以检查一下 Qemu 的启动固件的内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/10i <span class="variable">$pc</span></span><br><span class="line">=&gt; 0x1000:  auipc   t0,0x0</span><br><span class="line">0x1004:     addi    a1,t0,32</span><br><span class="line">0x1008:     csrr    a0,mhartid</span><br><span class="line">0x100c:     ld      t0,24(t0)</span><br><span class="line">0x1010:     jr      t0</span><br><span class="line">0x1014:     unimp</span><br><span class="line">0x1016:     unimp</span><br><span class="line">0x1018:     unimp</span><br><span class="line">0x101a:     0x8000</span><br><span class="line">0x101c:     unimp</span><br></pre></td></tr></table></figure>
+
+<p> Qemu 的固件仅包含 5 条指令，从 <code>0x1014</code> 开始都是数据，当数据为 0 的时候则会被反汇编为 <code>unimp</code> 指令。 <code>0x101a</code> 处的数据 <code>0x8000</code> 是能够跳转到 <code>0x80000000</code> 进入启动下一阶段的关键。在执行位于 <code>0x1010</code> 的指令之前，寄存器 <code>t0</code> 的值恰好为 <code>0x80000000</code> ，随后通过 <code>jr t0</code> 便可以跳转到该地址。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(gdb) si</span><br><span class="line">0x0000000000001004 <span class="keyword">in</span> ?? ()</span><br><span class="line">(gdb) si</span><br><span class="line">0x0000000000001008 <span class="keyword">in</span> ?? ()</span><br><span class="line">(gdb) si</span><br><span class="line">0x000000000000100c <span class="keyword">in</span> ?? ()</span><br><span class="line">(gdb) si</span><br><span class="line">0x0000000000001010 <span class="keyword">in</span> ?? ()</span><br><span class="line">(gdb) p/x <span class="variable">$t0</span></span><br><span class="line">1 = 0x80000000</span><br><span class="line">(gdb) si</span><br><span class="line">0x0000000080000000 <span class="keyword">in</span> ?? ()</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，当位于 <code>0x1010</code> 的指令执行完毕后，下一条待执行的指令位于 RustSBI 的入口，也即 <code>0x80000000</code> ，这意味着我们即将把控制权转交给 RustSBI 。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/10i $pc</span><br><span class="line">=&gt; 0x80000000:      auipc   sp,0x28</span><br><span class="line">0x80000004: mv      sp,sp</span><br><span class="line">0x80000008: lui     t0,0x4</span><br><span class="line">0x8000000a: addi    t1,a0,1</span><br><span class="line">0x8000000e: add     sp,sp,t0</span><br><span class="line">0x80000010: addi    t1,t1,-1</span><br><span class="line">0x80000012: bnez    t1,0x8000000e</span><br><span class="line">0x80000016: j       0x8001125a</span><br><span class="line">0x8000001a: unimp</span><br><span class="line">0x8000001c: addi    sp,sp,-48</span><br><span class="line">(gdb) si</span><br><span class="line">0x0000000080000004 in ?? ()</span><br><span class="line">(gdb) si</span><br><span class="line">0x0000000080000008 in ?? ()</span><br><span class="line">(gdb) si</span><br><span class="line">0x000000008000000a in ?? ()</span><br><span class="line">(gdb) si</span><br><span class="line">0x000000008000000e in ?? ()</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们检查控制权能否被移交给我们的内核：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(gdb) b *0x80200000</span><br><span class="line">Breakpoint 1 at 0x80200000</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line"></span><br><span class="line">Breakpoint 1, 0x0000000080200000 in ?? ()</span><br></pre></td></tr></table></figure>
+
+<h1 id="lab2"><a href="#lab2" class="headerlink" title="lab2"></a>lab2</h1><h2 id="编程作业-1"><a href="#编程作业-1" class="headerlink" title="编程作业"></a>编程作业</h2><h3 id="总结编程内容-1"><a href="#总结编程内容-1" class="headerlink" title="总结编程内容"></a>总结编程内容</h3><ol>
+<li>这里对于每次的输出都检查<code>str</code>地址是否在加载运行程序的地址范围内。</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">sys_write</span>(fd: <span class="type">usize</span>, buf: *<span class="keyword">const</span> <span class="type">u8</span>, len: <span class="type">usize</span>) <span class="punctuation">-&gt;</span> <span class="type">isize</span> &#123;</span><br><span class="line">    <span class="keyword">match</span> fd &#123;</span><br><span class="line">        FD_STDOUT =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (((buf <span class="keyword">as</span> <span class="type">usize</span>)  &gt;= USER_STACK.<span class="title function_ invoke__">get_sp</span>() - USER_STACK_SIZE) &amp;&amp; ((buf <span class="keyword">as</span> <span class="type">usize</span>) + len &lt;= USER_STACK.<span class="title function_ invoke__">get_sp</span>())) </span><br><span class="line">            || (((buf <span class="keyword">as</span> <span class="type">usize</span>) + len &lt;= APP_SIZE_LIMIT + APP_BASE_ADDRESS) &amp;&amp; ((buf <span class="keyword">as</span> <span class="type">usize</span>) &gt;= APP_BASE_ADDRESS))&#123;</span><br><span class="line">                ……</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                ……</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        ……</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p><img src="/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/Cache_-b461d57e7cbe281..jpg" alt="Cache_-b461d57e7cbe281."></p>
+<h2 id="问答作业-1"><a href="#问答作业-1" class="headerlink" title="问答作业"></a>问答作业</h2><h3 id="正确进入-U-态后，程序的特征还应有：使用-S-态特权指令，访问-S-态寄存器后会报错。-请同学们可以自行测试这些内容-运行-Rust-三个-bad-测例-ch2b-bad-rs-，-注意在编译时至少需要指定-LOG-ERROR-才能观察到内核的报错信息-，-描述程序出错行为，同时注意注明你使用的-sbi-及其版本。"><a href="#正确进入-U-态后，程序的特征还应有：使用-S-态特权指令，访问-S-态寄存器后会报错。-请同学们可以自行测试这些内容-运行-Rust-三个-bad-测例-ch2b-bad-rs-，-注意在编译时至少需要指定-LOG-ERROR-才能观察到内核的报错信息-，-描述程序出错行为，同时注意注明你使用的-sbi-及其版本。" class="headerlink" title="正确进入 U 态后，程序的特征还应有：使用 S 态特权指令，访问 S 态寄存器后会报错。 请同学们可以自行测试这些内容 (运行 Rust 三个 bad  测例 (ch2b_bad_*.rs) ， 注意在编译时至少需要指定 LOG&#x3D;ERROR 才能观察到内核的报错信息) ，  描述程序出错行为，同时注意注明你使用的 sbi 及其版本。"></a>正确进入 U 态后，程序的特征还应有：使用 S 态特权指令，访问 S 态寄存器后会报错。 请同学们可以自行测试这些内容 (运行 Rust 三个 bad  测例 (ch2b_bad_*.rs) ， 注意在编译时至少需要指定 LOG&#x3D;ERROR 才能观察到内核的报错信息) ，  描述程序出错行为，同时注意注明你使用的 sbi 及其版本。</h3><p>Rustsbi 版本为: 0.2.0-alpha.2</p>
+<p>出现报错:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[kernel] PageFault in application, bad addr = 0x0, bad instruction = 0x804003c4, kernel killed it.</span><br><span class="line">[kernel] IllegalInstruction in application, kernel killed it.</span><br><span class="line">[kernel] IllegalInstruction in application, kernel killed it.</span><br></pre></td></tr></table></figure>
+
+<p>ch2b_bad_address.rs<code> 由于除0错误触发异常退出</code> </p>
+<p>ch2b_bad_instructions.rs<code> 在用户态非法使用指令</code>sret</p>
+<p>ch2b_bad_register.rs<code> 在用户态非法使用指令</code>csrr</p>
+<h3 id="深入理解-trap-S-中两个函数-alltraps-和-restore-的作用，并回答如下问题"><a href="#深入理解-trap-S-中两个函数-alltraps-和-restore-的作用，并回答如下问题" class="headerlink" title="深入理解 trap.S 中两个函数 __alltraps 和 __restore 的作用，并回答如下问题:"></a>深入理解 trap.S 中两个函数 __alltraps 和 __restore 的作用，并回答如下问题:</h3><h4 id="L40：刚进入-restore-时，a0-代表了什么值。请指出-restore-的两种使用情景。"><a href="#L40：刚进入-restore-时，a0-代表了什么值。请指出-restore-的两种使用情景。" class="headerlink" title="L40：刚进入 __restore 时，a0 代表了什么值。请指出 __restore 的两种使用情景。"></a>L40：刚进入 __restore 时，a0 代表了什么值。请指出 __restore 的两种使用情景。</h4><blockquote>
+<ol>
+<li>刚进入 __restore 时，a0 代表了系统调用的第一个参数</li>
+<li>__restore 的作用包括:</li>
+</ol>
+<ul>
+<li>从系统调用和异常返回时, 恢复要返回的用户态的上下文信息</li>
+<li>任务切换时, 恢复要切换的任务的上下文信息</li>
+</ul>
+</blockquote>
+<h4 id="L43-L48：这几行汇编代码特殊处理了哪些寄存器？这些寄存器的的值对于进入用户态有何意义？请分别解释。"><a href="#L43-L48：这几行汇编代码特殊处理了哪些寄存器？这些寄存器的的值对于进入用户态有何意义？请分别解释。" class="headerlink" title="L43-L48：这几行汇编代码特殊处理了哪些寄存器？这些寄存器的的值对于进入用户态有何意义？请分别解释。"></a>L43-L48：这几行汇编代码特殊处理了哪些寄存器？这些寄存器的的值对于进入用户态有何意义？请分别解释。</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ld t0, 32*8(sp) # 内核栈 32*8(sp) 处存储了原 sstatus 寄存器的值, 将其读取到 t0</span><br><span class="line">ld t1, 33*8(sp) # 内核栈 32*8(sp) 处存储了原 sepc 寄存器的值, 将其读取到 t1</span><br><span class="line">ld t2, 2*8(sp) # 内核栈 32*8(sp) 处存储了原 sscratch 寄存器的值, 将其读取到 t2</span><br><span class="line">csrw sstatus, t0 # 将 t0中原 sstatus 寄存器的值读取到 sstatus</span><br><span class="line">csrw sepc, t1 # 将 t0中原 sepc 寄存器的值读取到 sepc</span><br><span class="line">csrw sscratch, t2 # 将 t0中原 sscratch 寄存器的值读取到 sscratch</span><br></pre></td></tr></table></figure>
+
+<h4 id="L50-L56：为何跳过了-x2-和-x4？"><a href="#L50-L56：为何跳过了-x2-和-x4？" class="headerlink" title="L50-L56：为何跳过了 x2 和 x4？"></a>L50-L56：为何跳过了 x2 和 x4？</h4><ol>
+<li>跳过<code>x2</code>是因为<code>x2</code>对应的用户栈指针保存到了sscratch寄存器, 不需要从内核栈中进行恢复</li>
+<li>跳过<code>x4</code>是因为并没有使用它, 所以无需恢复</li>
+</ol>
+<h4 id="L60：该指令之后，sp-和-sscratch-中的值分别有什么意义？"><a href="#L60：该指令之后，sp-和-sscratch-中的值分别有什么意义？" class="headerlink" title="L60：该指令之后，sp 和 sscratch 中的值分别有什么意义？"></a>L60：该指令之后，sp 和 sscratch 中的值分别有什么意义？</h4><p><code>sp</code>指向用户栈, <code>sscratch</code>指向内核栈</p>
+<h4 id="restore：中发生状态切换在哪一条指令？为何该指令执行之后会进入用户态？"><a href="#restore：中发生状态切换在哪一条指令？为何该指令执行之后会进入用户态？" class="headerlink" title="__restore：中发生状态切换在哪一条指令？为何该指令执行之后会进入用户态？"></a>__restore：中发生状态切换在哪一条指令？为何该指令执行之后会进入用户态？</h4><p><code>sret</code>后发生了状态切换, 执行该指令后, PC设置为 <code>sepc</code> 寄存器的值。<code>sepc</code> 存储着产生中断或异常前的指令地址，因此这实现了到原始代码的返回。</p>
+<h4 id="L13：该指令之后，sp-和-sscratch-中的值分别有什么意义？"><a href="#L13：该指令之后，sp-和-sscratch-中的值分别有什么意义？" class="headerlink" title="L13：该指令之后，sp 和 sscratch 中的值分别有什么意义？"></a>L13：该指令之后，sp 和 sscratch 中的值分别有什么意义？</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">csrrw sp, sscratch, sp</span><br></pre></td></tr></table></figure>
+
+<p><code>sp</code>, <code>sscratch</code>寄存器的内容被交换, <code>sp</code>保存了原<code>sscratch</code>中的内核栈指针, <code>sscratch</code>保存了原<code>sp</code>中的用户栈栈指针</p>
+<h4 id="从-U-态进入-S-态是哪一条指令发生的？"><a href="#从-U-态进入-S-态是哪一条指令发生的？" class="headerlink" title="从 U 态进入 S 态是哪一条指令发生的？"></a>从 U 态进入 S 态是哪一条指令发生的？</h4><p><code>ecall</code>指令</p>
+<h3 id="对于任何中断，-alltraps-中都需要保存所有寄存器吗？你有没有想到一些加速-alltraps-的方法？简单描述你的想法。"><a href="#对于任何中断，-alltraps-中都需要保存所有寄存器吗？你有没有想到一些加速-alltraps-的方法？简单描述你的想法。" class="headerlink" title="对于任何中断，__alltraps 中都需要保存所有寄存器吗？你有没有想到一些加速 __alltraps 的方法？简单描述你的想法。"></a>对于任何中断，<code>__alltraps</code> 中都需要保存所有寄存器吗？你有没有想到一些加速 <code>__alltraps</code> 的方法？简单描述你的想法。</h3><p>在处理中断时，通常会在<code>__alltraps</code>函数中保存所有寄存器的状态，以确保在中断处理完成后能够正确恢复现场。然而，并非所有寄存器都需要保存，因为某些寄存器可能在中断处理过程中并不会被修改。</p>
+<p>一些加速<code>__alltraps</code>的方法包括：</p>
+<ol>
+<li>只保存和恢复中断处理过程中需要的寄存器。可以通过分析中断处理过程中的代码，确定哪些寄存器是必须保存的，而哪些是可以不保存的。</li>
+<li>使用内联汇编或者手动优化汇编代码，避免不必要的寄存器保存和恢复操作，从而减少中断处理的开销。</li>
+<li>将一些处理逻辑移到中断处理程序之外，减少<code>__alltraps</code>函数中的代码量，提高处理效率。</li>
+</ol>
+<p>总的来说，通过精心设计中断处理过程，只保存必要的寄存器状态，避免不必要的操作，并尽可能减少中断处理的复杂性，可以加速<code>__alltraps</code>函数的执行。希望这些想法对你有所帮助！如果有任何问题，请随时告诉我。</p>
+<h1 id="lab3"><a href="#lab3" class="headerlink" title="lab3"></a>lab3</h1><h2 id="编程作业-2"><a href="#编程作业-2" class="headerlink" title="编程作业"></a>编程作业</h2><h3 id="总结编程内容-2"><a href="#总结编程内容-2" class="headerlink" title="总结编程内容"></a>总结编程内容</h3><h4 id="在TaskControl中增加相应的元素来记录需要的值"><a href="#在TaskControl中增加相应的元素来记录需要的值" class="headerlink" title="在TaskControl中增加相应的元素来记录需要的值"></a>在TaskControl中增加相应的元素来记录需要的值</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//	os/src/task/task.rs</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">TaskControlBlock</span> &#123;</span><br><span class="line">    <span class="comment">/// 任务状态</span></span><br><span class="line">    <span class="keyword">pub</span> task_status: TaskStatus,</span><br><span class="line">    <span class="comment">/// 任务上下文</span></span><br><span class="line">    <span class="keyword">pub</span> task_cx: TaskContext,</span><br><span class="line">    <span class="comment">/// 系统调用次数</span></span><br><span class="line">    <span class="keyword">pub</span> syscall_times: [<span class="type">u32</span>; MAX_SYSCALL_NUM],	<span class="comment">//lab3 adds</span></span><br><span class="line">    <span class="comment">/// 启动时间</span></span><br><span class="line">    <span class="keyword">pub</span> start_time: <span class="type">usize</span>	<span class="comment">//lab3 addds</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中start_time用来记录task第一次被调用的时间。</p>
+<h4 id="在所有初始化和赋值TaskControl的函数增加对应域的初始化和赋值"><a href="#在所有初始化和赋值TaskControl的函数增加对应域的初始化和赋值" class="headerlink" title="在所有初始化和赋值TaskControl的函数增加对应域的初始化和赋值"></a>在所有初始化和赋值TaskControl的函数增加对应域的初始化和赋值</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">static</span> <span class="keyword">ref</span> TASK_MANAGER: TaskManager = &#123;</span><br><span class="line">	……</span><br><span class="line">	<span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">tasks</span> = [TaskControlBlock &#123;</span><br><span class="line">            task_cx: TaskContext::<span class="title function_ invoke__">zero_init</span>(),</span><br><span class="line">            task_status: TaskStatus::UnInit,</span><br><span class="line">            syscall_times: [<span class="number">0</span>; MAX_SYSCALL_NUM],</span><br><span class="line">            start_time: <span class="number">0</span></span><br><span class="line">     &#125;; MAX_APP_NUM];</span><br><span class="line">     ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="在task第一次被调度时为其start-time赋值"><a href="#在task第一次被调度时为其start-time赋值" class="headerlink" title="在task第一次被调度时为其start_time赋值"></a>在task第一次被调度时为其start_time赋值</h4><p>这里采用了一个小trick，用start_time本身来做一个flag，当调度到其task时发现其start_time为0，则说明start_time为0，则说明该task第一次被调度，将start_time设计为当前时间，否则说明该task已经被调度过，不修改其start_time。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">run_next_task</span>(&amp;<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(next) = <span class="keyword">self</span>.<span class="title function_ invoke__">find_next_task</span>() &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">inner</span> = <span class="keyword">self</span>.inner.<span class="title function_ invoke__">exclusive_access</span>();</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">current</span> = inner.current_task;</span><br><span class="line">            inner.tasks[next].task_status = TaskStatus::Running;</span><br><span class="line">            <span class="keyword">if</span> inner.tasks[next].start_time == <span class="number">0</span>&#123;</span><br><span class="line">        	inner.tasks[next].start_time = <span class="title function_ invoke__">get_time_us</span>();</span><br><span class="line">            &#125;</span><br><span class="line">            ……</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="增加pub方法使得其它模块也能获取当前task的start-time和taskstatus，从而获取想要的信息。"><a href="#增加pub方法使得其它模块也能获取当前task的start-time和taskstatus，从而获取想要的信息。" class="headerlink" title="增加pub方法使得其它模块也能获取当前task的start_time和taskstatus，从而获取想要的信息。"></a>增加pub方法使得其它模块也能获取当前task的start_time和taskstatus，从而获取想要的信息。</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">TaskManager</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">get_current_start_time</span>(&amp;<span class="keyword">self</span>)<span class="punctuation">-&gt;</span><span class="type">usize</span>&#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">inner</span>=<span class="keyword">self</span>.inner.<span class="title function_ invoke__">exclusive_access</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">current</span>=inner.current_task;</span><br><span class="line">        inner.tasks[current].start_time</span><br><span class="line">    &#125;</span><br><span class="line">     <span class="keyword">fn</span> <span class="title function_">get_current_status</span>(&amp;<span class="keyword">self</span>)<span class="punctuation">-&gt;</span>TaskStatus&#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">inner</span>=<span class="keyword">self</span>.inner.<span class="title function_ invoke__">exclusive_access</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">current</span>=inner.current_task;</span><br><span class="line">        inner.tasks[current].task_status</span><br><span class="line">    &#125;</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">get_current_start_time</span>()<span class="punctuation">-&gt;</span><span class="type">usize</span>&#123;</span><br><span class="line">	TASK_MANAGER.<span class="title function_ invoke__">get_current_start_time</span>()</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">get_current_status</span>()<span class="punctuation">-&gt;</span>TaskStatus&#123;</span><br><span class="line">	TASK_MANAGER.<span class="title function_ invoke__">get_current_status</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="增加syscall-times的记录和处理"><a href="#增加syscall-times的记录和处理" class="headerlink" title="增加syscall_times的记录和处理"></a>增加syscall_times的记录和处理</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// os/src/task/mod.rs</span></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">TaskManager</span> &#123;</span><br><span class="line">    ……</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">get_syscall_times</span>(&amp;<span class="keyword">self</span>)<span class="punctuation">-&gt;</span>[<span class="type">u32</span>;<span class="number">500</span>]&#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">inner</span>=<span class="keyword">self</span>.inner.<span class="title function_ invoke__">exclusive_access</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">current</span>=inner.current_task;</span><br><span class="line">        inner.tasks[current].syscall_times</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">update_syscall_times</span>(&amp;<span class="keyword">self</span>,syscall_id: <span class="type">usize</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">inner</span> = <span class="keyword">self</span>.inner.<span class="title function_ invoke__">exclusive_access</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">current</span> = inner.current_task;</span><br><span class="line">        inner.tasks[current].syscall_times[syscall_id] += <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br><span class="line">……</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">get_syscall_times</span>()<span class="punctuation">-&gt;</span>[<span class="type">u32</span>;<span class="number">500</span>]&#123;</span><br><span class="line">	TASK_MANAGER.<span class="title function_ invoke__">get_syscall_times</span>()</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">update_syscall_times</span>(syscall_id: <span class="type">usize</span>) &#123;</span><br><span class="line">    TASK_MANAGER.<span class="title function_ invoke__">update_syscall_times</span>(syscall_id);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">syscall</span>(syscall_id: <span class="type">usize</span>, args: [<span class="type">usize</span>; <span class="number">3</span>]) <span class="punctuation">-&gt;</span> <span class="type">isize</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">update_syscall_times</span>(syscall_id);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="实现系统调用sys-task-info"><a href="#实现系统调用sys-task-info" class="headerlink" title="实现系统调用sys_task_info"></a>实现系统调用sys_task_info</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">sys_task_info</span>(ti: *<span class="keyword">mut</span> TaskInfo) <span class="punctuation">-&gt;</span> <span class="type">isize</span> &#123;</span><br><span class="line">    trace!(<span class="string">&quot;kernel: sys_task_info&quot;</span>);</span><br><span class="line">    <span class="keyword">unsafe</span>&#123;</span><br><span class="line">        *ti = TaskInfo &#123;</span><br><span class="line">            status: <span class="title function_ invoke__">get_current_status</span>(),</span><br><span class="line">            syscall_times: <span class="title function_ invoke__">get_syscall_times</span>(),</span><br><span class="line">            time:(<span class="title function_ invoke__">get_time_us</span>()-<span class="title function_ invoke__">get_current_start_time</span>())/<span class="number">1000</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="运行结果-1"><a href="#运行结果-1" class="headerlink" title="运行结果"></a>运行结果</h3><p><img src="/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240525204941485.png" alt="image-20240525204941485"></p>
+<h2 id="问答作业-2"><a href="#问答作业-2" class="headerlink" title="问答作业"></a>问答作业</h2><h3 id="正确进入-U-态后，程序的特征还应有：使用-S-态特权指令，访问-S-态寄存器后会报错。-请同学们可以自行测试这些内容-运行-Rust-两个-bad-测例-ch2b-bad-rs-，-描述程序出错行为，同时注意注明你使用的-sbi-及其版本。"><a href="#正确进入-U-态后，程序的特征还应有：使用-S-态特权指令，访问-S-态寄存器后会报错。-请同学们可以自行测试这些内容-运行-Rust-两个-bad-测例-ch2b-bad-rs-，-描述程序出错行为，同时注意注明你使用的-sbi-及其版本。" class="headerlink" title="正确进入 U 态后，程序的特征还应有：使用 S 态特权指令，访问 S 态寄存器后会报错。 请同学们可以自行测试这些内容 (运行 Rust 两个 bad 测例 (ch2b_bad_*.rs) ) ， 描述程序出错行为，同时注意注明你使用的 sbi 及其版本。"></a>正确进入 U 态后，程序的特征还应有：使用 S 态特权指令，访问 S 态寄存器后会报错。 请同学们可以自行测试这些内容 (运行 <a target="_blank" rel="noopener" href="https://github.com/LearningOS/rCore-Tutorial-Test-2022S/tree/master/src/bin">Rust 两个 bad 测例 (ch2b_bad_*.rs)</a> ) ， 描述程序出错行为，同时注意注明你使用的 sbi 及其版本。</h3><p>Rustsbi 版本为: 0.2.0-alpha.2</p>
+<p>出现报错:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[kernel] PageFault in application, bad addr = 0x0, bad instruction = 0x804003c4, kernel killed it.</span><br><span class="line">[kernel] IllegalInstruction in application, kernel killed it.</span><br><span class="line">[kernel] IllegalInstruction in application, kernel killed it.</span><br></pre></td></tr></table></figure>
+
+<p>ch2b_bad_address.rs<code> 由于除0错误触发异常退出</code> </p>
+<p>ch2b_bad_instructions.rs<code> 在用户态非法使用指令</code>sret</p>
+<p>ch2b_bad_register.rs<code> 在用户态非法使用指令</code>csrr</p>
+<h3 id="请通过-gdb-跟踪或阅读源代码了解机器从加电到跳转到-0x80200000-的过程，并描述重要的跳转。回答内核是如何进入-S-态的？"><a href="#请通过-gdb-跟踪或阅读源代码了解机器从加电到跳转到-0x80200000-的过程，并描述重要的跳转。回答内核是如何进入-S-态的？" class="headerlink" title="请通过 gdb 跟踪或阅读源代码了解机器从加电到跳转到 0x80200000 的过程，并描述重要的跳转。回答内核是如何进入 S 态的？"></a>请通过 gdb 跟踪或阅读源代码了解机器从加电到跳转到 0x80200000 的过程，并描述重要的跳转。回答内核是如何进入 S 态的？</h3><ul>
+<li>事实上进入 rustsbi (0x80000000) 之后就不需要使用 gdb 调试了。可以直接阅读 <a target="_blank" rel="noopener" href="https://github.com/rustsbi/rustsbi-qemu/blob/7d71bfb7b3ad8e36f06f92c2ffe2066bbb0f9254/rustsbi-qemu/src/main.rs#L56">代码</a> 。</li>
+<li>可以使用 Makefile 中的 <code>make debug</code> 指令。</li>
+<li>一些可能用到的 gdb 指令：<ul>
+<li><code>x/10i 0x80000000</code> : 显示 0x80000000 处的10条汇编指令。</li>
+<li><code>x/10i $pc</code> : 显示即将执行的10条汇编指令。</li>
+<li><code>x/10xw 0x80000000</code> : 显示 0x80000000 处的10条数据，格式为16进制32bit。</li>
+<li><code>info register</code>: 显示当前所有寄存器信息。</li>
+<li><code>info r t0</code>: 显示 t0 寄存器的值。</li>
+<li><code>break funcname</code>: 在目标函数第一条指令处设置断点。</li>
+<li><code>break *0x80200000</code>: 在 0x80200000 出设置断点。</li>
+<li><code>continue</code>: 执行直到碰到断点。</li>
+<li><code>si</code>: 单步执行一条汇编指令。</li>
+</ul>
+</li>
+</ul>
+<p>Qemu 启动后 PC 被初始化为 <code>0x1000</code> 。我们可以检查一下 Qemu 的启动固件的内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/10i <span class="variable">$pc</span></span><br><span class="line">=&gt; 0x1000:  auipc   t0,0x0</span><br><span class="line">0x1004:     addi    a1,t0,32</span><br><span class="line">0x1008:     csrr    a0,mhartid</span><br><span class="line">0x100c:     ld      t0,24(t0)</span><br><span class="line">0x1010:     jr      t0</span><br><span class="line">0x1014:     unimp</span><br><span class="line">0x1016:     unimp</span><br><span class="line">0x1018:     unimp</span><br><span class="line">0x101a:     0x8000</span><br><span class="line">0x101c:     unimp</span><br></pre></td></tr></table></figure>
+
+<p> Qemu 的固件仅包含 5 条指令，从 <code>0x1014</code> 开始都是数据，当数据为 0 的时候则会被反汇编为 <code>unimp</code> 指令。 <code>0x101a</code> 处的数据 <code>0x8000</code> 是能够跳转到 <code>0x80000000</code> 进入启动下一阶段的关键。在执行位于 <code>0x1010</code> 的指令之前，寄存器 <code>t0</code> 的值恰好为 <code>0x80000000</code> ，随后通过 <code>jr t0</code> 便可以跳转到该地址。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(gdb) si</span><br><span class="line">0x0000000000001004 <span class="keyword">in</span> ?? ()</span><br><span class="line">(gdb) si</span><br><span class="line">0x0000000000001008 <span class="keyword">in</span> ?? ()</span><br><span class="line">(gdb) si</span><br><span class="line">0x000000000000100c <span class="keyword">in</span> ?? ()</span><br><span class="line">(gdb) si</span><br><span class="line">0x0000000000001010 <span class="keyword">in</span> ?? ()</span><br><span class="line">(gdb) p/x <span class="variable">$t0</span></span><br><span class="line">1 = 0x80000000</span><br><span class="line">(gdb) si</span><br><span class="line">0x0000000080000000 <span class="keyword">in</span> ?? ()</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，当位于 <code>0x1010</code> 的指令执行完毕后，下一条待执行的指令位于 RustSBI 的入口，也即 <code>0x80000000</code> ，这意味着我们即将把控制权转交给 RustSBI 。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/10i $pc</span><br><span class="line">=&gt; 0x80000000:      auipc   sp,0x28</span><br><span class="line">0x80000004: mv      sp,sp</span><br><span class="line">0x80000008: lui     t0,0x4</span><br><span class="line">0x8000000a: addi    t1,a0,1</span><br><span class="line">0x8000000e: add     sp,sp,t0</span><br><span class="line">0x80000010: addi    t1,t1,-1</span><br><span class="line">0x80000012: bnez    t1,0x8000000e</span><br><span class="line">0x80000016: j       0x8001125a</span><br><span class="line">0x8000001a: unimp</span><br><span class="line">0x8000001c: addi    sp,sp,-48</span><br><span class="line">(gdb) si</span><br><span class="line">0x0000000080000004 in ?? ()</span><br><span class="line">(gdb) si</span><br><span class="line">0x0000000080000008 in ?? ()</span><br><span class="line">(gdb) si</span><br><span class="line">0x000000008000000a in ?? ()</span><br><span class="line">(gdb) si</span><br><span class="line">0x000000008000000e in ?? ()</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们检查控制权能否被移交给我们的内核：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(gdb) b *0x80200000</span><br><span class="line">Breakpoint 1 at 0x80200000</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line"></span><br><span class="line">Breakpoint 1, 0x0000000080200000 in ?? ()</span><br></pre></td></tr></table></figure>
+
+<h1 id="lab4"><a href="#lab4" class="headerlink" title="lab4"></a>lab4</h1><h2 id="编程作业-3"><a href="#编程作业-3" class="headerlink" title="编程作业"></a>编程作业</h2><h3 id="总结编程内容-3"><a href="#总结编程内容-3" class="headerlink" title="总结编程内容"></a>总结编程内容</h3><h4 id="重写-sys-get-time和sys-task-info"><a href="#重写-sys-get-time和sys-task-info" class="headerlink" title="重写 sys_get_time和sys_task_info"></a>重写 sys_get_time和sys_task_info</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">sys_get_time</span>(ts: *<span class="keyword">mut</span> TimeVal, _tz: <span class="type">usize</span>) <span class="punctuation">-&gt;</span> <span class="type">isize</span> &#123;</span><br><span class="line">    trace!(<span class="string">&quot;kernel: sys_get_time&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">us</span> = <span class="title function_ invoke__">get_time_us</span>();</span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line">        *ts = TimeVal &#123;</span><br><span class="line">            sec: us / <span class="number">1_000_000</span>,</span><br><span class="line">            usec: us % <span class="number">1_000_000</span>,</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以sys_get_time为例，在原来的sys_get_time中，它传入的是一个TimeVal类型的指针，发起系统调用时是在用户态下传入的地址，在内核态下，该地址显然不再是传入的数据的位置，因此，我们只需要找到真实的地址即可。因此，我们只需要实现一个当前进程虚拟地址到物理地址的转换方法即可，一种实现方式为：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">current_translated_physical_address</span>(ptr:*<span class="keyword">const</span> <span class="type">u8</span>)<span class="punctuation">-&gt;</span><span class="type">usize</span>&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">token</span> = <span class="title function_ invoke__">current_user_token</span>();</span><br><span class="line">	<span class="keyword">let</span> <span class="variable">page_table</span>=PageTable::<span class="title function_ invoke__">from_token</span>(token);</span><br><span class="line">	<span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">va</span>=VirtAddr::<span class="title function_ invoke__">from</span>(ptr <span class="keyword">as</span> <span class="type">usize</span>);</span><br><span class="line">	<span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">vpn</span> = va.<span class="title function_ invoke__">floor</span>();<span class="comment">//va-&gt;virt page num</span></span><br><span class="line">	<span class="keyword">let</span> <span class="variable">ppn</span> = page_table.<span class="title function_ invoke__">translate</span>(vpn).<span class="title function_ invoke__">unwrap</span>().<span class="title function_ invoke__">ppn</span>();</span><br><span class="line">	PhysAddr::<span class="title function_ invoke__">from</span>(ppn).<span class="number">0</span>+va.<span class="title function_ invoke__">page_offset</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由此可以得到的答案方法：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">sys_get_time</span>(_ts: *<span class="keyword">mut</span> TimeVal, _tz: <span class="type">usize</span>) <span class="punctuation">-&gt;</span> <span class="type">isize</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">_us</span> = <span class="title function_ invoke__">get_time_us</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ts</span>=<span class="title function_ invoke__">current_translated_physical_address</span>(_ts <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">u8</span>) <span class="keyword">as</span> *<span class="keyword">mut</span> TimeVal;</span><br><span class="line">    <span class="keyword">unsafe</span> &#123;</span><br><span class="line">        *ts = TimeVal &#123;</span><br><span class="line">            sec: _us / <span class="number">1_000_000</span>,</span><br><span class="line">            usec: _us % <span class="number">1_000_000</span>,</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">sys_task_info</span>(ti: *<span class="keyword">mut</span> TaskInfo) <span class="punctuation">-&gt;</span> <span class="type">isize</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">_ti</span> = <span class="title function_ invoke__">current_translated_physical_address</span>(ti <span class="keyword">as</span> *<span class="keyword">const</span> <span class="type">u8</span>) <span class="keyword">as</span> *<span class="keyword">mut</span> TaskInfo;</span><br><span class="line">    trace!(<span class="string">&quot;kernel: sys_task_info&quot;</span>);</span><br><span class="line">    <span class="keyword">unsafe</span>&#123;</span><br><span class="line">        *_ti = TaskInfo &#123;</span><br><span class="line">            status: <span class="title function_ invoke__">get_current_status</span>(),</span><br><span class="line">            syscall_times: <span class="title function_ invoke__">get_syscall_times</span>(),</span><br><span class="line">            time:(<span class="title function_ invoke__">get_time_us</span>()-<span class="title function_ invoke__">get_current_start_time</span>())/<span class="number">1000</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="实现-mmap和munmap"><a href="#实现-mmap和munmap" class="headerlink" title="实现 mmap和munmap"></a>实现 mmap和munmap</h4><p>我们观察到，MemorySet函数有如下方法：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">insert_framed_area</span>(</span><br><span class="line">    &amp;<span class="keyword">mut</span> <span class="keyword">self</span>,</span><br><span class="line">    start_va: VirtAddr,</span><br><span class="line">    end_va: VirtAddr,</span><br><span class="line">    permission: MapPermission,</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="keyword">self</span>.<span class="title function_ invoke__">push</span>(</span><br><span class="line">        MapArea::<span class="title function_ invoke__">new</span>(start_va, end_va, MapType::Framed, permission),</span><br><span class="line">        <span class="literal">None</span>,</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个方法与我们要实现的函数参数基本一致，因此我们把它作为主体函数，同时，不要忘了对特殊情况进行排查，最终我们的实现方法如下：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">MemorySet</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">mmap</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>,start:<span class="type">usize</span>,len:<span class="type">usize</span>,port:<span class="type">usize</span>)<span class="punctuation">-&gt;</span><span class="type">isize</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> start % PAGE_SIZE != <span class="number">0</span> </span><br><span class="line">        <span class="comment">/* start need to be page aligned */</span> </span><br><span class="line">        || port &amp; !<span class="number">0x7</span> != <span class="number">0</span> </span><br><span class="line">        <span class="comment">/* other bits of port needs to be zero */</span> </span><br><span class="line">        ||port &amp; <span class="number">0x7</span> ==<span class="number">0</span> </span><br><span class="line">        <span class="comment">/* No permission set, meaningless */</span> </span><br><span class="line">        ||start &gt;= MAXVA</span><br><span class="line">        <span class="comment">/* mapping range should be an legal address */</span> </span><br><span class="line">        &#123;<span class="keyword">return</span> -<span class="number">1</span>;&#125;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">vpnrange</span> =VPNRange::<span class="title function_ invoke__">new</span>(VirtAddr::<span class="title function_ invoke__">from</span>(start).<span class="title function_ invoke__">floor</span>(),VirtAddr::<span class="title function_ invoke__">from</span>(start+len).<span class="title function_ invoke__">ceil</span>());</span><br><span class="line">        <span class="keyword">for</span> <span class="variable">vpn</span> <span class="keyword">in</span> vpnrange&#123;</span><br><span class="line">    		<span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(pte) = <span class="keyword">self</span>.page_table.<span class="title function_ invoke__">find_pte</span>(vpn)&#123;</span><br><span class="line">    			<span class="keyword">if</span> pte.<span class="title function_ invoke__">is_valid</span>()&#123;</span><br><span class="line">    				<span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    			&#125;</span><br><span class="line">    		&#125;</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">map_prem</span> = MapPermission::U;</span><br><span class="line">    	<span class="keyword">if</span> (port &amp; <span class="number">1</span>)!=<span class="number">0</span>&#123;</span><br><span class="line">    		map_prem|=MapPermission::R;</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">if</span> (port &amp; <span class="number">2</span>)!=<span class="number">0</span>&#123;</span><br><span class="line">    		map_prem|=MapPermission::W;</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">if</span> (port &amp; <span class="number">4</span>)!=<span class="number">0</span>&#123;</span><br><span class="line">    		map_prem|=MapPermission::X;</span><br><span class="line">    	&#125;		  			<span class="keyword">self</span>.<span class="title function_ invoke__">insert_framed_area</span>(VirtAddr::<span class="title function_ invoke__">from</span>(start),VirtAddr::<span class="title function_ invoke__">from</span>(start+len),map_prem);</span><br><span class="line">    	<span class="number">0</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>此后,由系统调用函数直接调用当前进程的MemorySet的该方法即可。</p>
+<p>同样，我们也可以在MemorySet中加入munmap方法：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">MemorySet</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">munmap</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>,start:<span class="type">usize</span>,len:<span class="type">usize</span>)<span class="punctuation">-&gt;</span><span class="type">isize</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> start &gt;= MAXVA || start % PAGE_SIZE != <span class="number">0</span> &#123;<span class="keyword">return</span> -<span class="number">1</span>;&#125;</span><br><span class="line">    	<span class="keyword">let</span> <span class="variable">vpnrange</span> = VPNRange::<span class="title function_ invoke__">new</span>(VirtAddr::<span class="title function_ invoke__">from</span>(start).<span class="title function_ invoke__">floor</span>(),VirtAddr::<span class="title function_ invoke__">from</span>(start+len).<span class="title function_ invoke__">ceil</span>());</span><br><span class="line">    	<span class="keyword">for</span> <span class="variable">vpn</span> <span class="keyword">in</span> vpnrange&#123;</span><br><span class="line">    		<span class="keyword">let</span> <span class="variable">pte</span> = <span class="keyword">self</span>.page_table.<span class="title function_ invoke__">find_pte</span>(vpn);</span><br><span class="line">    		<span class="keyword">if</span> pte.<span class="title function_ invoke__">is_none</span>() || !pte.<span class="title function_ invoke__">unwrap</span>().<span class="title function_ invoke__">is_valid</span>()&#123;</span><br><span class="line">    			<span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    		&#125;</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">for</span> <span class="variable">vpn</span> <span class="keyword">in</span> vpnrange&#123;</span><br><span class="line">    		<span class="keyword">for</span> <span class="variable">area</span> <span class="keyword">in</span> &amp;<span class="keyword">mut</span> <span class="keyword">self</span>.areas&#123;</span><br><span class="line">    			<span class="keyword">if</span> vpn &lt; area.vpn_range.<span class="title function_ invoke__">get_end</span>() &amp;&amp; vpn &gt;= area.vpn_range.<span class="title function_ invoke__">get_start</span>()&#123;</span><br><span class="line">    				area.<span class="title function_ invoke__">unmap_one</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>.page_table,vpn);</span><br><span class="line">    			&#125;</span><br><span class="line">    		&#125;</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="number">0</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>第二个循环不仅取消了页表的映射，而且消除了对应的MapArea中对应的键值对，如此才能保证结构的一致性。</p>
+<h3 id="运行结果-2"><a href="#运行结果-2" class="headerlink" title="运行结果"></a>运行结果</h3><p><img src="/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240525214501761.png" alt="image-20240525214501761"></p>
+<h1 id="lab5"><a href="#lab5" class="headerlink" title="lab5"></a>lab5</h1><h2 id="编程作业-4"><a href="#编程作业-4" class="headerlink" title="编程作业"></a>编程作业</h2><h3 id="总结编程内容-4"><a href="#总结编程内容-4" class="headerlink" title="总结编程内容"></a>总结编程内容</h3><h4 id="编程作业一-完成sys-spawn函数"><a href="#编程作业一-完成sys-spawn函数" class="headerlink" title="编程作业一:完成sys_spawn函数"></a>编程作业一:完成sys_spawn函数</h4><p>借鉴fork()和exec()的过程，我们可以看到spawn()只需要进行如下几步即可：</p>
+<ol>
+<li>根据exec()中的参数创建新的地址空间memory_set。</li>
+<li>创建新的TaskControlBlock，模仿fork()进行初始化赋值工作，除了把复制地址空间的操作修改为把地址空间赋值为memory_set。</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">sys_spawn</span>(_path: *<span class="keyword">const</span> <span class="type">u8</span>) <span class="punctuation">-&gt;</span> <span class="type">isize</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">current_task</span> = <span class="title function_ invoke__">current_task</span>();</span><br><span class="line">    <span class="keyword">if</span> current_task.<span class="title function_ invoke__">is_none</span>() &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">current_task</span> = current_task.<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">current_inner</span> = current_task.<span class="title function_ invoke__">inner_exclusive_access</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">token</span> = current_inner.memory_set.<span class="title function_ invoke__">token</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">path</span> = <span class="title function_ invoke__">translated_str</span>(token, _path);</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(data) = <span class="title function_ invoke__">get_app_data_by_name</span>(path.<span class="title function_ invoke__">as_str</span>()) &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">child_block</span> = Arc::<span class="title function_ invoke__">new</span>(TaskControlBlock::<span class="title function_ invoke__">new</span>(data));</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">child_inner</span> = child_block.<span class="title function_ invoke__">inner_exclusive_access</span>();</span><br><span class="line">        child_inner.parent = <span class="title function_ invoke__">Some</span>(Arc::<span class="title function_ invoke__">downgrade</span>(&amp;current_task));</span><br><span class="line">        current_inner.children.<span class="title function_ invoke__">push</span>(child_block.<span class="title function_ invoke__">clone</span>());</span><br><span class="line">        <span class="title function_ invoke__">add_task</span>(child_block.<span class="title function_ invoke__">clone</span>());</span><br><span class="line">        <span class="keyword">return</span> child_block.pid.<span class="number">0</span> <span class="keyword">as</span> <span class="type">isize</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    -<span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="编程作业二：stride-调度算法"><a href="#编程作业二：stride-调度算法" class="headerlink" title="编程作业二：stride 调度算法"></a>编程作业二：stride 调度算法</h4><ol>
+<li><p>在TCB中增加新字段</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">new</span>(elf_data: &amp;[<span class="type">u8</span>]) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">		……</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">task_control_block</span> = <span class="keyword">Self</span> &#123;</span><br><span class="line">            pid: pid_handle,</span><br><span class="line">            kernel_stack,</span><br><span class="line">            inner: <span class="keyword">unsafe</span> &#123;</span><br><span class="line">                UPSafeCell::<span class="title function_ invoke__">new</span>(TaskControlBlockInner &#123;</span><br><span class="line">                    trap_cx_ppn,</span><br><span class="line">                    base_size: user_sp,</span><br><span class="line">                    task_cx: TaskContext::<span class="title function_ invoke__">goto_trap_return</span>(kernel_stack_top),</span><br><span class="line">                    task_status: TaskStatus::Ready,</span><br><span class="line">                    memory_set,</span><br><span class="line">                    parent: <span class="literal">None</span>,</span><br><span class="line">                    children: <span class="type">Vec</span>::<span class="title function_ invoke__">new</span>(),</span><br><span class="line">                    exit_code: <span class="number">0</span>,</span><br><span class="line">                    heap_bottom: user_sp,</span><br><span class="line">                    program_brk: user_sp,</span><br><span class="line">                    task_start_time: <span class="number">0</span>,</span><br><span class="line">                    task_syscall_times: [<span class="number">0</span>; MAX_SYSCALL_NUM],</span><br><span class="line">                    stride: <span class="number">0</span>,</span><br><span class="line">                    priority: <span class="number">16</span>,</span><br><span class="line">                &#125;)</span><br><span class="line">            &#125;,</span><br><span class="line">        &#125;;</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意之后修改所有与TCB赋值和初始化有关的操作</p>
+</li>
+<li><p>在每次 fetch 下一个 task 之前对这个队列中的 task 做检查， 找到最小的 stride。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">=<span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">fetch</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;Arc&lt;TaskControlBlock&gt;&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">min_index</span> = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">min_stride</span> = <span class="number">0x7FFF_FFFF</span>;</span><br><span class="line">        <span class="keyword">for</span> (idx, task) <span class="keyword">in</span> <span class="keyword">self</span>.ready_queue.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">enumerate</span>()		  &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">inner</span> = task.inner.<span class="title function_ invoke__">exclusive_access</span>();</span><br><span class="line">            <span class="keyword">if</span> inner.task_status == TaskStatus::Ready &#123;</span><br><span class="line">                <span class="keyword">if</span> inner.stride &lt; min_stride &#123;</span><br><span class="line">                    min_stride = inner.stride;</span><br><span class="line">                    min_index = idx;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(task) = <span class="keyword">self</span>.ready_queue.<span class="title function_ invoke__">get</span>(min_index) &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">inner</span> = task.inner.<span class="title function_ invoke__">exclusive_access</span>();</span><br><span class="line">            inner.stride += BIG_STRIDE / inner.priority;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">self</span>.ready_queue.<span class="title function_ invoke__">remove</span>(min_index)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="运行截图-1"><a href="#运行截图-1" class="headerlink" title="运行截图"></a>运行截图</h3><h4 id="lab3测例检查"><a href="#lab3测例检查" class="headerlink" title="lab3测例检查"></a>lab3测例检查</h4><p><img src="/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240526173032754.png" alt="image-20240526173032754"></p>
+<h4 id="lab4测例检查"><a href="#lab4测例检查" class="headerlink" title="lab4测例检查"></a>lab4测例检查</h4><p><img src="/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240526173119390.png" alt="image-20240526173119390"></p>
+<h4 id="lab5测例检查"><a href="#lab5测例检查" class="headerlink" title="lab5测例检查"></a>lab5测例检查</h4><ol>
+<li><p>编程作业一:完成sys_spawn函数</p>
+<p><img src="/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240526173236555.png" alt="image-20240526173236555"></p>
+</li>
+<li><p>编程作业二：stride 调度算法</p>
+<p><img src="/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240526173252748.png" alt="image-20240526173252748"></p>
+</li>
+</ol>
+<p>1386266&#x2F;1292240 &#x3D; 0.995&lt;1.5 通过测例</p>
+<h4 id="所有测例检查"><a href="#所有测例检查" class="headerlink" title="所有测例检查"></a>所有测例检查</h4><p><img src="/2025/04/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C/image-20240526173620130.png" alt="image-20240526173620130"></p>
+<h2 id="问答作业-3"><a href="#问答作业-3" class="headerlink" title="问答作业"></a>问答作业</h2><h3 id="fork-exec-的一个比较大的问题是-fork-之后的内存页-文件等资源完全没有使用就废弃了，针对这一点，有什么改进策略？"><a href="#fork-exec-的一个比较大的问题是-fork-之后的内存页-文件等资源完全没有使用就废弃了，针对这一点，有什么改进策略？" class="headerlink" title="fork + exec 的一个比较大的问题是 fork 之后的内存页&#x2F;文件等资源完全没有使用就废弃了，针对这一点，有什么改进策略？"></a>fork + exec 的一个比较大的问题是 fork 之后的内存页&#x2F;文件等资源完全没有使用就废弃了，针对这一点，有什么改进策略？</h3><p><strong>Answer:</strong></p>
+<ol>
+<li><p>使用 Copy-on-Write（写时复制）技术：在 fork 时，父子进程共享相同的内存页，直到其中一个进程试图对共享内存进行写操作时，才会复制出一个新的内存页。这样可以避免不必要的内存复制，减少资源浪费。</p>
+</li>
+<li><p>非阻塞地执行 fork 和 exec：在执行 fork 和 exec 时，可以考虑使用异步方式，即父进程继续执行，而子进程在需要时再进行资源初始化和 exec 调用。这样可以避免不必要的资源浪费，提高系统的资源利用率。</p>
+</li>
+<li><p>考虑使用其他机制替代 fork 和 exec：有些情况下，可以考虑使用线程或者其他机制来实现类似的功能，避免不必要的资源复制和浪费。</p>
+</li>
+</ol>
+<h3 id="选做，不占分-其实使用了题-1-的策略之后，fork-exec-所带来的无效资源的问题已经基本被解决了，但是近年来-fork-还是在被不断的批判，那么到底是什么正在”杀死”fork？可以参考-论文-。"><a href="#选做，不占分-其实使用了题-1-的策略之后，fork-exec-所带来的无效资源的问题已经基本被解决了，但是近年来-fork-还是在被不断的批判，那么到底是什么正在”杀死”fork？可以参考-论文-。" class="headerlink" title="[选做，不占分]其实使用了题(1)的策略之后，fork + exec 所带来的无效资源的问题已经基本被解决了，但是近年来 fork 还是在被不断的批判，那么到底是什么正在”杀死”fork？可以参考 论文 。"></a>[选做，不占分]其实使用了题(1)的策略之后，fork + exec 所带来的无效资源的问题已经基本被解决了，但是近年来 fork 还是在被不断的批判，那么到底是什么正在”杀死”fork？可以参考 <a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/uploads/prod/2019/04/fork-hotos19.pdf">论文</a> 。</h3><p><strong>Answer:</strong></p>
+<p>fork 和其他的操作不正交,也就是 os 每增加一个功能,都要改 fork, 这导致新功能开发困难,设计受限.有些和硬件相关的甚至根本无法支持 fork.</p>
+<p>fork 得到的父子进程可能产生共享资源的冲突；</p>
+<p>子进程继承父进程，如果父进程处理不当，子进程可以找到父进程的安全漏洞进而威胁父进程；</p>
+<p>还有比如 fork 必须要虚存, SAS 无法支持等等.</p>
+<h3 id="请阅读下列代码，并分析程序的输出，假定不发生运行错误，不考虑行缓冲："><a href="#请阅读下列代码，并分析程序的输出，假定不发生运行错误，不考虑行缓冲：" class="headerlink" title="请阅读下列代码，并分析程序的输出，假定不发生运行错误，不考虑行缓冲："></a>请阅读下列代码，并分析程序的输出，假定不发生运行错误，不考虑行缓冲：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">int main()&#123;</span><br><span class="line">    int val = 2;</span><br><span class="line"></span><br><span class="line">    printf(&quot;%d&quot;, 0);</span><br><span class="line">    int pid = fork();</span><br><span class="line">    if (pid == 0) &#123;</span><br><span class="line">        val++;</span><br><span class="line">        printf(&quot;%d&quot;, val);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        val--;</span><br><span class="line">        printf(&quot;%d&quot;, val);</span><br><span class="line">        wait(NULL);</span><br><span class="line">    &#125;</span><br><span class="line">    val++;</span><br><span class="line">    printf(&quot;%d&quot;, val);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果 fork() 之后主程序先运行，则结果如何？如果 fork() 之后 child 先运行，则结果如何？</p>
+<p><strong>Answer:</strong></p>
+<ol>
+<li>主程序先运行:01342</li>
+<li>child 先运行:03412</li>
+</ol>
+<h3 id="选做，不占分-更进一步，如果给出一个-的序列，如何设计一个程序来得到答案？"><a href="#选做，不占分-更进一步，如果给出一个-的序列，如何设计一个程序来得到答案？" class="headerlink" title="[选做，不占分] 更进一步，如果给出一个 &amp;&amp; || 的序列，如何设计一个程序来得到答案？"></a>[选做，不占分] 更进一步，如果给出一个 <code>&amp;&amp;</code> <code>||</code> 的序列，如何设计一个程序来得到答案？</h3><p><strong>Anser:</strong></p>
+<p>如果需要设计一个程序以及给定一个 <code>&amp;&amp;</code> <code>||</code> 的序列，来计算输出的数量，可以考虑使用递归的方式实现。每次调用递归函数时，根据当前操作符是 <code>&amp;&amp;</code> 还是 <code>||</code>，分别判断左右子表达式的结果，从而更新当前表达式的计算结果。通过递归调用，可以一步步计算出最终的结果，得到预期的输出数量。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 enum 来表示操作符的类型</span></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Operator</span> &#123;</span> AND = <span class="number">0</span>, OR = <span class="number">1</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 递归计算并输出 &#x27;A&#x27; 的数量</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">evaluateExpression</span><span class="params">(<span class="type">int</span>* sequence, <span class="type">int</span> start, <span class="type">int</span> end)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (start == end) &#123;</span><br><span class="line">        <span class="keyword">return</span> sequence[start];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> op = sequence[start];  <span class="comment">// 当前操作符</span></span><br><span class="line">    <span class="type">int</span> countA = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (op == AND) &#123;</span><br><span class="line">        <span class="comment">// 递归计算左右子表达式</span></span><br><span class="line">        <span class="type">int</span> left = evaluateExpression(sequence, start + <span class="number">1</span>, end);</span><br><span class="line">        <span class="type">int</span> right = evaluateExpression(sequence, left + <span class="number">1</span>, end);</span><br><span class="line">        <span class="comment">// 计算并返回 &#x27;A&#x27; 的数量</span></span><br><span class="line">        countA = left + right;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (op == OR) &#123;</span><br><span class="line">        <span class="comment">// 递归计算左子表达式</span></span><br><span class="line">        <span class="type">int</span> left = evaluateExpression(sequence, start + <span class="number">1</span>, end);</span><br><span class="line">        <span class="comment">// 递归计算右子表达式</span></span><br><span class="line">        <span class="type">int</span> right = evaluateExpression(sequence, left + <span class="number">1</span>, end);</span><br><span class="line">        <span class="comment">// 计算并返回 &#x27;A&#x27; 的数量</span></span><br><span class="line">        countA = left &gt; right ? left : right;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> countA;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">int</span> sequence[] = &#123;AND, AND, OR, AND, OR, AND&#125;;</span><br><span class="line">    <span class="type">int</span> result = evaluateExpression(sequence, <span class="number">0</span>, <span class="number">7</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Total count of &#x27;A&#x27;: %d\n&quot;</span>, result);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="stride-算法深入"><a href="#stride-算法深入" class="headerlink" title="stride 算法深入"></a>stride 算法深入</h3><p>stride 算法原理非常简单，但是有一个比较大的问题。例如两个 pass &#x3D; 10 的进程，使用 8bit 无符号整形储存  stride， p1.stride &#x3D; 255, p2.stride &#x3D; 250，在 p2 执行一个时间片后，理论上下一次应该 p1 执行。</p>
+<h4 id="实际情况是轮到-p1-执行吗？为什么？"><a href="#实际情况是轮到-p1-执行吗？为什么？" class="headerlink" title="实际情况是轮到 p1 执行吗？为什么？"></a>实际情况是轮到 p1 执行吗？为什么？</h4><p><strong>Answer</strong>: 实际情况还是p2执⾏，因为8位⽆符号整型取值范围是0-255，如果p2.stride加了10溢出了，变成了4，对⽐的时候还是⽐p1.stride⼩，所以还是p2执⾏。</p>
+<p>我们之前要求进程优先级 &gt;&#x3D; 2 其实就是为了解决这个问题。可以证明，<strong>在不考虑溢出的情况下</strong>, 在进程优先级全部 &gt;&#x3D; 2 的情况下，如果严格按照算法执行，那么 STRIDE_MAX – STRIDE_MIN &lt;&#x3D; BigStride &#x2F; 2。</p>
+<h4 id="为什么？尝试简单说明（传达思想即可，不要求严格证明）。"><a href="#为什么？尝试简单说明（传达思想即可，不要求严格证明）。" class="headerlink" title="为什么？尝试简单说明（传达思想即可，不要求严格证明）。"></a>为什么？尝试简单说明（传达思想即可，不要求严格证明）。</h4><p>**Answer:**因为优先级全部⼤于等于2，所以pass⼀定是⼩于⼆分之⼀的BigStride。在不考虑溢出的情况下，假设a进程的stride⼩于b进程，且⼆者差⼩于⼆分之⼀BigStride，则a进程的stride + pass⼀定⼤于b，且新的差不会⼤于⼆分之⼀BigStride。开始时⼆者stride都为零，经过⼀次调度后满⾜上述情况，所以如此迭代下去，如果严格按照算法执⾏，那么STIDE_MAX-STRIDE_MIN&lt;&#x3D;BigStride&#x2F;2成⽴。</p>
+<p>已知以上结论，<strong>考虑溢出的情况下</strong>，我们可以通过设计 Stride 的比较接口，结合 BinaryHeap 的 pop 接口可以很容易的找到真正最小的 Stride。</p>
+<h4 id="请补全如下-partial-cmp-函数（假设永远不会相等）"><a href="#请补全如下-partial-cmp-函数（假设永远不会相等）" class="headerlink" title="请补全如下 partial_cmp 函数（假设永远不会相等）"></a>请补全如下 <code>partial_cmp</code> 函数（假设永远不会相等）</h4> <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> core::cmp::Ordering;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Stride</span>(<span class="type">u64</span>);</span><br><span class="line"> </span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">PartialOrd</span> <span class="keyword">for</span> <span class="title class_">Stride</span> &#123;</span><br><span class="line">  <span class="keyword">fn</span> <span class="title function_">partial_cmp</span>(&amp;<span class="keyword">self</span>, other: &amp;<span class="keyword">Self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;Ordering&gt; &#123;</span><br><span class="line">     <span class="comment">// ...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">PartialEq</span> <span class="keyword">for</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">  <span class="keyword">fn</span> <span class="title function_">eq</span>(&amp;<span class="keyword">self</span>, other: &amp;<span class="keyword">Self</span>) <span class="punctuation">-&gt;</span> <span class="type">bool</span> &#123;</span><br><span class="line">     <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> <strong>Answer:</strong></p>
+ <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">fn</span> <span class="title function_">partial_cmp</span>(&amp;<span class="keyword">self</span>, other: &amp;<span class="keyword">Self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;Ordering&gt; &#123;</span><br><span class="line">      <span class="keyword">if</span> <span class="keyword">self</span>.<span class="number">0</span> &lt; other.<span class="number">0</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (other.<span class="number">0</span> - <span class="keyword">self</span>.<span class="number">0</span>) &gt; (BigStride / <span class="number">2</span>) &#123;</span><br><span class="line">              <span class="title function_ invoke__">Some</span>(Ording::Greater)</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           <span class="title function_ invoke__">Some</span>(Ording::Less)</span><br><span class="line">       &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">self</span>.<span class="number">0</span> &gt; other.<span class="number">0</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (<span class="keyword">self</span>.<span class="number">0</span> - other.<span class="number">0</span>) &gt; (BigStride / <span class="number">2</span>) &#123;</span><br><span class="line">              <span class="title function_ invoke__">Some</span>(Ording::Less)</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           <span class="title function_ invoke__">Some</span>(Ording::Greater)</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<pre><code>例如使用 8 bits 存储 stride, BigStride = 255, 则:
+
+- (125 &lt; 255) == false
+- (129 &lt; 255) == true
+</code></pre>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Sunny 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="Sunny 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AE%9E%E9%AA%8C/" rel="tag"># 实验</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/04/06/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E9%AA%8C/" rel="prev" title="数据库实验">
+      <i class="fa fa-chevron-left"></i> 数据库实验
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/04/06/http-https%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B/" rel="next" title="http/https交互过程">
+      http/https交互过程 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+            
+    
+  
+
+  <!-- 应使用 elif 而不是 else if -->  
+  <div class="comments" id="comments">  
+    
+  <script src="https://utteranc.es/client.js"
+    repo="wuyaxiao/wuyaxiao.github.io"
+    issue-term="title"
+    theme="github-light"
+    crossorigin="anonymous"
+    async>
+  </script>
+  
+  </div>  
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#lab1"><span class="nav-number">1.</span> <span class="nav-text">lab1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E4%BD%9C%E4%B8%9A"><span class="nav-number">1.1.</span> <span class="nav-text">编程作业</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%E7%BC%96%E7%A8%8B%E5%86%85%E5%AE%B9"><span class="nav-number">1.1.1.</span> <span class="nav-text">总结编程内容</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Log-Info"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">Log Info</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Kernel-Info"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">Kernel Info</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%88%AA%E5%9B%BE"><span class="nav-number">1.1.2.</span> <span class="nav-text">运行截图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E7%AD%94%E4%BD%9C%E4%B8%9A"><span class="nav-number">1.2.</span> <span class="nav-text">问答作业</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E5%AD%A6%E4%B9%A0-gdb-%E8%B0%83%E8%AF%95%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8-%E8%BF%99%E5%AF%B9%E5%90%8E%E7%BB%AD%E8%B0%83%E8%AF%95%E5%BE%88%E9%87%8D%E8%A6%81-%EF%BC%8C%E5%B9%B6%E9%80%9A%E8%BF%87-gdb-%E7%AE%80%E5%8D%95%E8%B7%9F%E8%B8%AA%E4%BB%8E%E6%9C%BA%E5%99%A8%E5%8A%A0%E7%94%B5%E5%88%B0%E8%B7%B3%E8%BD%AC%E5%88%B0-0x80200000-%E7%9A%84%E7%AE%80%E5%8D%95%E8%BF%87%E7%A8%8B%E3%80%82%E5%8F%AA%E9%9C%80%E8%A6%81%E6%8F%8F%E8%BF%B0%E9%87%8D%E8%A6%81%E7%9A%84%E8%B7%B3%E8%BD%AC%E5%8D%B3%E5%8F%AF%EF%BC%8C%E5%8F%AA%E9%9C%80%E8%A6%81%E6%8F%8F%E8%BF%B0%E5%9C%A8-qemu-%E4%B8%8A%E7%9A%84%E6%83%85%E5%86%B5%E3%80%82"><span class="nav-number">1.2.1.</span> <span class="nav-text">请学习 gdb 调试工具的使用(这对后续调试很重要)，并通过 gdb 简单跟踪从机器加电到跳转到 0x80200000 的简单过程。只需要描述重要的跳转即可，只需要描述在 qemu 上的情况。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lab2"><span class="nav-number">2.</span> <span class="nav-text">lab2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E4%BD%9C%E4%B8%9A-1"><span class="nav-number">2.1.</span> <span class="nav-text">编程作业</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%E7%BC%96%E7%A8%8B%E5%86%85%E5%AE%B9-1"><span class="nav-number">2.1.1.</span> <span class="nav-text">总结编程内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">2.1.2.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E7%AD%94%E4%BD%9C%E4%B8%9A-1"><span class="nav-number">2.2.</span> <span class="nav-text">问答作业</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E7%A1%AE%E8%BF%9B%E5%85%A5-U-%E6%80%81%E5%90%8E%EF%BC%8C%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%89%B9%E5%BE%81%E8%BF%98%E5%BA%94%E6%9C%89%EF%BC%9A%E4%BD%BF%E7%94%A8-S-%E6%80%81%E7%89%B9%E6%9D%83%E6%8C%87%E4%BB%A4%EF%BC%8C%E8%AE%BF%E9%97%AE-S-%E6%80%81%E5%AF%84%E5%AD%98%E5%99%A8%E5%90%8E%E4%BC%9A%E6%8A%A5%E9%94%99%E3%80%82-%E8%AF%B7%E5%90%8C%E5%AD%A6%E4%BB%AC%E5%8F%AF%E4%BB%A5%E8%87%AA%E8%A1%8C%E6%B5%8B%E8%AF%95%E8%BF%99%E4%BA%9B%E5%86%85%E5%AE%B9-%E8%BF%90%E8%A1%8C-Rust-%E4%B8%89%E4%B8%AA-bad-%E6%B5%8B%E4%BE%8B-ch2b-bad-rs-%EF%BC%8C-%E6%B3%A8%E6%84%8F%E5%9C%A8%E7%BC%96%E8%AF%91%E6%97%B6%E8%87%B3%E5%B0%91%E9%9C%80%E8%A6%81%E6%8C%87%E5%AE%9A-LOG-ERROR-%E6%89%8D%E8%83%BD%E8%A7%82%E5%AF%9F%E5%88%B0%E5%86%85%E6%A0%B8%E7%9A%84%E6%8A%A5%E9%94%99%E4%BF%A1%E6%81%AF-%EF%BC%8C-%E6%8F%8F%E8%BF%B0%E7%A8%8B%E5%BA%8F%E5%87%BA%E9%94%99%E8%A1%8C%E4%B8%BA%EF%BC%8C%E5%90%8C%E6%97%B6%E6%B3%A8%E6%84%8F%E6%B3%A8%E6%98%8E%E4%BD%A0%E4%BD%BF%E7%94%A8%E7%9A%84-sbi-%E5%8F%8A%E5%85%B6%E7%89%88%E6%9C%AC%E3%80%82"><span class="nav-number">2.2.1.</span> <span class="nav-text">正确进入 U 态后，程序的特征还应有：使用 S 态特权指令，访问 S 态寄存器后会报错。 请同学们可以自行测试这些内容 (运行 Rust 三个 bad  测例 (ch2b_bad_*.rs) ， 注意在编译时至少需要指定 LOG&#x3D;ERROR 才能观察到内核的报错信息) ，  描述程序出错行为，同时注意注明你使用的 sbi 及其版本。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-trap-S-%E4%B8%AD%E4%B8%A4%E4%B8%AA%E5%87%BD%E6%95%B0-alltraps-%E5%92%8C-restore-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%8C%E5%B9%B6%E5%9B%9E%E7%AD%94%E5%A6%82%E4%B8%8B%E9%97%AE%E9%A2%98"><span class="nav-number">2.2.2.</span> <span class="nav-text">深入理解 trap.S 中两个函数 __alltraps 和 __restore 的作用，并回答如下问题:</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#L40%EF%BC%9A%E5%88%9A%E8%BF%9B%E5%85%A5-restore-%E6%97%B6%EF%BC%8Ca0-%E4%BB%A3%E8%A1%A8%E4%BA%86%E4%BB%80%E4%B9%88%E5%80%BC%E3%80%82%E8%AF%B7%E6%8C%87%E5%87%BA-restore-%E7%9A%84%E4%B8%A4%E7%A7%8D%E4%BD%BF%E7%94%A8%E6%83%85%E6%99%AF%E3%80%82"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">L40：刚进入 __restore 时，a0 代表了什么值。请指出 __restore 的两种使用情景。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#L43-L48%EF%BC%9A%E8%BF%99%E5%87%A0%E8%A1%8C%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E7%89%B9%E6%AE%8A%E5%A4%84%E7%90%86%E4%BA%86%E5%93%AA%E4%BA%9B%E5%AF%84%E5%AD%98%E5%99%A8%EF%BC%9F%E8%BF%99%E4%BA%9B%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E7%9A%84%E5%80%BC%E5%AF%B9%E4%BA%8E%E8%BF%9B%E5%85%A5%E7%94%A8%E6%88%B7%E6%80%81%E6%9C%89%E4%BD%95%E6%84%8F%E4%B9%89%EF%BC%9F%E8%AF%B7%E5%88%86%E5%88%AB%E8%A7%A3%E9%87%8A%E3%80%82"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">L43-L48：这几行汇编代码特殊处理了哪些寄存器？这些寄存器的的值对于进入用户态有何意义？请分别解释。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#L50-L56%EF%BC%9A%E4%B8%BA%E4%BD%95%E8%B7%B3%E8%BF%87%E4%BA%86-x2-%E5%92%8C-x4%EF%BC%9F"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">L50-L56：为何跳过了 x2 和 x4？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#L60%EF%BC%9A%E8%AF%A5%E6%8C%87%E4%BB%A4%E4%B9%8B%E5%90%8E%EF%BC%8Csp-%E5%92%8C-sscratch-%E4%B8%AD%E7%9A%84%E5%80%BC%E5%88%86%E5%88%AB%E6%9C%89%E4%BB%80%E4%B9%88%E6%84%8F%E4%B9%89%EF%BC%9F"><span class="nav-number">2.2.2.4.</span> <span class="nav-text">L60：该指令之后，sp 和 sscratch 中的值分别有什么意义？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#restore%EF%BC%9A%E4%B8%AD%E5%8F%91%E7%94%9F%E7%8A%B6%E6%80%81%E5%88%87%E6%8D%A2%E5%9C%A8%E5%93%AA%E4%B8%80%E6%9D%A1%E6%8C%87%E4%BB%A4%EF%BC%9F%E4%B8%BA%E4%BD%95%E8%AF%A5%E6%8C%87%E4%BB%A4%E6%89%A7%E8%A1%8C%E4%B9%8B%E5%90%8E%E4%BC%9A%E8%BF%9B%E5%85%A5%E7%94%A8%E6%88%B7%E6%80%81%EF%BC%9F"><span class="nav-number">2.2.2.5.</span> <span class="nav-text">__restore：中发生状态切换在哪一条指令？为何该指令执行之后会进入用户态？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#L13%EF%BC%9A%E8%AF%A5%E6%8C%87%E4%BB%A4%E4%B9%8B%E5%90%8E%EF%BC%8Csp-%E5%92%8C-sscratch-%E4%B8%AD%E7%9A%84%E5%80%BC%E5%88%86%E5%88%AB%E6%9C%89%E4%BB%80%E4%B9%88%E6%84%8F%E4%B9%89%EF%BC%9F"><span class="nav-number">2.2.2.6.</span> <span class="nav-text">L13：该指令之后，sp 和 sscratch 中的值分别有什么意义？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E-U-%E6%80%81%E8%BF%9B%E5%85%A5-S-%E6%80%81%E6%98%AF%E5%93%AA%E4%B8%80%E6%9D%A1%E6%8C%87%E4%BB%A4%E5%8F%91%E7%94%9F%E7%9A%84%EF%BC%9F"><span class="nav-number">2.2.2.7.</span> <span class="nav-text">从 U 态进入 S 态是哪一条指令发生的？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E4%BA%8E%E4%BB%BB%E4%BD%95%E4%B8%AD%E6%96%AD%EF%BC%8C-alltraps-%E4%B8%AD%E9%83%BD%E9%9C%80%E8%A6%81%E4%BF%9D%E5%AD%98%E6%89%80%E6%9C%89%E5%AF%84%E5%AD%98%E5%99%A8%E5%90%97%EF%BC%9F%E4%BD%A0%E6%9C%89%E6%B2%A1%E6%9C%89%E6%83%B3%E5%88%B0%E4%B8%80%E4%BA%9B%E5%8A%A0%E9%80%9F-alltraps-%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%9F%E7%AE%80%E5%8D%95%E6%8F%8F%E8%BF%B0%E4%BD%A0%E7%9A%84%E6%83%B3%E6%B3%95%E3%80%82"><span class="nav-number">2.2.3.</span> <span class="nav-text">对于任何中断，__alltraps 中都需要保存所有寄存器吗？你有没有想到一些加速 __alltraps 的方法？简单描述你的想法。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lab3"><span class="nav-number">3.</span> <span class="nav-text">lab3</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E4%BD%9C%E4%B8%9A-2"><span class="nav-number">3.1.</span> <span class="nav-text">编程作业</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%E7%BC%96%E7%A8%8B%E5%86%85%E5%AE%B9-2"><span class="nav-number">3.1.1.</span> <span class="nav-text">总结编程内容</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8TaskControl%E4%B8%AD%E5%A2%9E%E5%8A%A0%E7%9B%B8%E5%BA%94%E7%9A%84%E5%85%83%E7%B4%A0%E6%9D%A5%E8%AE%B0%E5%BD%95%E9%9C%80%E8%A6%81%E7%9A%84%E5%80%BC"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">在TaskControl中增加相应的元素来记录需要的值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E6%89%80%E6%9C%89%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E8%B5%8B%E5%80%BCTaskControl%E7%9A%84%E5%87%BD%E6%95%B0%E5%A2%9E%E5%8A%A0%E5%AF%B9%E5%BA%94%E5%9F%9F%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E8%B5%8B%E5%80%BC"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">在所有初始化和赋值TaskControl的函数增加对应域的初始化和赋值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8task%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%A2%AB%E8%B0%83%E5%BA%A6%E6%97%B6%E4%B8%BA%E5%85%B6start-time%E8%B5%8B%E5%80%BC"><span class="nav-number">3.1.1.3.</span> <span class="nav-text">在task第一次被调度时为其start_time赋值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0pub%E6%96%B9%E6%B3%95%E4%BD%BF%E5%BE%97%E5%85%B6%E5%AE%83%E6%A8%A1%E5%9D%97%E4%B9%9F%E8%83%BD%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8Dtask%E7%9A%84start-time%E5%92%8Ctaskstatus%EF%BC%8C%E4%BB%8E%E8%80%8C%E8%8E%B7%E5%8F%96%E6%83%B3%E8%A6%81%E7%9A%84%E4%BF%A1%E6%81%AF%E3%80%82"><span class="nav-number">3.1.1.4.</span> <span class="nav-text">增加pub方法使得其它模块也能获取当前task的start_time和taskstatus，从而获取想要的信息。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0syscall-times%E7%9A%84%E8%AE%B0%E5%BD%95%E5%92%8C%E5%A4%84%E7%90%86"><span class="nav-number">3.1.1.5.</span> <span class="nav-text">增加syscall_times的记录和处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8sys-task-info"><span class="nav-number">3.1.1.6.</span> <span class="nav-text">实现系统调用sys_task_info</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C-1"><span class="nav-number">3.1.2.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E7%AD%94%E4%BD%9C%E4%B8%9A-2"><span class="nav-number">3.2.</span> <span class="nav-text">问答作业</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E7%A1%AE%E8%BF%9B%E5%85%A5-U-%E6%80%81%E5%90%8E%EF%BC%8C%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%89%B9%E5%BE%81%E8%BF%98%E5%BA%94%E6%9C%89%EF%BC%9A%E4%BD%BF%E7%94%A8-S-%E6%80%81%E7%89%B9%E6%9D%83%E6%8C%87%E4%BB%A4%EF%BC%8C%E8%AE%BF%E9%97%AE-S-%E6%80%81%E5%AF%84%E5%AD%98%E5%99%A8%E5%90%8E%E4%BC%9A%E6%8A%A5%E9%94%99%E3%80%82-%E8%AF%B7%E5%90%8C%E5%AD%A6%E4%BB%AC%E5%8F%AF%E4%BB%A5%E8%87%AA%E8%A1%8C%E6%B5%8B%E8%AF%95%E8%BF%99%E4%BA%9B%E5%86%85%E5%AE%B9-%E8%BF%90%E8%A1%8C-Rust-%E4%B8%A4%E4%B8%AA-bad-%E6%B5%8B%E4%BE%8B-ch2b-bad-rs-%EF%BC%8C-%E6%8F%8F%E8%BF%B0%E7%A8%8B%E5%BA%8F%E5%87%BA%E9%94%99%E8%A1%8C%E4%B8%BA%EF%BC%8C%E5%90%8C%E6%97%B6%E6%B3%A8%E6%84%8F%E6%B3%A8%E6%98%8E%E4%BD%A0%E4%BD%BF%E7%94%A8%E7%9A%84-sbi-%E5%8F%8A%E5%85%B6%E7%89%88%E6%9C%AC%E3%80%82"><span class="nav-number">3.2.1.</span> <span class="nav-text">正确进入 U 态后，程序的特征还应有：使用 S 态特权指令，访问 S 态寄存器后会报错。 请同学们可以自行测试这些内容 (运行 Rust 两个 bad 测例 (ch2b_bad_*.rs) ) ， 描述程序出错行为，同时注意注明你使用的 sbi 及其版本。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E9%80%9A%E8%BF%87-gdb-%E8%B7%9F%E8%B8%AA%E6%88%96%E9%98%85%E8%AF%BB%E6%BA%90%E4%BB%A3%E7%A0%81%E4%BA%86%E8%A7%A3%E6%9C%BA%E5%99%A8%E4%BB%8E%E5%8A%A0%E7%94%B5%E5%88%B0%E8%B7%B3%E8%BD%AC%E5%88%B0-0x80200000-%E7%9A%84%E8%BF%87%E7%A8%8B%EF%BC%8C%E5%B9%B6%E6%8F%8F%E8%BF%B0%E9%87%8D%E8%A6%81%E7%9A%84%E8%B7%B3%E8%BD%AC%E3%80%82%E5%9B%9E%E7%AD%94%E5%86%85%E6%A0%B8%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%9B%E5%85%A5-S-%E6%80%81%E7%9A%84%EF%BC%9F"><span class="nav-number">3.2.2.</span> <span class="nav-text">请通过 gdb 跟踪或阅读源代码了解机器从加电到跳转到 0x80200000 的过程，并描述重要的跳转。回答内核是如何进入 S 态的？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lab4"><span class="nav-number">4.</span> <span class="nav-text">lab4</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E4%BD%9C%E4%B8%9A-3"><span class="nav-number">4.1.</span> <span class="nav-text">编程作业</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%E7%BC%96%E7%A8%8B%E5%86%85%E5%AE%B9-3"><span class="nav-number">4.1.1.</span> <span class="nav-text">总结编程内容</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E5%86%99-sys-get-time%E5%92%8Csys-task-info"><span class="nav-number">4.1.1.1.</span> <span class="nav-text">重写 sys_get_time和sys_task_info</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0-mmap%E5%92%8Cmunmap"><span class="nav-number">4.1.1.2.</span> <span class="nav-text">实现 mmap和munmap</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C-2"><span class="nav-number">4.1.2.</span> <span class="nav-text">运行结果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lab5"><span class="nav-number">5.</span> <span class="nav-text">lab5</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E4%BD%9C%E4%B8%9A-4"><span class="nav-number">5.1.</span> <span class="nav-text">编程作业</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%E7%BC%96%E7%A8%8B%E5%86%85%E5%AE%B9-4"><span class="nav-number">5.1.1.</span> <span class="nav-text">总结编程内容</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%B8%80-%E5%AE%8C%E6%88%90sys-spawn%E5%87%BD%E6%95%B0"><span class="nav-number">5.1.1.1.</span> <span class="nav-text">编程作业一:完成sys_spawn函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E4%BD%9C%E4%B8%9A%E4%BA%8C%EF%BC%9Astride-%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="nav-number">5.1.1.2.</span> <span class="nav-text">编程作业二：stride 调度算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%88%AA%E5%9B%BE-1"><span class="nav-number">5.1.2.</span> <span class="nav-text">运行截图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#lab3%E6%B5%8B%E4%BE%8B%E6%A3%80%E6%9F%A5"><span class="nav-number">5.1.2.1.</span> <span class="nav-text">lab3测例检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lab4%E6%B5%8B%E4%BE%8B%E6%A3%80%E6%9F%A5"><span class="nav-number">5.1.2.2.</span> <span class="nav-text">lab4测例检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lab5%E6%B5%8B%E4%BE%8B%E6%A3%80%E6%9F%A5"><span class="nav-number">5.1.2.3.</span> <span class="nav-text">lab5测例检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%80%E6%9C%89%E6%B5%8B%E4%BE%8B%E6%A3%80%E6%9F%A5"><span class="nav-number">5.1.2.4.</span> <span class="nav-text">所有测例检查</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E7%AD%94%E4%BD%9C%E4%B8%9A-3"><span class="nav-number">5.2.</span> <span class="nav-text">问答作业</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fork-exec-%E7%9A%84%E4%B8%80%E4%B8%AA%E6%AF%94%E8%BE%83%E5%A4%A7%E7%9A%84%E9%97%AE%E9%A2%98%E6%98%AF-fork-%E4%B9%8B%E5%90%8E%E7%9A%84%E5%86%85%E5%AD%98%E9%A1%B5-%E6%96%87%E4%BB%B6%E7%AD%89%E8%B5%84%E6%BA%90%E5%AE%8C%E5%85%A8%E6%B2%A1%E6%9C%89%E4%BD%BF%E7%94%A8%E5%B0%B1%E5%BA%9F%E5%BC%83%E4%BA%86%EF%BC%8C%E9%92%88%E5%AF%B9%E8%BF%99%E4%B8%80%E7%82%B9%EF%BC%8C%E6%9C%89%E4%BB%80%E4%B9%88%E6%94%B9%E8%BF%9B%E7%AD%96%E7%95%A5%EF%BC%9F"><span class="nav-number">5.2.1.</span> <span class="nav-text">fork + exec 的一个比较大的问题是 fork 之后的内存页&#x2F;文件等资源完全没有使用就废弃了，针对这一点，有什么改进策略？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E5%81%9A%EF%BC%8C%E4%B8%8D%E5%8D%A0%E5%88%86-%E5%85%B6%E5%AE%9E%E4%BD%BF%E7%94%A8%E4%BA%86%E9%A2%98-1-%E7%9A%84%E7%AD%96%E7%95%A5%E4%B9%8B%E5%90%8E%EF%BC%8Cfork-exec-%E6%89%80%E5%B8%A6%E6%9D%A5%E7%9A%84%E6%97%A0%E6%95%88%E8%B5%84%E6%BA%90%E7%9A%84%E9%97%AE%E9%A2%98%E5%B7%B2%E7%BB%8F%E5%9F%BA%E6%9C%AC%E8%A2%AB%E8%A7%A3%E5%86%B3%E4%BA%86%EF%BC%8C%E4%BD%86%E6%98%AF%E8%BF%91%E5%B9%B4%E6%9D%A5-fork-%E8%BF%98%E6%98%AF%E5%9C%A8%E8%A2%AB%E4%B8%8D%E6%96%AD%E7%9A%84%E6%89%B9%E5%88%A4%EF%BC%8C%E9%82%A3%E4%B9%88%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88%E6%AD%A3%E5%9C%A8%E2%80%9D%E6%9D%80%E6%AD%BB%E2%80%9Dfork%EF%BC%9F%E5%8F%AF%E4%BB%A5%E5%8F%82%E8%80%83-%E8%AE%BA%E6%96%87-%E3%80%82"><span class="nav-number">5.2.2.</span> <span class="nav-text">[选做，不占分]其实使用了题(1)的策略之后，fork + exec 所带来的无效资源的问题已经基本被解决了，但是近年来 fork 还是在被不断的批判，那么到底是什么正在”杀死”fork？可以参考 论文 。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E9%98%85%E8%AF%BB%E4%B8%8B%E5%88%97%E4%BB%A3%E7%A0%81%EF%BC%8C%E5%B9%B6%E5%88%86%E6%9E%90%E7%A8%8B%E5%BA%8F%E7%9A%84%E8%BE%93%E5%87%BA%EF%BC%8C%E5%81%87%E5%AE%9A%E4%B8%8D%E5%8F%91%E7%94%9F%E8%BF%90%E8%A1%8C%E9%94%99%E8%AF%AF%EF%BC%8C%E4%B8%8D%E8%80%83%E8%99%91%E8%A1%8C%E7%BC%93%E5%86%B2%EF%BC%9A"><span class="nav-number">5.2.3.</span> <span class="nav-text">请阅读下列代码，并分析程序的输出，假定不发生运行错误，不考虑行缓冲：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E5%81%9A%EF%BC%8C%E4%B8%8D%E5%8D%A0%E5%88%86-%E6%9B%B4%E8%BF%9B%E4%B8%80%E6%AD%A5%EF%BC%8C%E5%A6%82%E6%9E%9C%E7%BB%99%E5%87%BA%E4%B8%80%E4%B8%AA-%E7%9A%84%E5%BA%8F%E5%88%97%EF%BC%8C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F%E6%9D%A5%E5%BE%97%E5%88%B0%E7%AD%94%E6%A1%88%EF%BC%9F"><span class="nav-number">5.2.4.</span> <span class="nav-text">[选做，不占分] 更进一步，如果给出一个 &amp;&amp; || 的序列，如何设计一个程序来得到答案？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stride-%E7%AE%97%E6%B3%95%E6%B7%B1%E5%85%A5"><span class="nav-number">5.2.5.</span> <span class="nav-text">stride 算法深入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E6%83%85%E5%86%B5%E6%98%AF%E8%BD%AE%E5%88%B0-p1-%E6%89%A7%E8%A1%8C%E5%90%97%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">5.2.5.1.</span> <span class="nav-text">实际情况是轮到 p1 执行吗？为什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%EF%BC%9F%E5%B0%9D%E8%AF%95%E7%AE%80%E5%8D%95%E8%AF%B4%E6%98%8E%EF%BC%88%E4%BC%A0%E8%BE%BE%E6%80%9D%E6%83%B3%E5%8D%B3%E5%8F%AF%EF%BC%8C%E4%B8%8D%E8%A6%81%E6%B1%82%E4%B8%A5%E6%A0%BC%E8%AF%81%E6%98%8E%EF%BC%89%E3%80%82"><span class="nav-number">5.2.5.2.</span> <span class="nav-text">为什么？尝试简单说明（传达思想即可，不要求严格证明）。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E8%A1%A5%E5%85%A8%E5%A6%82%E4%B8%8B-partial-cmp-%E5%87%BD%E6%95%B0%EF%BC%88%E5%81%87%E8%AE%BE%E6%B0%B8%E8%BF%9C%E4%B8%8D%E4%BC%9A%E7%9B%B8%E7%AD%89%EF%BC%89"><span class="nav-number">5.2.5.3.</span> <span class="nav-text">请补全如下 partial_cmp 函数（假设永远不会相等）</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sunny</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sunny</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
