@@ -20,23 +20,24 @@
     var CONFIG = {"hostname":"wuyaxiao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="http交互过程  用wireshark抓包后利用百度ip地址过滤数据包ipv6.src &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296 || ipv6.dst &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296  “三次握手”建立TCP连接 客户端发送HTTP请求 客户端向服务器发送HTTP请求消息。请求消息通常包括">
+  <meta name="description" content="前言对于传输关键字段的一个生活化理解  FIN&#x3D;1:数据传送完毕  ACK&#x3D;1:接收到你的消息  ack &#x3D; 对方上次的seq + 数据长度（Len） + 1：期望收到的下一个字节的序列号  seq &#x3D; 上一个发送包的seq + 上一个包的数据长度（Len） + 控制标志占用：当前数据包的第一个字节的序列号 SYN、FIN各占用1个虚拟序号（即使Len&#x3D;0）">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HTTP&#x2F;HTTPS交互过程">
 <meta property="og:url" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/index.html">
 <meta property="og:site_name" content="学习小屋">
-<meta property="og:description" content="http交互过程  用wireshark抓包后利用百度ip地址过滤数据包ipv6.src &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296 || ipv6.dst &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296  “三次握手”建立TCP连接 客户端发送HTTP请求 客户端向服务器发送HTTP请求消息。请求消息通常包括">
+<meta property="og:description" content="前言对于传输关键字段的一个生活化理解  FIN&#x3D;1:数据传送完毕  ACK&#x3D;1:接收到你的消息  ack &#x3D; 对方上次的seq + 数据长度（Len） + 1：期望收到的下一个字节的序列号  seq &#x3D; 上一个发送包的seq + 上一个包的数据长度（Len） + 控制标志占用：当前数据包的第一个字节的序列号 SYN、FIN各占用1个虚拟序号（即使Len&#x3D;0）">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221702611.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221720457.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221743565.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250407220856284.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221755801.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250407222015156.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221808248.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221827193.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221839504.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221855258.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221911301.png">
-<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221927735.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250407220911416.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221942057.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221951935.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222010322.png">
@@ -52,15 +53,17 @@
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222228493.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222316867.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222328763.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250407222109385.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222340929.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250407220936520.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222350469.png">
 <meta property="article:published_time" content="2025-04-07T10:34:40.000Z">
-<meta property="article:modified_time" content="2025-04-07T10:35:39.354Z">
+<meta property="article:modified_time" content="2025-04-07T14:25:27.802Z">
 <meta property="article:author" content="Sunny">
 <meta property="article:tag" content="HTTP">
 <meta property="article:tag" content="HTTPS">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221702611.png">
+<meta name="twitter:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221720457.png">
 
 <link rel="canonical" href="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/">
 
@@ -242,7 +245,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2025-04-07 18:34:40 / 修改时间：18:35:39" itemprop="dateCreated datePublished" datetime="2025-04-07T18:34:40+08:00">2025-04-07</time>
+              <time title="创建时间：2025-04-07 18:34:40 / 修改时间：22:25:27" itemprop="dateCreated datePublished" datetime="2025-04-07T18:34:40+08:00">2025-04-07</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -272,12 +275,25 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="http交互过程"><a href="#http交互过程" class="headerlink" title="http交互过程"></a>http交互过程</h2><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221702611.png" alt="image-20250406221702611"></p>
-<p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221720457.png" alt="image-20250406221720457"></p>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>对于传输关键字段的一个生活化理解</p>
+<ul>
+<li><p>FIN&#x3D;1:数据传送完毕</p>
+</li>
+<li><p>ACK&#x3D;1:接收到你的消息</p>
+</li>
+<li><p>ack &#x3D; 对方上次的seq + 数据长度（Len） + 1：期望收到的下一个字节的序列号</p>
+</li>
+<li><p>seq &#x3D; 上一个发送包的seq + 上一个包的数据长度（Len） + 控制标志占用：当前数据包的第一个字节的序列号</p>
+<p><code>SYN</code>、<code>FIN</code>各占用<strong>1个虚拟序号</strong>（即使<code>Len=0</code>）。</p>
+</li>
+</ul>
+<h2 id="http交互过程"><a href="#http交互过程" class="headerlink" title="http交互过程"></a>http交互过程</h2><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221720457.png" alt="image-20250406221720457"></p>
 <p>用wireshark抓包后利用百度ip地址过滤数据包ipv6.src &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296 || ipv6.dst &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296</p>
 <p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221743565.png" alt="image-20250406221743565"></p>
-<h3 id="“三次握手”建立TCP连接"><a href="#“三次握手”建立TCP连接" class="headerlink" title="“三次握手”建立TCP连接"></a>“三次握手”建立TCP连接</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221755801.png" alt="image-20250406221755801"></p>
-<h3 id="客户端发送HTTP请求"><a href="#客户端发送HTTP请求" class="headerlink" title="客户端发送HTTP请求"></a>客户端发送HTTP请求</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221808248.png" alt="image-20250406221808248"></p>
+<h3 id="“三次握手”建立TCP连接"><a href="#“三次握手”建立TCP连接" class="headerlink" title="“三次握手”建立TCP连接"></a>“三次握手”建立TCP连接</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250407220856284.png" alt="image-20250407220856284"></p>
+<p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221755801.png" alt="image-20250406221755801"></p>
+<h3 id="数据传输阶段"><a href="#数据传输阶段" class="headerlink" title="数据传输阶段"></a>数据传输阶段</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250407222015156.png" alt="image-20250407222015156"></p>
+<h4 id="客户端发送HTTP请求"><a href="#客户端发送HTTP请求" class="headerlink" title="客户端发送HTTP请求"></a>客户端发送HTTP请求</h4><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221808248.png" alt="image-20250406221808248"></p>
 <p>客户端向服务器发送HTTP请求消息。请求消息通常包括以下部分：</p>
 <ul>
 <li>请求行：包含请求方法（如GET、POST）、请求的资源路径、HTTP版本。<ul>
@@ -297,7 +313,7 @@
 </li>
 <li>请求体：对于某些请求方法（如POST），可能包含额外的数据，用于向服务器发送信息。</li>
 </ul>
-<h3 id="服务器发送HTTP响应"><a href="#服务器发送HTTP响应" class="headerlink" title="服务器发送HTTP响应"></a>服务器发送HTTP响应</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221827193.png" alt="image-20250406221827193"></p>
+<h4 id="服务器发送HTTP响应"><a href="#服务器发送HTTP响应" class="headerlink" title="服务器发送HTTP响应"></a>服务器发送HTTP响应</h4><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221827193.png" alt="image-20250406221827193"></p>
 <p>服务器接收到请求后，会检查请求头和请求体，然后根据请求方法（如GET、POST）和资源路径来决定如何响应。服务器生成的响应消息，包括状态行、响应体。</p>
 <p>当打开响应体会发现它的内容是明文的，对于机密通信来说HTTP通信很容易产生信息泄露。另外，以上介绍的整个交互过程中并不验证通信方的身份，第三方可以冒充他人身份参与通信。</p>
 <p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221839504.png" alt="image-20250406221839504"></p>
@@ -347,12 +363,12 @@
 <p>HTTPS 被称为 HTTP Over SSL (基于SSL加密的HTTP)，这里的SSL (Secure Socket Layer) 被称为安全套接层，它是一种加密协议，不仅可应用于HTTP协议、还可应用于POP3协议、SMTP协议、VPN等。</p>
 <p>TLS (Transport Layer Security) 被称为传输层安全，TLS相对于SSL 3.0版本做了些修改和功能增强，相当于SSL的升级版本，所以有时也一起统称为 SSL，接入来本文若不明显强调，SSL就默认表示SSL&#x2F;TLS。</p>
 <p>我们可以用公式HTTPS &#x3D; HTTP + SSL &#x2F; TLS来表示HTTPS。<br><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221911301.png" alt="image-20250406221911301"></p>
-<p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221927735.png" alt="image-20250406221927735"></p>
-<h3 id="阶段一：TCP三次握手建立连接"><a href="#阶段一：TCP三次握手建立连接" class="headerlink" title="阶段一：TCP三次握手建立连接"></a>阶段一：TCP三次握手建立连接</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221942057.png" alt="image-20250406221942057"></p>
+<h3 id="阶段一：TCP三次握手建立连接"><a href="#阶段一：TCP三次握手建立连接" class="headerlink" title="阶段一：TCP三次握手建立连接"></a>阶段一：TCP三次握手建立连接</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250407220911416.png" alt="image-20250407220911416"></p>
+<p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221942057.png" alt="image-20250406221942057"></p>
 <h3 id="阶段二：TLS握手建立安全通道"><a href="#阶段二：TLS握手建立安全通道" class="headerlink" title="阶段二：TLS握手建立安全通道"></a>阶段二：TLS握手建立安全通道</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221951935.png" alt="image-20250406221951935"></p>
-<p>第一次握手报文（72）：我-&gt;百度 发送TLS消息「Client Hello」；<br>第二次握手报文（74、79）：</p>
-<p>百度-&gt;我 发送TLS消息「Server Hello」；<br>百度-&gt;我 发送TLS消息「Certificate」，「Server Key Exchange」，「Server Hello Done」</p>
-<p>第三次握手报文（83）：我-&gt;百度 发送TLS消息「Client Key Exchange」，「Change Cipher Spec」，「Encrypted Handshake Message」<br>第四次握手报文（85）：百度-&gt;我 发送TLS消息「Change Cipher Spec」，「Encrypted Handshake Message」<br>为了直观展示TLS报文交互，基于抓包分析的数据包可以绘制得到下图。</p>
+<p>第一次握手报文：我-&gt;百度 发送TLS消息「Client Hello」（22）；<br>第二次握手报文：</p>
+<p>百度-&gt;我 发送TLS消息「Server Hello」（65）；<br>百度-&gt;我 发送TLS消息「Certificate」，「Server Key Exchange」，「Server Hello Done」（86）</p>
+<p>第三次握手报文：我-&gt;百度 发送TLS消息「Client Key Exchange」，「Change Cipher Spec」，「Encrypted Handshake Message」（88）<br>第四次握手报文（85）：百度-&gt;我 发送TLS消息「Change Cipher Spec」，「Encrypted Handshake Message」（98）<br>为了直观展示TLS报文交互，基于抓包分析的数据包可以绘制得到下图。</p>
 <p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222010322.png" alt="image-20250406222010322"></p>
 <h4 id="TLS第一次握手：client-server-Client-Hello"><a href="#TLS第一次握手：client-server-Client-Hello" class="headerlink" title="TLS第一次握手：client -&gt; server (Client Hello)"></a>TLS第一次握手：client -&gt; server (Client Hello)</h4><p>客户端向服务端发送：</p>
 <ol>
@@ -390,7 +406,7 @@
 <p>在这个例子中：</p>
 <p>ECDHE表示密钥交换算法是基于椭圆曲线的 Diffie-Hellman（ECDHE）。<br>RSA表示使用RSA算法（私钥加密、公钥解密）验证对方身份。<br>AES_256_GCM表示使用 256 位的 AES 加密算法和 GCM 模式。<br>SHA384表示使用 SHA-384 作为消息摘要算法。</p>
 <p>不同的密码套件组合提供了不同的安全性和性能特点，服务器和客户端在进行 TLS 握手时会协商选择双方都支持的 Cipher Suite 来建立安全连接。</p>
-<p>客户端发送完「Client Hello」（第72个报文），第73个报文则是服务端向客户端发送的ACK确认消息，代表上面的「Client Hello」已经收到。这里也可以看出服务端是通过普通的TCP 的ACK消息去应答「Client Hello」。<br><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222111873.png" alt="image-20250406222111873"></p>
+<p>客户端发送完「Client Hello」（第22个报文），第62个报文则是服务端向客户端发送的ACK确认消息，代表上面的「Client Hello」已经收到。这里也可以看出服务端是通过普通的TCP 的ACK消息去应答「Client Hello」。<br><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222111873.png" alt="image-20250406222111873"></p>
 <h4 id="TLS第二次握手：server-client-1-Server-Hello-2-Certificate-Server-key-Exchange-Server-Hello-Done"><a href="#TLS第二次握手：server-client-1-Server-Hello-2-Certificate-Server-key-Exchange-Server-Hello-Done" class="headerlink" title="TLS第二次握手：server -&gt; client (1.Server Hello; 2.Certificate,Server key Exchange,Server Hello Done)"></a>TLS第二次握手：server -&gt; client (1.Server Hello; 2.Certificate,Server key Exchange,Server Hello Done)</h4><p>这一次握手时，server向client连续发送了两个报文：</p>
 <p>Server Hello：服务端为了证明自己的身份，会发送「Server Certificate」给客户端，这个消息里含有数字证书；<br>Certificate,Server key Exchange,Server Hello Done：目的是告诉客户端，我已经把该给你的东西都给你了，本次打招呼完毕。</p>
 <h5 id="服务端发送报文：Server-Hello"><a href="#服务端发送报文：Server-Hello" class="headerlink" title="服务端发送报文：Server Hello"></a>服务端发送报文：Server Hello</h5><p>服务端向客户端发送：</p>
@@ -437,9 +453,11 @@
 <p>「Encrypted Handshake Message」消息其实不只是客户端会发送，之后服务端也会发送一个。</p>
 <h4 id="TLS-第四次握手server-client-Change-Cipher-Spec-Encrypted-Handshake-Message"><a href="#TLS-第四次握手server-client-Change-Cipher-Spec-Encrypted-Handshake-Message" class="headerlink" title="TLS 第四次握手server -&gt; client (Change Cipher Spec,Encrypted Handshake Message)"></a>TLS 第四次握手server -&gt; client (Change Cipher Spec,Encrypted Handshake Message)</h4><p>服务器也是同样的操作，发送「Change Cipher Spec」和「Encrypted Handshake Message」消息，如果双方都验证加密和解密没问题，那么TLS握手正式完成。</p>
 <p>最后，就用会话密钥加解密 HTTPS 请求和响应了，即开启了阶段三的加密通信。</p>
-<h3 id="阶段三：加密通信"><a href="#阶段三：加密通信" class="headerlink" title="阶段三：加密通信"></a>阶段三：加密通信</h3><p>TLS握手完成后，客户端与服务端的所有通信内容均被加密，如果没有会话密钥则无法解密通信内容。</p>
+<h3 id="阶段三：加密通信"><a href="#阶段三：加密通信" class="headerlink" title="阶段三：加密通信"></a>阶段三：加密通信</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250407222109385.png" alt="image-20250407222109385"></p>
+<p>TLS握手完成后，客户端与服务端的所有通信内容均被加密，如果没有会话密钥则无法解密通信内容。</p>
 <p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222340929.png" alt="image-20250406222340929"></p>
-<h3 id="阶段四：TCP四次挥手断开连接"><a href="#阶段四：TCP四次挥手断开连接" class="headerlink" title="阶段四：TCP四次挥手断开连接"></a>阶段四：TCP四次挥手断开连接</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222350469.png" alt="image-20250406222350469"></p>
+<h3 id="阶段四：TCP四次挥手断开连接"><a href="#阶段四：TCP四次挥手断开连接" class="headerlink" title="阶段四：TCP四次挥手断开连接"></a>阶段四：TCP四次挥手断开连接</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250407220936520.png" alt="image-20250407220936520"></p>
+<p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222350469.png" alt="image-20250406222350469"></p>
 
     </div>
 
@@ -557,7 +575,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#http%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">http交互过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%9C%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E2%80%9D%E5%BB%BA%E7%AB%8BTCP%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.1.</span> <span class="nav-text">“三次握手”建立TCP连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%8F%91%E9%80%81HTTP%E8%AF%B7%E6%B1%82"><span class="nav-number">1.2.</span> <span class="nav-text">客户端发送HTTP请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81HTTP%E5%93%8D%E5%BA%94"><span class="nav-number">1.3.</span> <span class="nav-text">服务器发送HTTP响应</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP-%E5%93%8D%E5%BA%94%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.1.</span> <span class="nav-text">HTTP 响应结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%9C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E2%80%9D%E6%96%AD%E5%BC%80TCP%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.4.</span> <span class="nav-text">“四次挥手”断开TCP连接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#https%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">https交互过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E4%B8%80%EF%BC%9ATCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.1.</span> <span class="nav-text">阶段一：TCP三次握手建立连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E4%BA%8C%EF%BC%9ATLS%E6%8F%A1%E6%89%8B%E5%BB%BA%E7%AB%8B%E5%AE%89%E5%85%A8%E9%80%9A%E9%81%93"><span class="nav-number">2.2.</span> <span class="nav-text">阶段二：TLS握手建立安全通道</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TLS%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%9Aclient-server-Client-Hello"><span class="nav-number">2.2.1.</span> <span class="nav-text">TLS第一次握手：client -&gt; server (Client Hello)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLS%E7%AC%AC%E4%BA%8C%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%9Aserver-client-1-Server-Hello-2-Certificate-Server-key-Exchange-Server-Hello-Done"><span class="nav-number">2.2.2.</span> <span class="nav-text">TLS第二次握手：server -&gt; client (1.Server Hello; 2.Certificate,Server key Exchange,Server Hello Done)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8F%91%E9%80%81%E6%8A%A5%E6%96%87%EF%BC%9AServer-Hello"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">服务端发送报文：Server Hello</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8F%91%E9%80%81%E6%8A%A5%E6%96%87%EF%BC%9ACertificate-Server-key-Exchange-Server-Hello-Done"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">服务端发送报文：Certificate,Server key Exchange,Server Hello Done</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#certificate"><span class="nav-number">2.2.2.2.1.</span> <span class="nav-text">certificate</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Server-Key-Exchange"><span class="nav-number">2.2.2.2.2.</span> <span class="nav-text">Server Key Exchange</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Server-Hello-Done"><span class="nav-number">2.2.2.2.3.</span> <span class="nav-text">Server Hello Done</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLS%E7%AC%AC%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8Bclient-server-Client-Key-Exchange-Change-Cipher-Spec-Encrypted-Handshake-Message"><span class="nav-number">2.2.3.</span> <span class="nav-text">TLS第三次握手client -&gt; server (Client Key Exchange, Change Cipher Spec, Encrypted Handshake Message)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Client-Key-Exchange"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">Client Key Exchange</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Change-Cipher-Spec"><span class="nav-number">2.2.3.2.</span> <span class="nav-text">Change Cipher Spec</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Encrypted-Handshake-Message"><span class="nav-number">2.2.3.3.</span> <span class="nav-text">Encrypted Handshake Message</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLS-%E7%AC%AC%E5%9B%9B%E6%AC%A1%E6%8F%A1%E6%89%8Bserver-client-Change-Cipher-Spec-Encrypted-Handshake-Message"><span class="nav-number">2.2.4.</span> <span class="nav-text">TLS 第四次握手server -&gt; client (Change Cipher Spec,Encrypted Handshake Message)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E4%B8%89%EF%BC%9A%E5%8A%A0%E5%AF%86%E9%80%9A%E4%BF%A1"><span class="nav-number">2.3.</span> <span class="nav-text">阶段三：加密通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E5%9B%9B%EF%BC%9ATCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E6%96%AD%E5%BC%80%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.4.</span> <span class="nav-text">阶段四：TCP四次挥手断开连接</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#http%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">http交互过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%9C%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E2%80%9D%E5%BB%BA%E7%AB%8BTCP%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.1.</span> <span class="nav-text">“三次握手”建立TCP连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E9%98%B6%E6%AE%B5"><span class="nav-number">2.2.</span> <span class="nav-text">数据传输阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%8F%91%E9%80%81HTTP%E8%AF%B7%E6%B1%82"><span class="nav-number">2.2.1.</span> <span class="nav-text">客户端发送HTTP请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81HTTP%E5%93%8D%E5%BA%94"><span class="nav-number">2.2.2.</span> <span class="nav-text">服务器发送HTTP响应</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP-%E5%93%8D%E5%BA%94%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.3.</span> <span class="nav-text">HTTP 响应结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%9C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E2%80%9D%E6%96%AD%E5%BC%80TCP%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.3.</span> <span class="nav-text">“四次挥手”断开TCP连接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#https%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">https交互过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E4%B8%80%EF%BC%9ATCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5"><span class="nav-number">3.1.</span> <span class="nav-text">阶段一：TCP三次握手建立连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E4%BA%8C%EF%BC%9ATLS%E6%8F%A1%E6%89%8B%E5%BB%BA%E7%AB%8B%E5%AE%89%E5%85%A8%E9%80%9A%E9%81%93"><span class="nav-number">3.2.</span> <span class="nav-text">阶段二：TLS握手建立安全通道</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TLS%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%9Aclient-server-Client-Hello"><span class="nav-number">3.2.1.</span> <span class="nav-text">TLS第一次握手：client -&gt; server (Client Hello)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLS%E7%AC%AC%E4%BA%8C%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%9Aserver-client-1-Server-Hello-2-Certificate-Server-key-Exchange-Server-Hello-Done"><span class="nav-number">3.2.2.</span> <span class="nav-text">TLS第二次握手：server -&gt; client (1.Server Hello; 2.Certificate,Server key Exchange,Server Hello Done)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8F%91%E9%80%81%E6%8A%A5%E6%96%87%EF%BC%9AServer-Hello"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">服务端发送报文：Server Hello</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8F%91%E9%80%81%E6%8A%A5%E6%96%87%EF%BC%9ACertificate-Server-key-Exchange-Server-Hello-Done"><span class="nav-number">3.2.2.2.</span> <span class="nav-text">服务端发送报文：Certificate,Server key Exchange,Server Hello Done</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#certificate"><span class="nav-number">3.2.2.2.1.</span> <span class="nav-text">certificate</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Server-Key-Exchange"><span class="nav-number">3.2.2.2.2.</span> <span class="nav-text">Server Key Exchange</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Server-Hello-Done"><span class="nav-number">3.2.2.2.3.</span> <span class="nav-text">Server Hello Done</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLS%E7%AC%AC%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8Bclient-server-Client-Key-Exchange-Change-Cipher-Spec-Encrypted-Handshake-Message"><span class="nav-number">3.2.3.</span> <span class="nav-text">TLS第三次握手client -&gt; server (Client Key Exchange, Change Cipher Spec, Encrypted Handshake Message)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Client-Key-Exchange"><span class="nav-number">3.2.3.1.</span> <span class="nav-text">Client Key Exchange</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Change-Cipher-Spec"><span class="nav-number">3.2.3.2.</span> <span class="nav-text">Change Cipher Spec</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Encrypted-Handshake-Message"><span class="nav-number">3.2.3.3.</span> <span class="nav-text">Encrypted Handshake Message</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLS-%E7%AC%AC%E5%9B%9B%E6%AC%A1%E6%8F%A1%E6%89%8Bserver-client-Change-Cipher-Spec-Encrypted-Handshake-Message"><span class="nav-number">3.2.4.</span> <span class="nav-text">TLS 第四次握手server -&gt; client (Change Cipher Spec,Encrypted Handshake Message)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E4%B8%89%EF%BC%9A%E5%8A%A0%E5%AF%86%E9%80%9A%E4%BF%A1"><span class="nav-number">3.3.</span> <span class="nav-text">阶段三：加密通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E5%9B%9B%EF%BC%9ATCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E6%96%AD%E5%BC%80%E8%BF%9E%E6%8E%A5"><span class="nav-number">3.4.</span> <span class="nav-text">阶段四：TCP四次挥手断开连接</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
