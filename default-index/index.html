@@ -13,6 +13,8 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
+
+<script src="/freecdn-loader.min.js"></script>
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 <script id="hexo-configurations">
@@ -1142,7 +1144,7 @@
 <td>2</td>
 <td>管理信息系</td>
 <td>85860126</td>
-<td><a href="mailto:&#122;&#120;&#x6c;&#64;&#49;&#x36;&#x33;&#x2e;&#99;&#x6f;&#109;">zxl@163.com</a></td>
+<td><a href="mailto:&#x7a;&#120;&#x6c;&#64;&#49;&#54;&#x33;&#46;&#x63;&#x6f;&#x6d;">zxl@163.com</a></td>
 </tr>
 <tr>
 <td>36405216</td>
@@ -1152,7 +1154,7 @@
 <td>1</td>
 <td>航海系</td>
 <td>85860729</td>
-<td><a href="mailto:&#x6c;&#x79;&#x40;&#x73;&#x69;&#110;&#x61;&#46;&#99;&#x6f;&#x6d;&#x2e;&#x63;&#110;">ly@sina.com.cn</a></td>
+<td><a href="mailto:&#108;&#121;&#64;&#x73;&#105;&#x6e;&#x61;&#46;&#x63;&#111;&#x6d;&#x2e;&#99;&#x6e;">ly@sina.com.cn</a></td>
 </tr>
 <tr>
 <td>28308208</td>
@@ -1162,7 +1164,7 @@
 <td>1</td>
 <td>人文艺术系</td>
 <td>85860618</td>
-<td><a href="mailto:&#119;&#x78;&#113;&#64;&#x79;&#x61;&#x68;&#111;&#x6f;&#x2e;&#99;&#x6e;">wxq@yahoo.cn</a></td>
+<td><a href="mailto:&#x77;&#x78;&#x71;&#x40;&#x79;&#x61;&#104;&#x6f;&#111;&#46;&#x63;&#110;">wxq@yahoo.cn</a></td>
 </tr>
 <tr>
 <td>16406236</td>
@@ -1172,7 +1174,7 @@
 <td>1</td>
 <td>轮机工程系</td>
 <td>85860913</td>
-<td><a href="mailto:&#x7a;&#x6a;&#x67;&#64;&#x31;&#54;&#x33;&#46;&#99;&#x6f;&#x6d;">zjg@163.com</a></td>
+<td><a href="mailto:&#122;&#106;&#103;&#64;&#x31;&#54;&#x33;&#x2e;&#x63;&#111;&#109;">zjg@163.com</a></td>
 </tr>
 <tr>
 <td>16406247</td>
@@ -1182,7 +1184,7 @@
 <td></td>
 <td>轮机工程系</td>
 <td>85860916</td>
-<td><a href="mailto:&#103;&#121;&#x66;&#64;&#x79;&#x61;&#x68;&#x6f;&#x6f;&#x2e;&#x63;&#x6e;">gyf@yahoo.cn</a></td>
+<td><a href="mailto:&#x67;&#121;&#102;&#64;&#121;&#x61;&#104;&#111;&#x6f;&#x2e;&#99;&#110;">gyf@yahoo.cn</a></td>
 </tr>
 </tbody></table>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">-- 借还明细表</span><br><span class="line">CREATE TABLE 借还明细表 (</span><br><span class="line">    借书证号 VARCHAR(10),</span><br><span class="line">    图书编号 VARCHAR(10),</span><br><span class="line">    借还状态 ENUM(&#x27;还&#x27;,&#x27;借&#x27;),</span><br><span class="line">    借书日期 DATE,</span><br><span class="line">    还书日期 DATE,</span><br><span class="line">    数量 INT,</span><br><span class="line">    工号 VARCHAR(10),</span><br><span class="line">    CONSTRAINT check_borrow_date CHECK (借书日期 &lt;= &#x27;2024-12-31&#x27;),</span><br><span class="line">    FOREIGN KEY (借书证号) REFERENCES 读者信息表(借书证号)</span><br><span class="line">);</span><br><span class="line">INSERT INTO 借还明细表 (借书证号, 图书编号, 借还状态, 借书日期, 还书日期, 数量, 工号)</span><br><span class="line">VALUES</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;07108667&#x27;, &#x27;还&#x27;, &#x27;2008-03-28&#x27;, &#x27;2008-04-14&#x27;, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;99011818&#x27;, &#x27;借&#x27;, &#x27;2008-04-27&#x27;, NULL, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;36405216&#x27;, &#x27;07410802&#x27;, &#x27;借&#x27;, &#x27;2008-04-27&#x27;, NULL, 1, &#x27;002018&#x27;),</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;07410298&#x27;, &#x27;借&#x27;, &#x27;2008-04-28&#x27;, NULL, 1, &#x27;002018&#x27;),</span><br><span class="line">    (&#x27;36405216&#x27;, &#x27;00000746&#x27;, &#x27;还&#x27;, &#x27;2008-04-29&#x27;, &#x27;2008-05-09&#x27;, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;28308208&#x27;, &#x27;07410139&#x27;, &#x27;借&#x27;, &#x27;2008-05-10&#x27;, NULL, 1, &#x27;002019&#x27;),</span><br><span class="line">    (&#x27;16406236&#x27;, &#x27;07410139&#x27;, &#x27;借&#x27;, &#x27;2008-05-11&#x27;, NULL, 1, &#x27;002017&#x27;);</span><br></pre></td></tr></table></figure>
@@ -1366,7 +1368,7 @@
 <td>男</td>
 <td>1971-05-03</td>
 <td>85860715</td>
-<td><a href="mailto:&#x7a;&#120;&#102;&#64;&#49;&#x36;&#x33;&#46;&#x63;&#111;&#109;">zxf@163.com</a></td>
+<td><a href="mailto:&#122;&#x78;&#x66;&#x40;&#49;&#x36;&#51;&#46;&#99;&#x6f;&#109;">zxf@163.com</a></td>
 </tr>
 <tr>
 <td>002017</td>
@@ -1374,7 +1376,7 @@
 <td>女</td>
 <td>1979-09-15</td>
 <td>85860716</td>
-<td><a href="mailto:&#x6c;&#106;&#x40;&#49;&#54;&#51;&#46;&#x63;&#111;&#109;">lj@163.com</a></td>
+<td><a href="mailto:&#x6c;&#x6a;&#64;&#x31;&#54;&#x33;&#x2e;&#x63;&#x6f;&#x6d;">lj@163.com</a></td>
 </tr>
 <tr>
 <td>002018</td>
@@ -1382,7 +1384,7 @@
 <td>男</td>
 <td>1972-04-25</td>
 <td>85860717</td>
-<td><a href="mailto:&#x67;&#x62;&#64;&#121;&#97;&#104;&#x6f;&#x6f;&#x2e;&#99;&#110;">gb@yahoo.cn</a></td>
+<td><a href="mailto:&#x67;&#x62;&#x40;&#121;&#97;&#x68;&#111;&#111;&#x2e;&#99;&#110;">gb@yahoo.cn</a></td>
 </tr>
 <tr>
 <td>002019</td>
@@ -1390,7 +1392,7 @@
 <td>女</td>
 <td>1968-11-03</td>
 <td>85860718</td>
-<td><a href="mailto:&#99;&#x78;&#64;&#115;&#x69;&#x6e;&#x61;&#46;&#x63;&#111;&#x6d;&#x2e;&#x63;&#x6e;">cx@sina.com.cn</a></td>
+<td><a href="mailto:&#99;&#x78;&#x40;&#115;&#x69;&#110;&#97;&#46;&#99;&#x6f;&#109;&#x2e;&#99;&#110;">cx@sina.com.cn</a></td>
 </tr>
 </tbody></table>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">-- 图书明细表 </span><br><span class="line">CREATE TABLE 图书明细表 (</span><br><span class="line">    类别号 VARCHAR(10),</span><br><span class="line">    图书编号 VARCHAR(10) PRIMARY KEY,</span><br><span class="line">    图书名称 VARCHAR(50),</span><br><span class="line">    作者 VARCHAR(50),</span><br><span class="line">    出版社 VARCHAR(50),</span><br><span class="line">    定价 DECIMAL(10, 2),</span><br><span class="line">    购进日期 DATE,</span><br><span class="line">    购入数 INT,</span><br><span class="line">    复本数 INT,</span><br><span class="line">    库存数 INT</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">INSERT INTO 图书明细表 (类别号, 图书编号, 图书名称, 作者, 出版社, 定价, 购进日期, 购入数, 复本数, 库存数)</span><br><span class="line">VALUES</span><br><span class="line">    (&#x27;I267&#x27;, &#x27;99011818&#x27;, &#x27;文化苦旅&#x27;, &#x27;余秋雨&#x27;, &#x27;知识出版社&#x27;, 16, &#x27;2000-03-19&#x27;, 8, 15, 14),</span><br><span class="line">    (&#x27;TP312&#x27;, &#x27;00000476&#x27;, &#x27;Delphi高级开发指南&#x27;, &#x27;坎图&#x27;, &#x27;电子工业出版社&#x27;, 80, &#x27;2000-03-19&#x27;, 15, 15, 15),</span><br><span class="line">    (&#x27;U66&#x27;, &#x27;01058589&#x27;, &#x27;船舶制造基础&#x27;, &#x27;杨敏&#x27;, &#x27;国防工业出版社&#x27;, 19, &#x27;2001-07-15&#x27;, 20, 20, 20),</span><br><span class="line">    (&#x27;I267&#x27;, &#x27;07410139&#x27;, &#x27;艺海潮音&#x27;, &#x27;李叔&#x27;, &#x27;江苏文艺出版社&#x27;, 19, &#x27;2007-04-12&#x27;, 15, 20, 18),</span><br><span class="line">    (&#x27;TP312&#x27;, &#x27;07410298&#x27;, &#x27;C++程序设计&#x27;, &#x27;成颖&#x27;, &#x27;东南大学出版社&#x27;, 38, &#x27;2007-05-08&#x27;, 10, 15, 14),</span><br><span class="line">    (&#x27;H31&#x27;, &#x27;07410802&#x27;, &#x27;航海英语&#x27;, &#x27;陈宏权&#x27;, &#x27;武汉工业大学出版社&#x27;, 42, &#x27;2007-10-20&#x27;, 25, 25, 24),</span><br><span class="line">    (&#x27;H31&#x27;, &#x27;07108667&#x27;, &#x27;大学英语学习辅导&#x27;, &#x27;姜丽蓉&#x27;, &#x27;北京理工大学出版社&#x27;, 23.5, &#x27;2008-02-06&#x27;, 25, 25, 25),</span><br><span class="line">    (&#x27;TP393&#x27;, &#x27;07410810&#x27;, &#x27;网络工程实用教程&#x27;, &#x27;汪新民&#x27;, &#x27;北京大学出版社&#x27;, 34.8, &#x27;2008-08-21&#x27;, 10, 15, 15);</span><br></pre></td></tr></table></figure>
@@ -3269,7 +3271,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-04-08 00:34:51" itemprop="dateModified" datetime="2025-04-08T00:34:51+08:00">2025-04-08</time>
+                <time title="修改时间：2025-04-08 01:57:19" itemprop="dateModified" datetime="2025-04-08T01:57:19+08:00">2025-04-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -3412,11 +3414,36 @@
 
 <h2 id="隐藏网页底部powered-By-Hexo-强力驱动"><a href="#隐藏网页底部powered-By-Hexo-强力驱动" class="headerlink" title="隐藏网页底部powered By Hexo &#x2F; 强力驱动"></a>隐藏网页底部powered By Hexo &#x2F; 强力驱动</h2><p>找到&#x2F;Blog&#x2F;themes&#x2F;next&#x2F;_config.yml，设置powered为false即可！</p>
 <h2 id="自定义主页配置方法"><a href="#自定义主页配置方法" class="headerlink" title="自定义主页配置方法"></a>自定义主页配置方法</h2><p><strong>1.在根目录的<code>source</code>目录下，新建一个<code>index.md</code>文档</strong><br>在根目录的<code>source</code>目录下，新建一个名为<code>index.md</code>文档，这个<code>source</code>目录下的<code>index.md</code>文档即是我们自定义的主页。在文档中做出的任何修改均会体现在自定义主页中。</p>
-<p><img src="/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/v2-d5d7faffdbc4f61571b92f9de222e5f7_1440w.jpg" alt="img"></p>
 <p><strong>2.修改站点配置文件中的<code>index_generator</code>项</strong><br>打开根目录下的<code>_config.yml</code>文件，将<code>index_generator</code>项下的<code>path</code>项的值修改为一个无效值，例如：我将这一项修改为了<code>default-index</code>。目的是使Hexo框架的默认主页指向一个无效值。</p>
-<p><img src="/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/v2-bc6950de1af164b49e7651ea284c5eb3_1440w.jpg" alt="img"></p>
+<p><img src="/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/image-20250408004707918.png" alt="image-20250408004707918"></p>
 <p><strong>3.修改NexT主题的<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=169631928&content_type=Article&match_order=1&q=%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6&zhida_source=entity">配置文件</a>（<code>themes/next/_config.yml</code>文件）的<code>Home</code>菜单指向的链接</strong><br>打开<code>themes/next/</code>目录下的<code>_config.yml</code>文件，将<code>menu</code>项下的<code>home</code>项的值修改为<code>/ || fa fa-home</code>。使得点击页面中的Home菜单时，可以返回自定义主页。</p>
-<p><img src="/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/v2-67c77983e06377f182df0bd459ffe30c_1440w.jpg" alt="img"></p>
+<p><img src="/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/image-20250408004642710.png" alt="image-20250408004642710"></p>
+<h2 id="CDN加速"><a href="#CDN加速" class="headerlink" title="CDN加速"></a>CDN加速</h2><p>使用了github项目<a target="_blank" rel="noopener" href="https://github.com/EtherDream/freecdn?tab=readme-ov-file">freecdn</a></p>
+<p>安装 freecdn 命令行工具：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install freecdn -g</span><br></pre></td></tr></table></figure>
+
+<p>查询当前站点下，哪些文件可通过公共 CDN 加速，保存清单：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">freecdn find --save</span><br></pre></td></tr></table></figure>
+
+<p>得到清单文件 <code>freecdn-manifest.txt</code></p>
+<p>实际应用时，你无需手动修改清单文件，工具支持配置合并。</p>
+<p>创建配置文件，例如 <a target="_blank" rel="noopener" href="https://github.com/EtherDream/freecdn/blob/master/examples/cdn-fallback/custom.conf">custom.conf</a></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://ajax.cdnjs.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css</span><br><span class="line">	open_timeout=0</span><br></pre></td></tr></table></figure>
+
+<p>合并配置到当前清单：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">freecdn manifest --merge custom.conf</span><br></pre></td></tr></table></figure>
+
+<p>提供 URL 列表文件，例如 <a target="_blank" rel="noopener" href="https://github.com/EtherDream/freecdn/blob/master/examples/cdn-fallback/urls.txt">urls.txt</a>。搜索资源时，通过 <code>--with-urls</code> 选项指定该文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export FREECDN_RESOLVE=4</span><br><span class="line">freecdn find --save --with-urls ../urls.txt</span><br></pre></td></tr></table></figure>
+
+<p>为避免工具使用本地 hosts 中的无效域名，这里使用 <code>FREECDN_RESOLVE</code> 环境变量让工具直接查询 DNS（类型 IPv4）。实际应用时无需设置该环境变量。</p>
+<p>得到清单文件 <code>freecdn-manifest.txt</code>，内容大致如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">https://ajax.cdnjs.com/ajax/libs/jquery/3.2.1/jquery.js</span><br><span class="line">	https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js</span><br><span class="line">	https://cdn.jsdelivr.net/gh/cdnjs/cdnjs/ajax/libs/jquery/3.2.1/jquery.js</span><br><span class="line">	https://cdnjs.loli.net/ajax/libs/jquery/3.2.1/jquery.js</span><br><span class="line">	https://lib.baomitu.com/jquery/3.2.1/jquery.js</span><br><span class="line">	https://cdn.staticfile.org/jquery/3.2.1/jquery.js</span><br><span class="line">	https://cdn.bootcss.com/jquery/3.2.1/jquery.js</span><br><span class="line">	https://cdn.bootcdn.net/ajax/libs/jquery/3.2.1/jquery.js</span><br><span class="line">	https://unpkg.com/jquery@3.2.1/dist/jquery.js</span><br><span class="line">	https://g.alicdn.com/code/lib/jquery/3.2.1/jquery.js</span><br><span class="line">	https://pagecdn.io/lib/jquery/3.2.1/jquery.js</span><br><span class="line">	https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.2.1.js</span><br><span class="line">	https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.js</span><br><span class="line">	https://code.jquery.com/jquery-3.2.1.js</span><br><span class="line">	hash=DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>创建前端脚本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">freecdn js --make</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>&#123;&#123; next_font() &#125;&#125;</code> 和 Font Awesome 样式表之间引入脚本。这是在页面样式加载之前引入 JavaScript 的一个良好做法，可以提高页面的加载速度和用户体验。</p>
 
       
     </div>
