@@ -17,36 +17,36 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"wuyaxiao.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+    var CONFIG = {"hostname":"wuyaxiao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
   <meta name="description" content="PE文件格式  DOS头  MZ文件头：IMAGE_DOS_HEADER 结构体1234567891011121314151617181920212223&#x2F;&#x2F;注释掉的不需要重点分析struct _IMAGE_DOS_HEADER&#123;  0X00 WORD e_magic;      &#x2F;&#x2F;※Magic DOS signature MZ(4Dh 5Ah):MZ标记:用于标记是否是可执行文件;用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PE文件格式">
-<meta property="og:url" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/index.html">
+<meta property="og:url" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/index.html">
 <meta property="og:site_name" content="学习小屋">
 <meta property="og:description" content="PE文件格式  DOS头  MZ文件头：IMAGE_DOS_HEADER 结构体1234567891011121314151617181920212223&#x2F;&#x2F;注释掉的不需要重点分析struct _IMAGE_DOS_HEADER&#123;  0X00 WORD e_magic;      &#x2F;&#x2F;※Magic DOS signature MZ(4Dh 5Ah):MZ标记:用于标记是否是可执行文件;用">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103174529532.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103181902992.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103195427884.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103205655208.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103205711132.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103214737276.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/4d838f3ad4a25abbbf64a80aa161984b.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/e674ae54460c7da4c8ce5c777996162c.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103215704121.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/2f8dadfaa1513f15cffda7ce1576bb35.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250407003153563.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103174529532.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103181902992.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103195427884.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103205655208.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103205711132.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103214737276.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/4d838f3ad4a25abbbf64a80aa161984b.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/e674ae54460c7da4c8ce5c777996162c.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103215704121.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/2f8dadfaa1513f15cffda7ce1576bb35.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250407003153563.png">
 <meta property="article:published_time" content="2025-04-06T16:30:24.000Z">
 <meta property="article:modified_time" content="2025-04-06T16:35:39.729Z">
 <meta property="article:author" content="Sunny">
 <meta property="article:tag" content="PE文件">
 <meta property="article:tag" content="笔记">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103174529532.png">
+<meta name="twitter:image" content="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/image-20250103174529532.png">
 
-<link rel="canonical" href="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/">
+<link rel="canonical" href="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/">
 
 
 <script id="page-configurations">
@@ -202,7 +202,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://wuyaxiao.com/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/">
+    <link itemprop="mainEntityOfPage" href="https://wuyaxiao.github.io/2025/04/07/PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">

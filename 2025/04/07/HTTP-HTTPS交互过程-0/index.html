@@ -17,52 +17,52 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"wuyaxiao.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+    var CONFIG = {"hostname":"wuyaxiao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
   <meta name="description" content="http交互过程  用wireshark抓包后利用百度ip地址过滤数据包ipv6.src &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296 || ipv6.dst &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296  “三次握手”建立TCP连接 客户端发送HTTP请求 客户端向服务器发送HTTP请求消息。请求消息通常包括">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HTTP&#x2F;HTTPS交互过程">
-<meta property="og:url" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/index.html">
+<meta property="og:url" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/index.html">
 <meta property="og:site_name" content="学习小屋">
 <meta property="og:description" content="http交互过程  用wireshark抓包后利用百度ip地址过滤数据包ipv6.src &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296 || ipv6.dst &#x3D;&#x3D; 240e:ff:e020:966:0:ff:b042:f296  “三次握手”建立TCP连接 客户端发送HTTP请求 客户端向服务器发送HTTP请求消息。请求消息通常包括">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221702611.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221720457.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221743565.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221755801.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221808248.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221827193.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221839504.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221855258.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221911301.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221927735.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221942057.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221951935.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222010322.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222026174.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222044546.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222056722.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222111873.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222126505.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222141946.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222153092.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222204616.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222217832.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222228493.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222316867.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222328763.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222340929.png">
-<meta property="og:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222350469.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221702611.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221720457.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221743565.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221755801.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221808248.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221827193.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221839504.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221855258.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221911301.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221927735.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221942057.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221951935.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222010322.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222026174.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222044546.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222056722.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222111873.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222126505.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222141946.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222153092.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222204616.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222217832.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222228493.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222316867.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222328763.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222340929.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406222350469.png">
 <meta property="article:published_time" content="2025-04-07T10:34:40.000Z">
 <meta property="article:modified_time" content="2025-04-07T10:35:39.354Z">
 <meta property="article:author" content="Sunny">
 <meta property="article:tag" content="HTTP">
 <meta property="article:tag" content="HTTPS">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221702611.png">
+<meta name="twitter:image" content="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221702611.png">
 
-<link rel="canonical" href="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/">
+<link rel="canonical" href="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/">
 
 
 <script id="page-configurations">
@@ -218,7 +218,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://wuyaxiao.com/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/">
+    <link itemprop="mainEntityOfPage" href="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
