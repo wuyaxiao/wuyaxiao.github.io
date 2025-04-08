@@ -17,15 +17,15 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"wuyaxiao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+    var CONFIG = {"hostname":"wuyaxiao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"posthide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="前言 站点配置文件: &#x2F;your-hexo-blog&#x2F;config.yml Next 主题配置文件: &#x2F;your-hexo-blog&#x2F;themes&#x2F;next&#x2F;_config.yml Next 官方教程 - 开始使用 Next 官方教程 - 主题配置 Next 官方教程 - 常见问题 其它配置博文  Hexo基本操作创建博客： 1hexo n  打包上传文件： 123hexo cleanhexo g">
+  <meta name="description" content="前言 站点配置文件: &#x2F;your-hexo-blog&#x2F;config.yml Next 主题配置文件: &#x2F;your-hexo-blog&#x2F;themes&#x2F;next&#x2F;_config.yml Next 官方教程 - 开始使用 Next 官方教程 - 主题配置 Next 官方教程 - 常见问题 其它配置博文  Hexo基本操作创建博客： 1hexo n  编辑完毕后，您需要重新生成您的Hexo站点。运行以下命">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hexo Next 主题配置">
 <meta property="og:url" content="https://wuyaxiao.github.io/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/index.html">
 <meta property="og:site_name" content="学习小屋">
-<meta property="og:description" content="前言 站点配置文件: &#x2F;your-hexo-blog&#x2F;config.yml Next 主题配置文件: &#x2F;your-hexo-blog&#x2F;themes&#x2F;next&#x2F;_config.yml Next 官方教程 - 开始使用 Next 官方教程 - 主题配置 Next 官方教程 - 常见问题 其它配置博文  Hexo基本操作创建博客： 1hexo n  打包上传文件： 123hexo cleanhexo g">
+<meta property="og:description" content="前言 站点配置文件: &#x2F;your-hexo-blog&#x2F;config.yml Next 主题配置文件: &#x2F;your-hexo-blog&#x2F;themes&#x2F;next&#x2F;_config.yml Next 官方教程 - 开始使用 Next 官方教程 - 主题配置 Next 官方教程 - 常见问题 其它配置博文  Hexo基本操作创建博客： 1hexo n  编辑完毕后，您需要重新生成您的Hexo站点。运行以下命">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/20230825-1dd7a39c-1743905946665-1.gif">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/993af5c7afec466eaec981af9ac662edtplv-k3u1fbpfcp-jj-mark3024000q75.webp">
@@ -37,8 +37,8 @@
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/image-20250408004707918.png">
 <meta property="og:image" content="https://wuyaxiao.github.io/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/image-20250408004642710.png">
 <meta property="article:published_time" content="2025-04-06T02:18:39.088Z">
-<meta property="article:modified_time" content="2025-04-07T18:09:31.330Z">
-<meta property="article:author" content="Sunny">
+<meta property="article:modified_time" content="2025-04-08T05:31:12.258Z">
+<meta property="article:author" content="wuyaxiao">
 <meta property="article:tag" content="Hexo Next">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wuyaxiao.github.io/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/20230825-1dd7a39c-1743905946665-1.gif">
@@ -203,7 +203,7 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Sunny">
+      <meta itemprop="name" content="wuyaxiao">
       <meta itemprop="description" content="">
     </span>
 
@@ -229,7 +229,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-04-08 02:09:31" itemprop="dateModified" datetime="2025-04-08T02:09:31+08:00">2025-04-08</time>
+                <time title="修改时间：2025-04-08 13:31:12" itemprop="dateModified" datetime="2025-04-08T13:31:12+08:00">2025-04-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -270,8 +270,14 @@
 <h2 id="Hexo基本操作"><a href="#Hexo基本操作" class="headerlink" title="Hexo基本操作"></a>Hexo基本操作</h2><p>创建博客：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo n</span><br></pre></td></tr></table></figure>
 
+<p>编辑完毕后，您需要重新生成您的Hexo站点。运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo clean  </span><br><span class="line">hexo generate  </span><br></pre></td></tr></table></figure>
+
+<p>然后可以使用下面的命令启动本地服务器查看效果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server  </span><br></pre></td></tr></table></figure>
+
 <p>打包上传文件：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
 
 <p>在本地运行代码：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean</span><br><span class="line">$ hexo s -g</span><br><span class="line">INFO  Start processing</span><br><span class="line">INFO  Hexo is running at http://localhost:4000 . Press Ctrl+C to stop.</span><br></pre></td></tr></table></figure>
@@ -368,7 +374,7 @@
 <p>Note:如果Uttenrances的重定向网址不对可以检查一下站点配置文件</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># URL</span><br><span class="line">## Set your site url here. For example, if you use GitHub Page, set url as &#x27;https://username.github.io/project&#x27;</span><br><span class="line">url: https://wuyaxiao.github.io #这个位置是重定向网址，不要写错了</span><br><span class="line">permalink: :year/:month/:day/:title/</span><br><span class="line">permalink_defaults:</span><br><span class="line">pretty_urls:</span><br><span class="line">  trailing_index: true # Set to false to remove trailing &#x27;index.html&#x27; from permalinks</span><br><span class="line">  trailing_html: true # Set to false to remove tgithub.iorailing &#x27;.html&#x27; from permalinks</span><br></pre></td></tr></table></figure></li>
 </ol>
-<h2 id="在底部增加github直达链接-待实现"><a href="#在底部增加github直达链接-待实现" class="headerlink" title="在底部增加github直达链接(待实现)"></a>在底部增加github直达链接(待实现)</h2><h2 id="增加简历页-待实现"><a href="#增加简历页-待实现" class="headerlink" title="增加简历页(待实现)"></a>增加简历页(待实现)</h2><h2 id="启用图片点击居中预览"><a href="#启用图片点击居中预览" class="headerlink" title="启用图片点击居中预览"></a>启用图片点击居中预览</h2><p>更改 Next 主题的配置文件，设置以下内容</p>
+<h2 id="启用图片点击居中预览"><a href="#启用图片点击居中预览" class="headerlink" title="启用图片点击居中预览"></a>启用图片点击居中预览</h2><p>更改 Next 主题的配置文件，设置以下内容</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mediumzoom: true</span><br></pre></td></tr></table></figure>
 
 <h2 id="代码块高亮样式"><a href="#代码块高亮样式" class="headerlink" title="代码块高亮样式"></a>代码块高亮样式</h2><p>更改 Next 主题的配置文件 <code>themes/next/_config.yml</code>，设置以下内容</p>
@@ -383,6 +389,14 @@
 <p><img src="/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/image-20250408004707918.png" alt="image-20250408004707918"></p>
 <p><strong>3.修改NexT主题的<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=169631928&content_type=Article&match_order=1&q=%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6&zhida_source=entity">配置文件</a>（<code>themes/next/_config.yml</code>文件）的<code>Home</code>菜单指向的链接</strong><br>打开<code>themes/next/</code>目录下的<code>_config.yml</code>文件，将<code>menu</code>项下的<code>home</code>项的值修改为<code>/ || fa fa-home</code>。使得点击页面中的Home菜单时，可以返回自定义主页。</p>
 <p><img src="/2025/04/06/hexo%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E5%9C%A8Next%E4%B8%BB%E9%A2%98%E4%B8%8B/image-20250408004642710.png" alt="image-20250408004642710"></p>
+<h2 id="加密文章"><a href="#加密文章" class="headerlink" title="加密文章"></a>加密文章</h2><p>安装 hexo-blog-encrypt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install --save hexo-blog-encrypt</span><br></pre></td></tr></table></figure>
+
+<p>修改站点配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">encrypt: # hexo-blog-encrypt</span><br><span class="line">  abstract: This article is encrypted!</span><br><span class="line">  message: This article is encrypted!</span><br><span class="line">  tags:</span><br><span class="line">  - &#123;name: tagName, password: passwordA&#125;</span><br><span class="line">  - &#123;name: tagName, password: passwordB&#125;</span><br><span class="line">  template: &lt;div id=&quot;hexo-blog-encrypt&quot; data-wpm=&quot;&#123;&#123;hbeWrongPassMessage&#125;&#125;&quot; data-whm=&quot;&#123;&#123;hbeWrongHashMessage&#125;&#125;&quot;&gt;&lt;div class=&quot;hbe-input-container&quot;&gt;&lt;input type=&quot;password&quot; id=&quot;hbePass&quot; placeholder=&quot;&#123;&#123;hbeMessage&#125;&#125;&quot; /&gt;&lt;label&gt;&#123;&#123;hbeMessage&#125;&#125;&lt;/label&gt;&lt;div class=&quot;bottom-line&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;script id=&quot;hbeData&quot; type=&quot;hbeData&quot; data-hmacdigest=&quot;&#123;&#123;hbeHmacDigest&#125;&#125;&quot;&gt;&#123;&#123;hbeEncryptedData&#125;&#125;&lt;/script&gt;&lt;/div&gt;</span><br><span class="line">  wrong_pass_message: Sorry,wrong password!</span><br><span class="line">  wrong_hash_message: Sorry,wrong hash!</span><br></pre></td></tr></table></figure>
+
+<p>需要使用密码的时候,在文章头部信息加入这个配置即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">password: password</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -397,12 +411,12 @@
   <div id="qr" style="display: none;">
       
       <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="Sunny 微信支付">
+        <img src="/images/wechatpay.jpg" alt="wuyaxiao 微信支付">
         <p>微信支付</p>
       </div>
       
       <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="Sunny 支付宝">
+        <img src="/images/alipay.jpg" alt="wuyaxiao 支付宝">
         <p>支付宝</p>
       </div>
 
@@ -499,13 +513,13 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hexo%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">Hexo基本操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%88%86%E7%B1%BB%E5%92%8C%E6%A0%87%E7%AD%BE"><span class="nav-number">3.</span> <span class="nav-text">设置分类和标签</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE"><span class="nav-number">3.1.</span> <span class="nav-text">主题配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">创建文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%A0%87%E7%AD%BE%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.1.</span> <span class="nav-text">创建标签文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%88%86%E7%B1%BB%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.2.</span> <span class="nav-text">创建分类文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%8A%A8%E6%80%81%E8%83%8C%E6%99%AF"><span class="nav-number">4.</span> <span class="nav-text">添加动态背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87"><span class="nav-number">5.</span> <span class="nav-text">上传图片</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="nav-number">5.1.</span> <span class="nav-text">站点配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#typora%E4%B8%AD%E7%9A%84%E5%9B%BE%E5%83%8F%E4%BF%9D%E5%AD%98%E4%BD%8D%E7%BD%AE%E8%AE%BE%E7%BD%AE"><span class="nav-number">5.2.</span> <span class="nav-text">typora中的图像保存位置设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="nav-number">5.3.</span> <span class="nav-text">安装插件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%8D%9A%E6%96%87%E7%9B%AE%E5%BD%95"><span class="nav-number">6.</span> <span class="nav-text">设置博文目录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-config-yml"><span class="nav-number">6.1.</span> <span class="nav-text">1.修改主题配置文件 _config.yml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA-data-%E6%96%87%E4%BB%B6%E5%A4%B9%E5%B9%B6%E6%B7%BB%E5%8A%A0-styles-styl-%E6%96%87%E4%BB%B6"><span class="nav-number">6.2.</span> <span class="nav-text">2.创建 _data 文件夹并添加 styles.styl 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%BF%AE%E6%94%B9-styles-styl-%E6%96%87%E4%BB%B6"><span class="nav-number">6.3.</span> <span class="nav-text">3.修改 styles.styl 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">6.4.</span> <span class="nav-text">4.修改主题配置文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%90%AF%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD"><span class="nav-number">7.</span> <span class="nav-text">开启搜索功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E7%9B%B8%E5%85%B3%E6%8F%92%E4%BB%B6"><span class="nav-number">7.1.</span> <span class="nav-text">安装相关插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8D%9A%E5%AE%A2"><span class="nav-number">7.2.</span> <span class="nav-text">配置博客</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%BB%E9%A2%98"><span class="nav-number">7.3.</span> <span class="nav-text">配置主题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E9%98%85%E8%AF%BB%E7%BB%9F%E8%AE%A1-%E4%B8%8D%E8%92%9C%E5%AD%90%E7%BB%9F%E8%AE%A1"><span class="nav-number">8.</span> <span class="nav-text">增加阅读统计(不蒜子统计)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD-utterances"><span class="nav-number">9.</span> <span class="nav-text">增加评论功能(utterances)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E5%BA%95%E9%83%A8%E5%A2%9E%E5%8A%A0github%E7%9B%B4%E8%BE%BE%E9%93%BE%E6%8E%A5-%E5%BE%85%E5%AE%9E%E7%8E%B0"><span class="nav-number">10.</span> <span class="nav-text">在底部增加github直达链接(待实现)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E7%AE%80%E5%8E%86%E9%A1%B5-%E5%BE%85%E5%AE%9E%E7%8E%B0"><span class="nav-number">11.</span> <span class="nav-text">增加简历页(待实现)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E7%94%A8%E5%9B%BE%E7%89%87%E7%82%B9%E5%87%BB%E5%B1%85%E4%B8%AD%E9%A2%84%E8%A7%88"><span class="nav-number">12.</span> <span class="nav-text">启用图片点击居中预览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%9D%97%E9%AB%98%E4%BA%AE%E6%A0%B7%E5%BC%8F"><span class="nav-number">13.</span> <span class="nav-text">代码块高亮样式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E7%94%A8%E6%96%87%E7%AB%A0%E6%89%93%E8%B5%8F"><span class="nav-number">14.</span> <span class="nav-text">启用文章打赏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E7%BD%91%E9%A1%B5%E5%BA%95%E9%83%A8powered-By-Hexo-%E5%BC%BA%E5%8A%9B%E9%A9%B1%E5%8A%A8"><span class="nav-number">15.</span> <span class="nav-text">隐藏网页底部powered By Hexo &#x2F; 强力驱动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%BB%E9%A1%B5%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95"><span class="nav-number">16.</span> <span class="nav-text">自定义主页配置方法</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hexo%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">Hexo基本操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%88%86%E7%B1%BB%E5%92%8C%E6%A0%87%E7%AD%BE"><span class="nav-number">3.</span> <span class="nav-text">设置分类和标签</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE"><span class="nav-number">3.1.</span> <span class="nav-text">主题配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">创建文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%A0%87%E7%AD%BE%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.1.</span> <span class="nav-text">创建标签文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%88%86%E7%B1%BB%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.2.</span> <span class="nav-text">创建分类文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%8A%A8%E6%80%81%E8%83%8C%E6%99%AF"><span class="nav-number">4.</span> <span class="nav-text">添加动态背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87"><span class="nav-number">5.</span> <span class="nav-text">上传图片</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="nav-number">5.1.</span> <span class="nav-text">站点配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#typora%E4%B8%AD%E7%9A%84%E5%9B%BE%E5%83%8F%E4%BF%9D%E5%AD%98%E4%BD%8D%E7%BD%AE%E8%AE%BE%E7%BD%AE"><span class="nav-number">5.2.</span> <span class="nav-text">typora中的图像保存位置设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="nav-number">5.3.</span> <span class="nav-text">安装插件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%8D%9A%E6%96%87%E7%9B%AE%E5%BD%95"><span class="nav-number">6.</span> <span class="nav-text">设置博文目录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-config-yml"><span class="nav-number">6.1.</span> <span class="nav-text">1.修改主题配置文件 _config.yml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA-data-%E6%96%87%E4%BB%B6%E5%A4%B9%E5%B9%B6%E6%B7%BB%E5%8A%A0-styles-styl-%E6%96%87%E4%BB%B6"><span class="nav-number">6.2.</span> <span class="nav-text">2.创建 _data 文件夹并添加 styles.styl 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%BF%AE%E6%94%B9-styles-styl-%E6%96%87%E4%BB%B6"><span class="nav-number">6.3.</span> <span class="nav-text">3.修改 styles.styl 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E4%BF%AE%E6%94%B9%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">6.4.</span> <span class="nav-text">4.修改主题配置文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%90%AF%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD"><span class="nav-number">7.</span> <span class="nav-text">开启搜索功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E7%9B%B8%E5%85%B3%E6%8F%92%E4%BB%B6"><span class="nav-number">7.1.</span> <span class="nav-text">安装相关插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8D%9A%E5%AE%A2"><span class="nav-number">7.2.</span> <span class="nav-text">配置博客</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%BB%E9%A2%98"><span class="nav-number">7.3.</span> <span class="nav-text">配置主题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E9%98%85%E8%AF%BB%E7%BB%9F%E8%AE%A1-%E4%B8%8D%E8%92%9C%E5%AD%90%E7%BB%9F%E8%AE%A1"><span class="nav-number">8.</span> <span class="nav-text">增加阅读统计(不蒜子统计)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD-utterances"><span class="nav-number">9.</span> <span class="nav-text">增加评论功能(utterances)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E7%94%A8%E5%9B%BE%E7%89%87%E7%82%B9%E5%87%BB%E5%B1%85%E4%B8%AD%E9%A2%84%E8%A7%88"><span class="nav-number">10.</span> <span class="nav-text">启用图片点击居中预览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%9D%97%E9%AB%98%E4%BA%AE%E6%A0%B7%E5%BC%8F"><span class="nav-number">11.</span> <span class="nav-text">代码块高亮样式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E7%94%A8%E6%96%87%E7%AB%A0%E6%89%93%E8%B5%8F"><span class="nav-number">12.</span> <span class="nav-text">启用文章打赏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E7%BD%91%E9%A1%B5%E5%BA%95%E9%83%A8powered-By-Hexo-%E5%BC%BA%E5%8A%9B%E9%A9%B1%E5%8A%A8"><span class="nav-number">13.</span> <span class="nav-text">隐藏网页底部powered By Hexo &#x2F; 强力驱动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%BB%E9%A1%B5%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95"><span class="nav-number">14.</span> <span class="nav-text">自定义主页配置方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E6%96%87%E7%AB%A0"><span class="nav-number">15.</span> <span class="nav-text">加密文章</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Sunny</p>
+  <p class="site-author-name" itemprop="name">wuyaxiao</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap motion-element">
@@ -513,7 +527,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -554,10 +568,9 @@
   
   &copy; 
   <span itemprop="copyrightYear">2025</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
+  <span class="fa fa-user">
   </span>
-  <span class="author" itemprop="copyrightHolder">Sunny</span>
+  <span class="author" itemprop="copyrightHolder">wuyaxiao</span>
 </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
 
         
