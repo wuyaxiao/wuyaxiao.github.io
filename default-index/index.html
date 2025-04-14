@@ -183,6 +183,323 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuyaxiao.github.io/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuyaxiao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学习小屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/" class="post-title-link" itemprop="url">把项目部署到华为云服务器上</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-04-14 13:33:00 / 修改时间：17:46:12" itemprop="dateCreated datePublished" datetime="2025-04-14T13:33:00+08:00">2025-04-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9D%82%E8%B0%88/" itemprop="url" rel="index"><span itemprop="name">杂谈</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>想要把项目部署到云服务器上，但是看了一下别人的博文总感觉写得太简略了，所以把那些博文整理了一下写了自己把项目部署到服务器上的经历。</p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ul>
+<li>服务器：华为云Ubuntu24.04.1 LTS x64-based PC</li>
+<li>前后端分离项目项目：<a target="_blank" rel="noopener" href="https://github.com/wuyaxiao/AiQuestion">AiQuestion</a></li>
+<li>前端项目用的是webstorm软件，后端项目用的是intelij idea软件</li>
+<li>完成后的效果: <a target="_blank" rel="noopener" href="http://110.41.130.6:8080/">http://110.41.130.6:8080</a></li>
+<li>IP设置为了方便服务器端口设置成了允许所有IP通过，但在实际生产环节为了安全应该设置成某一个特定IP地址</li>
+</ul>
+<h1 id="后端部署（springboot）"><a href="#后端部署（springboot）" class="headerlink" title="后端部署（springboot）"></a>后端部署（springboot）</h1><h2 id="在服务器安装mysql"><a href="#在服务器安装mysql" class="headerlink" title="在服务器安装mysql"></a>在服务器安装mysql</h2><blockquote>
+<p>参考博文：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45626288/article/details/133220238">https://blog.csdn.net/weixin_45626288/article/details/133220238</a></p>
+</blockquote>
+<p>完成mysql安装和相关配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line"><span class="built_in">sudo</span> apt install -y mysql-server  or  <span class="built_in">sudo</span> apt install -y mysql-server-8.0</span><br><span class="line"><span class="comment"># 启动mysql服务</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl start mysql</span><br><span class="line"><span class="comment"># 设置为开机自启动</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> mysql</span><br></pre></td></tr></table></figure>
+
+<p>验证</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl status mysql</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250412203105792.png" alt="image-20250412203105792"></p>
+<p>修改密码权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 登录mysql，在默认安装时如果没有让我们设置密码，则直接回车就能登录成功。</span></span><br><span class="line"><span class="built_in">sudo</span> mysql -uroot -p</span><br><span class="line"><span class="comment"># 设置密码 mysql8.0</span></span><br><span class="line">ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;新密码&#x27;</span>;</span><br><span class="line"><span class="comment"># 设置密码 mysql5.7</span></span><br><span class="line"><span class="built_in">set</span> password=password(<span class="string">&#x27;新密码&#x27;</span>);</span><br><span class="line"><span class="comment"># 配置IP 5.7</span></span><br><span class="line">GRANT ALL PRIVILEGES ON *.* TO <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED BY <span class="string">&#x27;密码&#x27;</span>;  </span><br><span class="line"><span class="comment"># 刷新缓存</span></span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+
+<p>注意：配置8.0版本参考：我这里通过这种方式没有实现所有IP都能访问；我是通过直接修改配置文件才实现的，MySQL8.0版本把配置文件 my.cnf 拆分成mysql.cnf 和mysqld.cnf，我们需要修改的是mysqld.cnf文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/mysql/mysql.conf.d/mysqld.cnf</span><br></pre></td></tr></table></figure>
+
+<p>修改配置文件，保存后重启MySQL,并允许 <code>3306</code> 端口的 TCP 连接。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bind-address = 0.0.0.0</span><br><span class="line">max_connections = XXXX#设置最大连接数</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart mysql</span><br><span class="line"><span class="built_in">sudo</span> ufw allow 3306/tcp  </span><br></pre></td></tr></table></figure>
+
+<p>在华为云服务器中添加安全配置规则</p>
+<ul>
+<li><p>更多-网络&#x2F;安全组-安全组规则配置-配置规则</p>
+</li>
+<li><p>快速添加规则：</p>
+<p>在Mysql前面打勾</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250412232051836.png" alt="image-20250412232051836"></p>
+<p>源地址如下设置</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250412232128017.png" alt="image-20250412232128017"></p>
+</li>
+</ul>
+<p>本地idea连接服务器的mysql</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250412233759065.png" alt="image-20250412233759065"></p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250413003727850.png" alt="image-20250413003727850"></p>
+<h2 id="在服务器安装redis"><a href="#在服务器安装redis" class="headerlink" title="在服务器安装redis"></a>在服务器安装redis</h2><p>安装redis</p>
+<blockquote>
+<p>因为我在安装的时候报了很多错误，感觉自己会误导别人，所以还是不写这部分了。</p>
+</blockquote>
+<p>访问redis</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># redis-cli</span></span><br><span class="line">127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure>
+
+<p>要让 IntelliJ IDEA 连接云服务器上的 Redis，需要完成以下配置步骤：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/redis/redis.conf</span><br></pre></td></tr></table></figure>
+
+<p>修改以下关键参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bind 0.0.0.0  # 允许所有IP访问（或指定特定IP）</span><br><span class="line">protected-mode no  # 关闭保护模式（生产环境建议配合密码使用）</span><br><span class="line">requirepass yourpassword  # 设置密码（可选但推荐）</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th><strong>参数</strong></th>
+<th><strong>值</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>port</td>
+<td>6379</td>
+<td>redis的端口</td>
+</tr>
+<tr>
+<td>bind</td>
+<td>127.0.0.1</td>
+<td>绑定的ip地址，默认是127.0.0.1 。如果本机有多个网卡，且限制只能通过其中一个网卡对应的IP才能访问redis时，可绑定该IP，例：bind IP</td>
+</tr>
+<tr>
+<td>protected-mode</td>
+<td>yes</td>
+<td>保护模式，默认为yes，如果要其他网络能访问，改为no即可</td>
+</tr>
+<tr>
+<td>requirepass</td>
+<td>-</td>
+<td>登录密码，默认是空</td>
+</tr>
+<tr>
+<td>maxclients</td>
+<td>0</td>
+<td>同一时间能够连接到redis的客户端数量，默认是无限制，0表示不限制</td>
+</tr>
+<tr>
+<td>maxmemory</td>
+<td>-</td>
+<td>redis能够使用的最大内存 单位byte, 默认无限制</td>
+</tr>
+</tbody></table>
+<p>重启 Redis 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart redis-server</span><br></pre></td></tr></table></figure>
+
+<p>开放防火墙端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 开放6379端口</span></span><br><span class="line"><span class="built_in">sudo</span> ufw allow 6379/tcp</span><br><span class="line"><span class="built_in">sudo</span> ufw reload</span><br></pre></td></tr></table></figure>
+
+<p>在华为云服务器中添加安全配置规则</p>
+<ul>
+<li><p>更多-网络&#x2F;安全组-安全组规则配置-配置规则</p>
+</li>
+<li><p>快速添加规则：</p>
+<p>在Redis前面打勾</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250412232051836.png" alt="image-20250412232051836"></p>
+<p>源地址如下设置</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250412232128017.png" alt="image-20250412232128017"></p>
+</li>
+</ul>
+<p>验证远程连接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从本地测试连接</span></span><br><span class="line">redis-cli -h 110.41.130.6 -p 6379 -a wu139057 ping</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250413143209501.png" alt="image-20250413143209501"></p>
+<p>在 IDEA 中配置 Redis 连接</p>
+<ol>
+<li><p>打开 <code>Database</code> 面板（右侧边栏或 <code>View</code> → <code>Tool Windows</code> → <code>Database</code>）</p>
+</li>
+<li><p>点击 <code>+</code> → <code>Data Source</code> → <code>Redis</code></p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250413003512463.png" alt="image-20250413003512463"></p>
+</li>
+<li><p>填写连接信息：</p>
+<ul>
+<li><strong>Host</strong>: 填入公网IP地址</li>
+<li><strong>Port</strong>: <code>6379</code></li>
+<li><strong>Database</strong>: <code>0</code>（默认）</li>
+<li><strong>Auth</strong>: 输入密码（如果设置了 <code>requirepass</code>）</li>
+</ul>
+<p>点击 <code>Test Connection</code>，确认显示成功。</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250413143240825.png" alt="image-20250413143240825"></p>
+</li>
+</ol>
+<h2 id="测试项目"><a href="#测试项目" class="headerlink" title="测试项目"></a>测试项目</h2><p>更改配置文件，在本地用云服务器上的mysql和redis进行测试</p>
+<h2 id="服务器后台运行后端项目"><a href="#服务器后台运行后端项目" class="headerlink" title="服务器后台运行后端项目"></a>服务器后台运行后端项目</h2><h3 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h3><h4 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h4><p>创建一个名为 start.sh 的文件，内容如下：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 清理旧的nohup.out（可选）</span></span><br><span class="line">&gt; nohup.out <span class="number">2</span>&gt;/dev/null || true</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动应用并获取PID</span></span><br><span class="line">nohup java <span class="literal">-jar</span> AiQuestion<span class="literal">-backend-0</span>.<span class="number">0.1</span><span class="literal">-SNAPSHOT</span>.jar &gt; nohup.out <span class="number">2</span>&gt;&amp;<span class="number">1</span> &amp;</span><br><span class="line">APP_PID=<span class="variable">$</span>!</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证启动是否成功</span></span><br><span class="line"><span class="built_in">sleep</span> <span class="number">5</span>  <span class="comment"># 等待5秒让应用初始化</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">ps</span> <span class="literal">-p</span> <span class="variable">$APP_PID</span> &gt; /dev/null; then</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;启动成功！PID: <span class="variable">$APP_PID</span>&quot;</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;日志输出：tail -f nohup.out&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;启动失败！检查日志：&quot;</span></span><br><span class="line">  tail <span class="literal">-n</span> <span class="number">20</span> nohup.out</span><br><span class="line">  <span class="keyword">exit</span> <span class="number">1</span></span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<p>再通过命令启动，命令如下：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh start.sh <span class="built_in">start</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/c36dca0a250692cc171824ec2f57948a.png" alt="在这里插入图片描述"></p>
+<p>可以看到项目已经启动，会把日志输出到名为 nohup.out 的文件中。</p>
+<h4 id="完成服务器配置"><a href="#完成服务器配置" class="headerlink" title="完成服务器配置"></a>完成服务器配置</h4><p>开放服务器8101端口（这里应该是你的后端端口）</p>
+<ul>
+<li><p>服务器内防火墙允许8101端口通行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> ufw allow 8101/tcp</span><br><span class="line"><span class="built_in">sudo</span> ufw reload</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250413183019595.png" alt="image-20250413183019595"></p>
+</li>
+<li><p>在华为云服务器中添加安全配置规则</p>
+<ul>
+<li><p>更多-网络&#x2F;安全组-安全组规则配置-配置规则</p>
+</li>
+<li><p>添加规则：</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250413183218671.png" alt="image-20250413183218671"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="验证是否启动成功"><a href="#验证是否启动成功" class="headerlink" title="验证是否启动成功"></a>验证是否启动成功</h4><p>在浏览器打开后端接口文档<code>http://110.41.130.6:8101/api/doc.html#/home</code></p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250413183642561.png" alt="image-20250413183642561"></p>
+<p>后端部署成功</p>
+<h3 id="停止项目"><a href="#停止项目" class="headerlink" title="停止项目"></a>停止项目</h3><p>创建一个名为 stop.sh 的文件，内容如下：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ps -ef | grep -v grep | grep jeecg-boot-module-system-2.4.2.jar | awk &#x27;&#123;print $2&#125;&#x27;</span></span><br><span class="line"><span class="comment"># 表示只输出“jeecg-boot-module-system-2.4.2.jar”的进程ID，就是PID，“awk &#x27;&#123;print $2&#125;&#x27;”表示只输出第二列，第二列就是PID所在列</span></span><br><span class="line">PID=<span class="variable">$</span>(<span class="built_in">ps</span> <span class="literal">-ef</span> | grep <span class="literal">-v</span> grep | grep AiQuestion<span class="literal">-backend-0</span>.<span class="number">0.1</span><span class="literal">-SNAPSHOT</span>.jar | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>)</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Current PID：<span class="variable">$PID</span>&quot;</span></span><br><span class="line"><span class="built_in">kill</span> <span class="literal">-9</span> <span class="variable">$PID</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Stop Success!&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>再通过命令停止，命令如下：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh stop.sh <span class="built_in">start</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250413183818537.png" alt="image-20250413183818537"></p>
+<p>可以看到项目已经停止。</p>
+<p>再次打开接口文档进行验证</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250413183852181.png" alt="image-20250413183852181"></p>
+<p>成功停止项目运行</p>
+<h2 id="开启HTTPS安全访问：正在努力解决中"><a href="#开启HTTPS安全访问：正在努力解决中" class="headerlink" title="开启HTTPS安全访问：正在努力解决中"></a>开启HTTPS安全访问：正在努力解决中</h2><h1 id="前端部署（vue）"><a href="#前端部署（vue）" class="headerlink" title="前端部署（vue）"></a>前端部署（vue）</h1><h2 id="连接到服务器后端"><a href="#连接到服务器后端" class="headerlink" title="连接到服务器后端"></a>连接到服务器后端</h2><h3 id="更改代码"><a href="#更改代码" class="headerlink" title="更改代码"></a>更改代码</h3><p><code>ctrl+shift+R</code>把所有localhost替换成公网ip地址</p>
+<p>点击serve前的运行按钮</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250413230932703.png" alt="image-20250413230932703"></p>
+<p>成功连接到后端服务器</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250413231756145.png" alt="image-20250413231756145"></p>
+<h2 id="解决跨域问题（CORS）：正在努力解决中"><a href="#解决跨域问题（CORS）：正在努力解决中" class="headerlink" title="解决跨域问题（CORS）：正在努力解决中"></a>解决跨域问题（CORS）：正在努力解决中</h2><p>只要 协议、域名、端口号，任何一个不同,就是不同域；是否同域与路径无关。跨域请求一般会被浏览器阻止掉</p>
+<p>虽然我前后端都部署在了一个云服务器上，但是为了测试方便还是决定写一下</p>
+<ul>
+<li><p>Nginx解决跨域问题（适用于HTTP和HTTPS）：使用Nginx通过路径转发到真是的后端，由于我并没有研究过，所以不多赘述</p>
+</li>
+<li><p>后端Cookie配置（使用于HTTPS）：</p>
+<ul>
+<li><p><code>SameSite=None</code><br>允许 Cookie 在跨站请求中发送（解决跨域场景下的 Cookie 传输问题）</p>
+</li>
+<li><p><code>Secure=true</code><br>确保 Cookie 仅通过 HTTPS 加密连接传输（增强安全性）。这是浏览器的强制要求</p>
+</li>
+</ul>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8101</span></span><br><span class="line">  <span class="attr">servlet:</span></span><br><span class="line">    <span class="attr">session:</span></span><br><span class="line">      <span class="attr">cookie:</span></span><br><span class="line">        <span class="comment"># 解决跨域</span></span><br><span class="line">        <span class="attr">same-site:</span> <span class="string">none</span></span><br><span class="line">        <span class="attr">secure:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250413232307680.png" alt="image-20250413232307680"></p>
+<h2 id="服务器后台运行前端项目"><a href="#服务器后台运行前端项目" class="headerlink" title="服务器后台运行前端项目"></a>服务器后台运行前端项目</h2><h3 id="将项目上传到云服务器"><a href="#将项目上传到云服务器" class="headerlink" title="将项目上传到云服务器"></a>将项目上传到云服务器</h3><p>在本地进入你的项目目录，打开控制台</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run build</span><br></pre></td></tr></table></figure>
+
+<p>运行完成后会出现一个名为dist的文件夹，这个就是你要上传给服务器的</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250414134027551.png" alt="image-20250414134027551"></p>
+<p>接着将上面说的dist文件夹上传到云服务器</p>
+<h3 id="配置nginx"><a href="#配置nginx" class="headerlink" title="配置nginx"></a>配置nginx</h3><p>如果没有nginx的话安装nginx</p>
+<ul>
+<li>更新包索引</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装nginx</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install nginx</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>确认安装成功并检查Nginx版本</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx -v</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>启动Nginx服务</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start nginx</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>设置Nginx开机自启</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl enable nginx</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>在浏览器中访问 http:&#x2F;&#x2F;&lt;your_server_IP&gt; 来确认Nginx安装并运行正常。</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250414142313690.png" alt="image-20250414142313690"></p>
+</li>
+<li><p>配置nginx</p>
+<p>配置<code>/etc/nginx/nginx.conf</code>（以下是我的配置，可供参考）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    include /etc/nginx/mime.types;</span><br><span class="line">    default_type application/octet-stream;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen 8080;# 监听端口</span><br><span class="line">        server_name 110.41.130.6;# 服务器公网IP地址</span><br><span class="line">        root /root/AiQuestion/dist;# dist文件夹位置</span><br><span class="line"></span><br><span class="line">        # 前端路由回退</span><br><span class="line">        location / &#123;</span><br><span class="line">            try_files $uri /index.html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重新加载nginx</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service nginx restart <span class="comment">#完全停止 Nginx 服务，然后再重新启动。</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl reload nginx <span class="comment">#让 Nginx 重新加载配置文件，而不中断正在运行的进程。</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="开放端口"><a href="#开放端口" class="headerlink" title="开放端口"></a>开放端口</h3><p>查看已防火墙开放端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> ufw status verbose</span><br></pre></td></tr></table></figure>
+
+<p>若没有开放前端项目端口则运行以下指令开放</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> ufw allow 8080/tcp</span><br><span class="line"><span class="built_in">sudo</span> ufw reload</span><br></pre></td></tr></table></figure>
+
+<p>在华为云服务器中添加安全配置规则</p>
+<ul>
+<li><p>更多-网络&#x2F;安全组-安全组规则配置-配置规则</p>
+</li>
+<li><p>添加规则：</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250414145050829.png" alt="image-20250414145050829"></p>
+</li>
+</ul>
+<h1 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h1><p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250414174555073.png" alt="image-20250414174555073"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://wuyaxiao.github.io/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -456,10 +773,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-04-07 12:41:52 / 修改时间：21:32:46" itemprop="dateCreated datePublished" datetime="2025-04-07T12:41:52+08:00">2025-04-07</time>
+              <time title="创建时间：2025-04-07 12:41:52" itemprop="dateCreated datePublished" datetime="2025-04-07T12:41:52+08:00">2025-04-07</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-04-14 13:38:08" itemprop="dateModified" datetime="2025-04-14T13:38:08+08:00">2025-04-14</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -490,6 +813,8 @@
 </blockquote>
 </li>
 <li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Zhudi1145/article/details/140519215?ops_request_misc=%257B%2522request%255Fid%2522%253A%252262bd8fa17d9ae93175167c34a513891a%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fall.%2522%257D&request_id=62bd8fa17d9ae93175167c34a513891a&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~hot_rank-13-140519215-null-null.142">Alist安装教程</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://support.huaweicloud.com/bestpractice-ecs/zh-cn_topic_0000001956778641.html">快速搭建FTP站点</a></p>
 </li>
 </ul>
 <h2 id="优质项目"><a href="#优质项目" class="headerlink" title="优质项目"></a>优质项目</h2><ul>
@@ -1081,7 +1406,7 @@
 <td>2</td>
 <td>管理信息系</td>
 <td>85860126</td>
-<td><a href="mailto:&#x7a;&#120;&#108;&#x40;&#49;&#54;&#51;&#x2e;&#99;&#111;&#x6d;">zxl@163.com</a></td>
+<td><a href="mailto:&#122;&#x78;&#108;&#64;&#x31;&#54;&#x33;&#x2e;&#99;&#111;&#109;">zxl@163.com</a></td>
 </tr>
 <tr>
 <td>36405216</td>
@@ -1091,7 +1416,7 @@
 <td>1</td>
 <td>航海系</td>
 <td>85860729</td>
-<td><a href="mailto:&#108;&#121;&#64;&#115;&#105;&#110;&#x61;&#46;&#99;&#111;&#x6d;&#x2e;&#99;&#x6e;">ly@sina.com.cn</a></td>
+<td><a href="mailto:&#x6c;&#x79;&#x40;&#115;&#x69;&#x6e;&#x61;&#46;&#99;&#111;&#x6d;&#x2e;&#x63;&#x6e;">ly@sina.com.cn</a></td>
 </tr>
 <tr>
 <td>28308208</td>
@@ -1101,7 +1426,7 @@
 <td>1</td>
 <td>人文艺术系</td>
 <td>85860618</td>
-<td><a href="mailto:&#x77;&#120;&#113;&#x40;&#121;&#x61;&#104;&#111;&#x6f;&#46;&#x63;&#x6e;">wxq@yahoo.cn</a></td>
+<td><a href="mailto:&#119;&#x78;&#113;&#x40;&#x79;&#x61;&#104;&#x6f;&#x6f;&#x2e;&#99;&#x6e;">wxq@yahoo.cn</a></td>
 </tr>
 <tr>
 <td>16406236</td>
@@ -1111,7 +1436,7 @@
 <td>1</td>
 <td>轮机工程系</td>
 <td>85860913</td>
-<td><a href="mailto:&#x7a;&#x6a;&#x67;&#x40;&#x31;&#x36;&#51;&#46;&#x63;&#x6f;&#109;">zjg@163.com</a></td>
+<td><a href="mailto:&#122;&#106;&#x67;&#64;&#x31;&#x36;&#x33;&#x2e;&#x63;&#x6f;&#109;">zjg@163.com</a></td>
 </tr>
 <tr>
 <td>16406247</td>
@@ -1121,7 +1446,7 @@
 <td></td>
 <td>轮机工程系</td>
 <td>85860916</td>
-<td><a href="mailto:&#x67;&#x79;&#102;&#64;&#121;&#97;&#x68;&#111;&#x6f;&#46;&#x63;&#x6e;">gyf@yahoo.cn</a></td>
+<td><a href="mailto:&#103;&#x79;&#102;&#x40;&#121;&#x61;&#x68;&#x6f;&#x6f;&#x2e;&#99;&#x6e;">gyf@yahoo.cn</a></td>
 </tr>
 </tbody></table>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">-- 借还明细表</span><br><span class="line">CREATE TABLE 借还明细表 (</span><br><span class="line">    借书证号 VARCHAR(10),</span><br><span class="line">    图书编号 VARCHAR(10),</span><br><span class="line">    借还状态 ENUM(&#x27;还&#x27;,&#x27;借&#x27;),</span><br><span class="line">    借书日期 DATE,</span><br><span class="line">    还书日期 DATE,</span><br><span class="line">    数量 INT,</span><br><span class="line">    工号 VARCHAR(10),</span><br><span class="line">    CONSTRAINT check_borrow_date CHECK (借书日期 &lt;= &#x27;2024-12-31&#x27;),</span><br><span class="line">    FOREIGN KEY (借书证号) REFERENCES 读者信息表(借书证号)</span><br><span class="line">);</span><br><span class="line">INSERT INTO 借还明细表 (借书证号, 图书编号, 借还状态, 借书日期, 还书日期, 数量, 工号)</span><br><span class="line">VALUES</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;07108667&#x27;, &#x27;还&#x27;, &#x27;2008-03-28&#x27;, &#x27;2008-04-14&#x27;, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;99011818&#x27;, &#x27;借&#x27;, &#x27;2008-04-27&#x27;, NULL, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;36405216&#x27;, &#x27;07410802&#x27;, &#x27;借&#x27;, &#x27;2008-04-27&#x27;, NULL, 1, &#x27;002018&#x27;),</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;07410298&#x27;, &#x27;借&#x27;, &#x27;2008-04-28&#x27;, NULL, 1, &#x27;002018&#x27;),</span><br><span class="line">    (&#x27;36405216&#x27;, &#x27;00000746&#x27;, &#x27;还&#x27;, &#x27;2008-04-29&#x27;, &#x27;2008-05-09&#x27;, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;28308208&#x27;, &#x27;07410139&#x27;, &#x27;借&#x27;, &#x27;2008-05-10&#x27;, NULL, 1, &#x27;002019&#x27;),</span><br><span class="line">    (&#x27;16406236&#x27;, &#x27;07410139&#x27;, &#x27;借&#x27;, &#x27;2008-05-11&#x27;, NULL, 1, &#x27;002017&#x27;);</span><br></pre></td></tr></table></figure>
@@ -1305,7 +1630,7 @@
 <td>男</td>
 <td>1971-05-03</td>
 <td>85860715</td>
-<td><a href="mailto:&#x7a;&#x78;&#102;&#64;&#49;&#54;&#51;&#46;&#99;&#x6f;&#109;">zxf@163.com</a></td>
+<td><a href="mailto:&#122;&#120;&#102;&#64;&#49;&#54;&#x33;&#46;&#x63;&#x6f;&#109;">zxf@163.com</a></td>
 </tr>
 <tr>
 <td>002017</td>
@@ -1313,7 +1638,7 @@
 <td>女</td>
 <td>1979-09-15</td>
 <td>85860716</td>
-<td><a href="mailto:&#108;&#106;&#64;&#x31;&#54;&#51;&#x2e;&#x63;&#x6f;&#109;">lj@163.com</a></td>
+<td><a href="mailto:&#x6c;&#106;&#x40;&#x31;&#54;&#51;&#x2e;&#99;&#111;&#109;">lj@163.com</a></td>
 </tr>
 <tr>
 <td>002018</td>
@@ -1321,7 +1646,7 @@
 <td>男</td>
 <td>1972-04-25</td>
 <td>85860717</td>
-<td><a href="mailto:&#x67;&#x62;&#x40;&#121;&#97;&#104;&#111;&#111;&#x2e;&#x63;&#x6e;">gb@yahoo.cn</a></td>
+<td><a href="mailto:&#103;&#x62;&#x40;&#x79;&#97;&#104;&#x6f;&#x6f;&#x2e;&#99;&#x6e;">gb@yahoo.cn</a></td>
 </tr>
 <tr>
 <td>002019</td>
@@ -1329,7 +1654,7 @@
 <td>女</td>
 <td>1968-11-03</td>
 <td>85860718</td>
-<td><a href="mailto:&#x63;&#120;&#x40;&#x73;&#x69;&#110;&#97;&#46;&#x63;&#111;&#x6d;&#x2e;&#99;&#110;">cx@sina.com.cn</a></td>
+<td><a href="mailto:&#x63;&#x78;&#x40;&#x73;&#105;&#110;&#97;&#x2e;&#x63;&#x6f;&#109;&#x2e;&#99;&#x6e;">cx@sina.com.cn</a></td>
 </tr>
 </tbody></table>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">-- 图书明细表 </span><br><span class="line">CREATE TABLE 图书明细表 (</span><br><span class="line">    类别号 VARCHAR(10),</span><br><span class="line">    图书编号 VARCHAR(10) PRIMARY KEY,</span><br><span class="line">    图书名称 VARCHAR(50),</span><br><span class="line">    作者 VARCHAR(50),</span><br><span class="line">    出版社 VARCHAR(50),</span><br><span class="line">    定价 DECIMAL(10, 2),</span><br><span class="line">    购进日期 DATE,</span><br><span class="line">    购入数 INT,</span><br><span class="line">    复本数 INT,</span><br><span class="line">    库存数 INT</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">INSERT INTO 图书明细表 (类别号, 图书编号, 图书名称, 作者, 出版社, 定价, 购进日期, 购入数, 复本数, 库存数)</span><br><span class="line">VALUES</span><br><span class="line">    (&#x27;I267&#x27;, &#x27;99011818&#x27;, &#x27;文化苦旅&#x27;, &#x27;余秋雨&#x27;, &#x27;知识出版社&#x27;, 16, &#x27;2000-03-19&#x27;, 8, 15, 14),</span><br><span class="line">    (&#x27;TP312&#x27;, &#x27;00000476&#x27;, &#x27;Delphi高级开发指南&#x27;, &#x27;坎图&#x27;, &#x27;电子工业出版社&#x27;, 80, &#x27;2000-03-19&#x27;, 15, 15, 15),</span><br><span class="line">    (&#x27;U66&#x27;, &#x27;01058589&#x27;, &#x27;船舶制造基础&#x27;, &#x27;杨敏&#x27;, &#x27;国防工业出版社&#x27;, 19, &#x27;2001-07-15&#x27;, 20, 20, 20),</span><br><span class="line">    (&#x27;I267&#x27;, &#x27;07410139&#x27;, &#x27;艺海潮音&#x27;, &#x27;李叔&#x27;, &#x27;江苏文艺出版社&#x27;, 19, &#x27;2007-04-12&#x27;, 15, 20, 18),</span><br><span class="line">    (&#x27;TP312&#x27;, &#x27;07410298&#x27;, &#x27;C++程序设计&#x27;, &#x27;成颖&#x27;, &#x27;东南大学出版社&#x27;, 38, &#x27;2007-05-08&#x27;, 10, 15, 14),</span><br><span class="line">    (&#x27;H31&#x27;, &#x27;07410802&#x27;, &#x27;航海英语&#x27;, &#x27;陈宏权&#x27;, &#x27;武汉工业大学出版社&#x27;, 42, &#x27;2007-10-20&#x27;, 25, 25, 24),</span><br><span class="line">    (&#x27;H31&#x27;, &#x27;07108667&#x27;, &#x27;大学英语学习辅导&#x27;, &#x27;姜丽蓉&#x27;, &#x27;北京理工大学出版社&#x27;, 23.5, &#x27;2008-02-06&#x27;, 25, 25, 25),</span><br><span class="line">    (&#x27;TP393&#x27;, &#x27;07410810&#x27;, &#x27;网络工程实用教程&#x27;, &#x27;汪新民&#x27;, &#x27;北京大学出版社&#x27;, 34.8, &#x27;2008-08-21&#x27;, 10, 15, 15);</span><br></pre></td></tr></table></figure>
@@ -2346,7 +2671,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2359,7 +2684,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
