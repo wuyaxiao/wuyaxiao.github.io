@@ -206,10 +206,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-04-14 13:33:00 / 修改时间：17:46:12" itemprop="dateCreated datePublished" datetime="2025-04-14T13:33:00+08:00">2025-04-14</time>
+              <time title="创建时间：2025-04-14 13:33:00" itemprop="dateCreated datePublished" datetime="2025-04-14T13:33:00+08:00">2025-04-14</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-04-15 12:48:02" itemprop="dateModified" datetime="2025-04-15T12:48:02+08:00">2025-04-15</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -364,7 +370,11 @@
 </li>
 </ol>
 <h2 id="测试项目"><a href="#测试项目" class="headerlink" title="测试项目"></a>测试项目</h2><p>更改配置文件，在本地用云服务器上的mysql和redis进行测试</p>
-<h2 id="服务器后台运行后端项目"><a href="#服务器后台运行后端项目" class="headerlink" title="服务器后台运行后端项目"></a>服务器后台运行后端项目</h2><h3 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h3><h4 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h4><p>创建一个名为 start.sh 的文件，内容如下：</p>
+<h2 id="服务器后台运行后端项目"><a href="#服务器后台运行后端项目" class="headerlink" title="服务器后台运行后端项目"></a>服务器后台运行后端项目</h2><p>运行<code>clean</code>,<code>package</code>两条命令生成jar文件</p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250415124415277.png" alt="image-20250415124415277"></p>
+<p><img src="/2025/04/14/%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%88%B0%E5%8D%8E%E4%B8%BA%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A/image-20250415124758994.png" alt="image-20250415124758994"></p>
+<p>把jar文件上传到服务器</p>
+<h3 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h3><h4 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h4><p>创建一个名为 start.sh 的文件，内容如下：</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 清理旧的nohup.out（可选）</span></span><br><span class="line">&gt; nohup.out <span class="number">2</span>&gt;/dev/null || true</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动应用并获取PID</span></span><br><span class="line">nohup java <span class="literal">-jar</span> AiQuestion<span class="literal">-backend-0</span>.<span class="number">0.1</span><span class="literal">-SNAPSHOT</span>.jar &gt; nohup.out <span class="number">2</span>&gt;&amp;<span class="number">1</span> &amp;</span><br><span class="line">APP_PID=<span class="variable">$</span>!</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证启动是否成功</span></span><br><span class="line"><span class="built_in">sleep</span> <span class="number">5</span>  <span class="comment"># 等待5秒让应用初始化</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">ps</span> <span class="literal">-p</span> <span class="variable">$APP_PID</span> &gt; /dev/null; then</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;启动成功！PID: <span class="variable">$APP_PID</span>&quot;</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;日志输出：tail -f nohup.out&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;启动失败！检查日志：&quot;</span></span><br><span class="line">  tail <span class="literal">-n</span> <span class="number">20</span> nohup.out</span><br><span class="line">  <span class="keyword">exit</span> <span class="number">1</span></span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
 
 <p>再通过命令启动，命令如下：</p>
@@ -523,10 +533,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-04-07 18:34:40 / 修改时间：22:25:27" itemprop="dateCreated datePublished" datetime="2025-04-07T18:34:40+08:00">2025-04-07</time>
+              <time title="创建时间：2025-04-07 18:34:40" itemprop="dateCreated datePublished" datetime="2025-04-07T18:34:40+08:00">2025-04-07</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-05-03 21:46:03" itemprop="dateModified" datetime="2025-05-03T21:46:03+08:00">2025-05-03</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -624,7 +640,8 @@
 <li><p><strong>响应主体</strong>：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Response: True&gt;</span><br></pre></td></tr></table></figure></li>
 </ol>
-<h3 id="“四次挥手”断开TCP连接"><a href="#“四次挥手”断开TCP连接" class="headerlink" title="“四次挥手”断开TCP连接"></a>“四次挥手”断开TCP连接</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221855258.png" alt="image-20250406221855258"></p>
+<h3 id="“四次挥手”断开TCP连接"><a href="#“四次挥手”断开TCP连接" class="headerlink" title="“四次挥手”断开TCP连接"></a>“四次挥手”断开TCP连接</h3><p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250407220936520.png" alt="image-20250407220936520"></p>
+<p><img src="/2025/04/07/HTTP-HTTPS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B-0/image-20250406221855258.png" alt="image-20250406221855258"></p>
 <p>请求完成后，客户端和服务器可以关闭连接。通常情况下，HTTP 1.0使用的是短连接，请求完成后关闭连接。HTTP 1.1默认使用长连接，多个请求可以复用同一个连接，直到连接超时或被关闭。</p>
 <h2 id="https交互过程"><a href="#https交互过程" class="headerlink" title="https交互过程"></a>https交互过程</h2><p>HTTP协议有三大缺点：</p>
 <ul>
@@ -1406,7 +1423,7 @@
 <td>2</td>
 <td>管理信息系</td>
 <td>85860126</td>
-<td><a href="mailto:&#x7a;&#120;&#x6c;&#64;&#x31;&#54;&#x33;&#x2e;&#99;&#x6f;&#109;">zxl@163.com</a></td>
+<td><a href="mailto:&#122;&#120;&#x6c;&#x40;&#49;&#x36;&#x33;&#46;&#x63;&#x6f;&#x6d;">zxl@163.com</a></td>
 </tr>
 <tr>
 <td>36405216</td>
@@ -1416,7 +1433,7 @@
 <td>1</td>
 <td>航海系</td>
 <td>85860729</td>
-<td><a href="mailto:&#x6c;&#121;&#x40;&#115;&#x69;&#110;&#97;&#46;&#99;&#x6f;&#x6d;&#x2e;&#99;&#x6e;">ly@sina.com.cn</a></td>
+<td><a href="mailto:&#108;&#x79;&#64;&#x73;&#105;&#110;&#x61;&#x2e;&#x63;&#111;&#109;&#46;&#99;&#x6e;">ly@sina.com.cn</a></td>
 </tr>
 <tr>
 <td>28308208</td>
@@ -1426,7 +1443,7 @@
 <td>1</td>
 <td>人文艺术系</td>
 <td>85860618</td>
-<td><a href="mailto:&#x77;&#120;&#x71;&#x40;&#121;&#x61;&#x68;&#x6f;&#x6f;&#x2e;&#x63;&#110;">wxq@yahoo.cn</a></td>
+<td><a href="mailto:&#119;&#x78;&#113;&#x40;&#121;&#x61;&#104;&#111;&#111;&#46;&#99;&#110;">wxq@yahoo.cn</a></td>
 </tr>
 <tr>
 <td>16406236</td>
@@ -1436,7 +1453,7 @@
 <td>1</td>
 <td>轮机工程系</td>
 <td>85860913</td>
-<td><a href="mailto:&#x7a;&#x6a;&#103;&#x40;&#49;&#54;&#51;&#x2e;&#x63;&#x6f;&#x6d;">zjg@163.com</a></td>
+<td><a href="mailto:&#122;&#106;&#103;&#x40;&#49;&#54;&#51;&#46;&#x63;&#111;&#x6d;">zjg@163.com</a></td>
 </tr>
 <tr>
 <td>16406247</td>
@@ -1446,7 +1463,7 @@
 <td></td>
 <td>轮机工程系</td>
 <td>85860916</td>
-<td><a href="mailto:&#x67;&#121;&#x66;&#64;&#121;&#97;&#104;&#x6f;&#111;&#x2e;&#99;&#x6e;">gyf@yahoo.cn</a></td>
+<td><a href="mailto:&#x67;&#x79;&#102;&#64;&#121;&#x61;&#x68;&#111;&#x6f;&#46;&#99;&#110;">gyf@yahoo.cn</a></td>
 </tr>
 </tbody></table>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">-- 借还明细表</span><br><span class="line">CREATE TABLE 借还明细表 (</span><br><span class="line">    借书证号 VARCHAR(10),</span><br><span class="line">    图书编号 VARCHAR(10),</span><br><span class="line">    借还状态 ENUM(&#x27;还&#x27;,&#x27;借&#x27;),</span><br><span class="line">    借书日期 DATE,</span><br><span class="line">    还书日期 DATE,</span><br><span class="line">    数量 INT,</span><br><span class="line">    工号 VARCHAR(10),</span><br><span class="line">    CONSTRAINT check_borrow_date CHECK (借书日期 &lt;= &#x27;2024-12-31&#x27;),</span><br><span class="line">    FOREIGN KEY (借书证号) REFERENCES 读者信息表(借书证号)</span><br><span class="line">);</span><br><span class="line">INSERT INTO 借还明细表 (借书证号, 图书编号, 借还状态, 借书日期, 还书日期, 数量, 工号)</span><br><span class="line">VALUES</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;07108667&#x27;, &#x27;还&#x27;, &#x27;2008-03-28&#x27;, &#x27;2008-04-14&#x27;, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;99011818&#x27;, &#x27;借&#x27;, &#x27;2008-04-27&#x27;, NULL, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;36405216&#x27;, &#x27;07410802&#x27;, &#x27;借&#x27;, &#x27;2008-04-27&#x27;, NULL, 1, &#x27;002018&#x27;),</span><br><span class="line">    (&#x27;29307142&#x27;, &#x27;07410298&#x27;, &#x27;借&#x27;, &#x27;2008-04-28&#x27;, NULL, 1, &#x27;002018&#x27;),</span><br><span class="line">    (&#x27;36405216&#x27;, &#x27;00000746&#x27;, &#x27;还&#x27;, &#x27;2008-04-29&#x27;, &#x27;2008-05-09&#x27;, 1, &#x27;002016&#x27;),</span><br><span class="line">    (&#x27;28308208&#x27;, &#x27;07410139&#x27;, &#x27;借&#x27;, &#x27;2008-05-10&#x27;, NULL, 1, &#x27;002019&#x27;),</span><br><span class="line">    (&#x27;16406236&#x27;, &#x27;07410139&#x27;, &#x27;借&#x27;, &#x27;2008-05-11&#x27;, NULL, 1, &#x27;002017&#x27;);</span><br></pre></td></tr></table></figure>
@@ -1630,7 +1647,7 @@
 <td>男</td>
 <td>1971-05-03</td>
 <td>85860715</td>
-<td><a href="mailto:&#x7a;&#x78;&#102;&#64;&#49;&#54;&#51;&#x2e;&#99;&#111;&#109;">zxf@163.com</a></td>
+<td><a href="mailto:&#x7a;&#x78;&#x66;&#64;&#x31;&#54;&#51;&#x2e;&#x63;&#x6f;&#109;">zxf@163.com</a></td>
 </tr>
 <tr>
 <td>002017</td>
@@ -1638,7 +1655,7 @@
 <td>女</td>
 <td>1979-09-15</td>
 <td>85860716</td>
-<td><a href="mailto:&#x6c;&#x6a;&#64;&#49;&#x36;&#51;&#x2e;&#99;&#111;&#x6d;">lj@163.com</a></td>
+<td><a href="mailto:&#x6c;&#106;&#x40;&#49;&#x36;&#51;&#46;&#99;&#111;&#109;">lj@163.com</a></td>
 </tr>
 <tr>
 <td>002018</td>
@@ -1646,7 +1663,7 @@
 <td>男</td>
 <td>1972-04-25</td>
 <td>85860717</td>
-<td><a href="mailto:&#x67;&#x62;&#64;&#121;&#97;&#104;&#111;&#x6f;&#x2e;&#99;&#x6e;">gb@yahoo.cn</a></td>
+<td><a href="mailto:&#103;&#x62;&#64;&#121;&#97;&#x68;&#x6f;&#111;&#46;&#99;&#110;">gb@yahoo.cn</a></td>
 </tr>
 <tr>
 <td>002019</td>
@@ -1654,7 +1671,7 @@
 <td>女</td>
 <td>1968-11-03</td>
 <td>85860718</td>
-<td><a href="mailto:&#99;&#120;&#x40;&#115;&#105;&#x6e;&#x61;&#46;&#x63;&#x6f;&#x6d;&#46;&#x63;&#110;">cx@sina.com.cn</a></td>
+<td><a href="mailto:&#x63;&#120;&#x40;&#115;&#105;&#x6e;&#x61;&#x2e;&#x63;&#x6f;&#x6d;&#x2e;&#x63;&#x6e;">cx@sina.com.cn</a></td>
 </tr>
 </tbody></table>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">-- 图书明细表 </span><br><span class="line">CREATE TABLE 图书明细表 (</span><br><span class="line">    类别号 VARCHAR(10),</span><br><span class="line">    图书编号 VARCHAR(10) PRIMARY KEY,</span><br><span class="line">    图书名称 VARCHAR(50),</span><br><span class="line">    作者 VARCHAR(50),</span><br><span class="line">    出版社 VARCHAR(50),</span><br><span class="line">    定价 DECIMAL(10, 2),</span><br><span class="line">    购进日期 DATE,</span><br><span class="line">    购入数 INT,</span><br><span class="line">    复本数 INT,</span><br><span class="line">    库存数 INT</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">INSERT INTO 图书明细表 (类别号, 图书编号, 图书名称, 作者, 出版社, 定价, 购进日期, 购入数, 复本数, 库存数)</span><br><span class="line">VALUES</span><br><span class="line">    (&#x27;I267&#x27;, &#x27;99011818&#x27;, &#x27;文化苦旅&#x27;, &#x27;余秋雨&#x27;, &#x27;知识出版社&#x27;, 16, &#x27;2000-03-19&#x27;, 8, 15, 14),</span><br><span class="line">    (&#x27;TP312&#x27;, &#x27;00000476&#x27;, &#x27;Delphi高级开发指南&#x27;, &#x27;坎图&#x27;, &#x27;电子工业出版社&#x27;, 80, &#x27;2000-03-19&#x27;, 15, 15, 15),</span><br><span class="line">    (&#x27;U66&#x27;, &#x27;01058589&#x27;, &#x27;船舶制造基础&#x27;, &#x27;杨敏&#x27;, &#x27;国防工业出版社&#x27;, 19, &#x27;2001-07-15&#x27;, 20, 20, 20),</span><br><span class="line">    (&#x27;I267&#x27;, &#x27;07410139&#x27;, &#x27;艺海潮音&#x27;, &#x27;李叔&#x27;, &#x27;江苏文艺出版社&#x27;, 19, &#x27;2007-04-12&#x27;, 15, 20, 18),</span><br><span class="line">    (&#x27;TP312&#x27;, &#x27;07410298&#x27;, &#x27;C++程序设计&#x27;, &#x27;成颖&#x27;, &#x27;东南大学出版社&#x27;, 38, &#x27;2007-05-08&#x27;, 10, 15, 14),</span><br><span class="line">    (&#x27;H31&#x27;, &#x27;07410802&#x27;, &#x27;航海英语&#x27;, &#x27;陈宏权&#x27;, &#x27;武汉工业大学出版社&#x27;, 42, &#x27;2007-10-20&#x27;, 25, 25, 24),</span><br><span class="line">    (&#x27;H31&#x27;, &#x27;07108667&#x27;, &#x27;大学英语学习辅导&#x27;, &#x27;姜丽蓉&#x27;, &#x27;北京理工大学出版社&#x27;, 23.5, &#x27;2008-02-06&#x27;, 25, 25, 25),</span><br><span class="line">    (&#x27;TP393&#x27;, &#x27;07410810&#x27;, &#x27;网络工程实用教程&#x27;, &#x27;汪新民&#x27;, &#x27;北京大学出版社&#x27;, 34.8, &#x27;2008-08-21&#x27;, 10, 15, 15);</span><br></pre></td></tr></table></figure>
