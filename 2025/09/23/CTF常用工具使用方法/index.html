@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuyaxiao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"posthide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="查杀工具D盾下载：https:&#x2F;&#x2F;www.d99net.net&#x2F; 河马下载：https:&#x2F;&#x2F;www.shellpub.com&#x2F; Linux使用手册：https:&#x2F;&#x2F;www.shellpub.com&#x2F;doc&#x2F;hm_linux_usage.html Windows使用手册：https:&#x2F;&#x2F;blog.shellpub.com&#x2F;2020&#x2F;07&#x2F;14&#x2F;hm_windows_usage.html 扫描工具 d">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CTF常用工具下载及使用">
+<meta property="og:url" content="https://wuyaxiao.github.io/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="学习小屋">
+<meta property="og:description" content="查杀工具D盾下载：https:&#x2F;&#x2F;www.d99net.net&#x2F; 河马下载：https:&#x2F;&#x2F;www.shellpub.com&#x2F; Linux使用手册：https:&#x2F;&#x2F;www.shellpub.com&#x2F;doc&#x2F;hm_linux_usage.html Windows使用手册：https:&#x2F;&#x2F;blog.shellpub.com&#x2F;2020&#x2F;07&#x2F;14&#x2F;hm_windows_usage.html 扫描工具 d">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/05788a722e45408045cec8962e3ae971.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/c65eaa1f03a969c09c4fea0c1bad0d6a.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/b80d95ad41feb689a0a54aa8a8fb0dad.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/a2ebb5fcee497c2c43de7b632c3378f2.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/e3b714fbfcebc5c31b3a16ce45ad98f5.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/d5e8b3f325db62384a40bd2b3d2699a3.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/8ab9c5607a583db0fcbee50c6979d1d0.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/4880ebe08bc7ce4eca4dbcde75103155.png">
+<meta property="article:published_time" content="2025-09-23T04:46:12.177Z">
+<meta property="article:modified_time" content="2026-11-09T06:31:50.026Z">
+<meta property="article:author" content="wuyaxiao">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wuyaxiao.github.io/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/05788a722e45408045cec8962e3ae971.png">
+
+<link rel="canonical" href="https://wuyaxiao.github.io/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>CTF常用工具下载及使用 | 学习小屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学习小屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuyaxiao.github.io/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuyaxiao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学习小屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CTF常用工具下载及使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-09-23 12:46:12" itemprop="dateCreated datePublished" datetime="2025-09-23T12:46:12+08:00">2025-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-11-09 14:31:50" itemprop="dateModified" datetime="2026-11-09T14:31:50+08:00">2026-11-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" itemprop="url" rel="index"><span itemprop="name">使用指南</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="查杀工具"><a href="#查杀工具" class="headerlink" title="查杀工具"></a>查杀工具</h2><h3 id="D盾"><a href="#D盾" class="headerlink" title="D盾"></a>D盾</h3><p>下载：<a target="_blank" rel="noopener" href="https://www.d99net.net/">https://www.d99net.net/</a></p>
+<h3 id="河马"><a href="#河马" class="headerlink" title="河马"></a>河马</h3><p>下载：<a target="_blank" rel="noopener" href="https://www.shellpub.com/">https://www.shellpub.com/</a></p>
+<p>Linux使用手册：<a target="_blank" rel="noopener" href="https://www.shellpub.com/doc/hm_linux_usage.html">https://www.shellpub.com/doc/hm_linux_usage.html</a></p>
+<p>Windows使用手册：<a target="_blank" rel="noopener" href="https://blog.shellpub.com/2020/07/14/hm_windows_usage.html">https://blog.shellpub.com/2020/07/14/hm_windows_usage.html</a></p>
+<h2 id="扫描工具"><a href="#扫描工具" class="headerlink" title="扫描工具"></a>扫描工具</h2><p><img src="/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/05788a722e45408045cec8962e3ae971.png" alt="05788a722e45408045cec8962e3ae971"></p>
+<h3 id="disearch"><a href="#disearch" class="headerlink" title="disearch"></a>disearch</h3><h3 id="转子女神"><a href="#转子女神" class="headerlink" title="转子女神"></a>转子女神</h3><p>使用方法：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/c7C7Y9kM0qndh9wjSwq7fA">https://mp.weixin.qq.com/s/c7C7Y9kM0qndh9wjSwq7fA</a></p>
+<p><img src="/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/c65eaa1f03a969c09c4fea0c1bad0d6a.png" alt="c65eaa1f03a969c09c4fea0c1bad0d6a"></p>
+<p>-u：制定目标</p>
+<p>-d：字典路径</p>
+<p>–black-status&#x3D;xxxx过滤状态码</p>
+<h2 id="情报搜集"><a href="#情报搜集" class="headerlink" title="情报搜集"></a>情报搜集</h2><h3 id="威胁情报平台"><a href="#威胁情报平台" class="headerlink" title="威胁情报平台"></a>威胁情报平台</h3><p>微步在线<a target="_blank" rel="noopener" href="https://x.threatbook.cn/">https://x.threatbook.cn/</a></p>
+<h3 id="网站技术分析工具集"><a href="#网站技术分析工具集" class="headerlink" title="网站技术分析工具集"></a>网站技术分析工具集</h3><p>站长之家：<a target="_blank" rel="noopener" href="http://tool.chinaz.com/">http://tool.chinaz.com/</a></p>
+<h2 id="BP插件"><a href="#BP插件" class="headerlink" title="BP插件"></a>BP插件</h2><ol>
+<li>autoDecode:自动解码和规范化 HTTP 请求&#x2F;响应中的编码数据比如说Base64编码</li>
+</ol>
+<h2 id="油猴脚本"><a href="#油猴脚本" class="headerlink" title="油猴脚本"></a>油猴脚本</h2><p><img src="/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/b80d95ad41feb689a0a54aa8a8fb0dad.png" alt="b80d95ad41feb689a0a54aa8a8fb0dad"></p>
+<p><img src="/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/a2ebb5fcee497c2c43de7b632c3378f2.png" alt="a2ebb5fcee497c2c43de7b632c3378f2"></p>
+<p><img src="/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/e3b714fbfcebc5c31b3a16ce45ad98f5.png" alt="e3b714fbfcebc5c31b3a16ce45ad98f5"></p>
+<p><img src="/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/d5e8b3f325db62384a40bd2b3d2699a3.png" alt="d5e8b3f325db62384a40bd2b3d2699a3"></p>
+<h2 id="浏览器插件"><a href="#浏览器插件" class="headerlink" title="浏览器插件"></a>浏览器插件</h2><h3 id="Hackbar"><a href="#Hackbar" class="headerlink" title="Hackbar"></a>Hackbar</h3><p><img src="/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/8ab9c5607a583db0fcbee50c6979d1d0.png" alt="8ab9c5607a583db0fcbee50c6979d1d0"></p>
+<p><img src="/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/4880ebe08bc7ce4eca4dbcde75103155.png" alt="4880ebe08bc7ce4eca4dbcde75103155"></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="wuyaxiao 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="wuyaxiao 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CTF/" rel="tag"># CTF</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/09/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC_%E4%B8%8D%E4%B8%8A%E4%BC%A0/" rel="prev" title="一句话木马">
+      <i class="fa fa-chevron-left"></i> 一句话木马
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+            
+    
+  
+
+  <!-- 应使用 elif 而不是 else if -->  
+  <div class="comments" id="comments">  
+    
+  <script src="https://utteranc.es/client.js"
+    repo="wuyaxiao/wuyaxiao.github.io"
+    issue-term="title"
+    theme="github-light"
+    crossorigin="anonymous"
+    async>
+  </script>
+  
+  </div>  
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E6%9D%80%E5%B7%A5%E5%85%B7"><span class="nav-number">1.</span> <span class="nav-text">查杀工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#D%E7%9B%BE"><span class="nav-number">1.1.</span> <span class="nav-text">D盾</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B2%B3%E9%A9%AC"><span class="nav-number">1.2.</span> <span class="nav-text">河马</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%AB%E6%8F%8F%E5%B7%A5%E5%85%B7"><span class="nav-number">2.</span> <span class="nav-text">扫描工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#disearch"><span class="nav-number">2.1.</span> <span class="nav-text">disearch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AC%E5%AD%90%E5%A5%B3%E7%A5%9E"><span class="nav-number">2.2.</span> <span class="nav-text">转子女神</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%83%85%E6%8A%A5%E6%90%9C%E9%9B%86"><span class="nav-number">3.</span> <span class="nav-text">情报搜集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5%E5%B9%B3%E5%8F%B0"><span class="nav-number">3.1.</span> <span class="nav-text">威胁情报平台</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%AB%99%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7%E9%9B%86"><span class="nav-number">3.2.</span> <span class="nav-text">网站技术分析工具集</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BP%E6%8F%92%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">BP插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B2%B9%E7%8C%B4%E8%84%9A%E6%9C%AC"><span class="nav-number">5.</span> <span class="nav-text">油猴脚本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6"><span class="nav-number">6.</span> <span class="nav-text">浏览器插件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hackbar"><span class="nav-number">6.1.</span> <span class="nav-text">Hackbar</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuyaxiao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="fa fa-user">
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuyaxiao</span>
+</div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuyaxiao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"posthide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="misc题型概览图片隐写PNG 文件隐写与分析技术   组成部分 字节数 描述 魔术数字&#x2F;标记    文件签名（Magic Number） 8 字节 用于识别文件是有效的PNG格式。 89 50 4E 47 0D 0A 1A 0A (十六进制)   数据块（Chunk） 可变 包含图像数据、元数据、调色板等信息。一个PNG文件由多个数据块组成。 N&#x2F;A (每个块有自己的类型)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习小屋">
+<meta property="og:url" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/index.html">
+<meta property="og:site_name" content="学习小屋">
+<meta property="og:description" content="misc题型概览图片隐写PNG 文件隐写与分析技术   组成部分 字节数 描述 魔术数字&#x2F;标记    文件签名（Magic Number） 8 字节 用于识别文件是有效的PNG格式。 89 50 4E 47 0D 0A 1A 0A (十六进制)   数据块（Chunk） 可变 包含图像数据、元数据、调色板等信息。一个PNG文件由多个数据块组成。 N&#x2F;A (每个块有自己的类型)">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/088234996997639157fedf29f4f1d6e9.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/20161126233946256.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/02d9b31b295e4f398c93fdccf460a868tplv-k3u1fbpfcp-zoom-in-crop-mark1512000.webp">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/image-20251021211004480.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/604765-20160907140034566-1766794640.gif">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/604765-20160907140044207-1335514151.gif">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/image-20251021211310898.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/image-20251021211337221.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/604765-20160907140054832-607109094.gif">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/abe8d7cbbf22a32498d31cfe31378841.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/0290b70c660025fd1bf3942b8e835fec.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/b17941cd6f7ca2ac55595b1369080619.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/34fcacb4c86a45934312a73888aab475.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/image-20260113112133677.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/image-20260113112549595.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/202407071838550.png">
+<meta property="article:published_time" content="2025-10-21T07:44:32.020Z">
+<meta property="article:modified_time" content="2026-01-14T07:08:13.112Z">
+<meta property="article:author" content="wuyaxiao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/088234996997639157fedf29f4f1d6e9.png">
+
+<link rel="canonical" href="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 学习小屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学习小屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuyaxiao.github.io/2025/10/21/misc%E9%A2%98%E7%9B%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuyaxiao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学习小屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-10-21 15:44:32" itemprop="dateCreated datePublished" datetime="2025-10-21T15:44:32+08:00">2025-10-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-01-14 15:08:13" itemprop="dateModified" datetime="2026-01-14T15:08:13+08:00">2026-01-14</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="misc题型概览"><a href="#misc题型概览" class="headerlink" title="misc题型概览"></a>misc题型概览</h2><h3 id="图片隐写"><a href="#图片隐写" class="headerlink" title="图片隐写"></a><strong>图片隐写</strong></h3><h4 id="PNG-文件隐写与分析技术"><a href="#PNG-文件隐写与分析技术" class="headerlink" title="PNG 文件隐写与分析技术"></a>PNG 文件隐写与分析技术</h4><table>
+<thead>
+<tr>
+<th><strong>组成部分</strong></th>
+<th><strong>字节数</strong></th>
+<th><strong>描述</strong></th>
+<th><strong>魔术数字&#x2F;标记</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>文件签名（Magic Number）</strong></td>
+<td>8 字节</td>
+<td>用于识别文件是有效的PNG格式。</td>
+<td><strong><code>89 50 4E 47 0D 0A 1A 0A</code> (十六进制)</strong></td>
+</tr>
+<tr>
+<td><strong>数据块（Chunk）</strong></td>
+<td>可变</td>
+<td>包含图像数据、元数据、调色板等信息。一个PNG文件由多个数据块组成。</td>
+<td>N&#x2F;A (每个块有自己的类型)</td>
+</tr>
+</tbody></table>
+<p><code>49 45 4E 44 AE 42 60 82</code> 是 PNG IEND块（文件结束标记）</p>
+<h5 id="1-修改宽高（一般是高）"><a href="#1-修改宽高（一般是高）" class="headerlink" title="1. 修改宽高（一般是高）"></a>1. 修改宽高（一般是高）</h5><ul>
+<li><strong>原理：</strong> PNG 文件头中的 <code>IHDR</code> 数据块存储了图像的宽度（Width）和高度（Height）。出题者会故意将<strong>真实</strong>的图片高度改小，使得图片底部的一部分像素数据被隐藏，无法正常显示。</li>
+<li><strong>目的：</strong> 隐藏的像素区域可能包含 Flag、二维码或重要的线索。</li>
+<li><strong>解题关键：</strong><ul>
+<li>使用十六进制编辑器（Hex Editor）查看 PNG 文件，找到 <code>IHDR</code> 数据块中表示高度的 4 个字节（通常在文件偏移量 20-23 处）。</li>
+<li>尝试将高度值改大（例如，改为一个非常大的值，或者通过 CRC 爆破找到真实值）。</li>
+<li><strong>CRC 校验报错：</strong> <strong>这是最大的提示！</strong> 当你修改了高度值后，文件末尾的 <strong>CRC 校验码</strong>就会失效，图片查看器会报错。你需要<strong>重新计算</strong>修改后的 <code>IHDR</code> 数据块的 CRC-32 值，并替换文件中的旧值，才能让图片正常显示。</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-LSB（最低有效位隐写）隐写文件或文字或图片"><a href="#2-LSB（最低有效位隐写）隐写文件或文字或图片" class="headerlink" title="2. LSB（最低有效位隐写）隐写文件或文字或图片"></a>2. LSB（最低有效位隐写）隐写文件或文字或图片</h5><ul>
+<li><strong>原理：</strong> LSB（Least Significant Bit）隐写是利用数字图像中人眼对颜色微小变化不敏感的特性。<ul>
+<li>对于一个 24 位（真彩色）的像素点，R、G、B 各占 8 位。将每个颜色分量的<strong>最低一位</strong>（即 LSB）替换成秘密信息的数据位。</li>
+<li>由于 LSB 改变只会使颜色值最大变化 1（人眼无法察觉），因此秘密信息被完美地隐藏在视觉上没有变化的图像中。</li>
+</ul>
+</li>
+<li><strong>目的：</strong> 隐藏文本（Flag）、压缩文件或其他图片。</li>
+<li><strong>解题关键：</strong><ul>
+<li>使用专业工具（如 <strong><code>zsteg</code></strong>、StegSolve）对 PNG 文件进行分析，让工具自动提取 LSB 中的数据。</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-两张图片异或-XOR"><a href="#3-两张图片异或-XOR" class="headerlink" title="3. 两张图片异或 (XOR)"></a>3. 两张图片异或 (XOR)</h5><ul>
+<li><p>原理： 这是双图盲水印解法的核心操作。它基于以下数学特性：</p>
+<p>$$\text{A} \oplus \text{A} &#x3D; 0$$</p>
+<p>$$\text{A} \oplus \text{B} \oplus \text{A} &#x3D; \text{B}$$</p>
+</li>
+<li><p><strong>目的：</strong> 当题目提供两张<strong>几乎相同</strong>的图片 $I_1$ 和 $I_2$ 时，通常意味着：</p>
+<ul>
+<li><strong>双图盲水印：</strong> $I_1$ 和 $I_2$ 都嵌入了相同的 Flag ($W$)，但载体有微小差异。XOR 操作可以消除大部分载体背景，突出水印。</li>
+<li><strong>隐写差异：</strong> $I_1$ 是原始图，而 $I_2$ 只是在某部分像素上做了轻微修改（比如嵌入了 Flag）。XOR 运算会使两个图片<strong>不同的区域</strong>显示为<strong>亮色</strong>。</li>
+</ul>
+</li>
+<li><p><strong>解题关键：</strong> 使用 Python 脚本（NumPy&#x2F;OpenCV&#x2F;PIL）或 <strong>StegSolve</strong> 的 <strong>Image Combiner -&gt; XOR</strong> 功能，对两张图片的像素值进行异或运算，观察得到的差异图。</p>
+</li>
+</ul>
+<h5 id="4-cloacked-pixel"><a href="#4-cloacked-pixel" class="headerlink" title="4. cloacked-pixel"></a>4. cloacked-pixel</h5><ul>
+<li><strong>原理：</strong> Cloaked Pixel（隐形像素）是一种隐写工具，它利用 PNG 或其他图像格式中<strong>肉眼不可见</strong>的像素变化来编码数据。它可能与 LSB 类似，但通常涉及到更复杂的颜色通道操纵或压缩特性。</li>
+<li><strong>目的：</strong> 隐藏 Flag 或秘密文件。</li>
+<li><strong>解题关键：</strong> 通常需要使用专门的 <strong>Cloaked-Pixel 解密工具</strong>（如果出题人使用了该工具）或深入分析像素的颜色值，寻找异常的、不符合周围环境的像素点。</li>
+</ul>
+<h5 id="5-apng-可以考双图盲水印"><a href="#5-apng-可以考双图盲水印" class="headerlink" title="5. apng (可以考双图盲水印)"></a>5. apng (可以考双图盲水印)</h5><ul>
+<li><strong>APNG (Animated Portable Network Graphics)：</strong><ul>
+<li><strong>原理：</strong> APNG 是 PNG 的扩展格式，支持动画。它由多个**帧（Frame）**组成，类似于 GIF，但支持 PNG 的所有特性（如 24 位颜色和 Alpha 透明度）。</li>
+<li><strong>与双图盲水印的关系：</strong> 出题人可以将 Flag 隐藏在 APNG 动画的<strong>某一个帧</strong>中，或者将 <strong>$I_1$ 作为第一帧</strong>，<strong>$I_2$ 作为第二帧</strong>。这迫使解题者必须将 APNG 拆解成独立的 PNG 帧文件，然后再对帧文件进行<strong>双图异或</strong>操作来提取水印。</li>
+</ul>
+</li>
+<li><strong>解题关键：</strong> 使用 APNG 拆解工具（如 FFmpeg 或在线工具）将动画拆分为一系列单帧 PNG 文件，然后对这些帧文件进行分析或异或运算。</li>
+</ul>
+<h5 id="6-隐藏或其它格式的文件"><a href="#6-隐藏或其它格式的文件" class="headerlink" title="6.隐藏或其它格式的文件"></a>6.隐藏或其它格式的文件</h5><table>
+<thead>
+<tr>
+<th align="left">格式</th>
+<th align="left">典型扩展名</th>
+<th align="left">文件头（Hex）</th>
+<th align="left">ASCII 可见字符</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>ZIP</strong></td>
+<td align="left"><code>.zip</code>, <code>.jar</code>, <code>.apk</code></td>
+<td align="left"><code>50 4B 03 04</code></td>
+<td align="left"><code>P K . .</code></td>
+</tr>
+<tr>
+<td align="left"><strong>RAR (v4)</strong></td>
+<td align="left"><code>.rar</code></td>
+<td align="left"><code>52 61 72 21 1A 07 00</code></td>
+<td align="left"><code>R a r ! . . .</code></td>
+</tr>
+<tr>
+<td align="left"><strong>7-Zip</strong></td>
+<td align="left"><code>.7z</code></td>
+<td align="left"><code>37 7A BC AF 27 1C</code></td>
+<td align="left"><code>7 z ¼ ¯ &#39; .</code></td>
+</tr>
+<tr>
+<td align="left"><strong>GZIP</strong></td>
+<td align="left"><code>.gz</code>, <code>.tgz</code></td>
+<td align="left"><code>1F 8B</code></td>
+<td align="left">(不可见控制字符)</td>
+</tr>
+<tr>
+<td align="left"><strong>BZIP2</strong></td>
+<td align="left"><code>.bz2</code></td>
+<td align="left"><code>42 5A 68</code></td>
+<td align="left"><code>B Z h</code></td>
+</tr>
+</tbody></table>
+<h4 id="JPG"><a href="#JPG" class="headerlink" title="JPG"></a>JPG</h4><ul>
+<li>steghide</li>
+<li>jphide</li>
+<li>jsteg</li>
+<li>SlientEye</li>
+<li>修改宽高（没有CRC不会报错）</li>
+</ul>
+<h4 id="GIF"><a href="#GIF" class="headerlink" title="GIF"></a>GIF</h4><ul>
+<li>动图</li>
+<li>帧间隔时间</li>
+<li>修改宽高（注意有多段，而且每帧都有一段数据）</li>
+</ul>
+<h4 id="BMP"><a href="#BMP" class="headerlink" title="BMP"></a>BMP</h4><ul>
+<li>类似于png</li>
+<li>wbs43open</li>
+</ul>
+<h4 id="webp"><a href="#webp" class="headerlink" title="webp"></a>webp</h4><h4 id="盲水印"><a href="#盲水印" class="headerlink" title="盲水印"></a>盲水印</h4><ul>
+<li>java盲水印：提示出题人可能使用 Java 语言编写的盲水印工具或框架（而不是 Python 或 C++）来嵌入水印。那么常规的 Python 工具可能无法直接兼容或提取。解题者可能需要找到对应的 Java 程序或反向工程该程序。</li>
+<li>watermarkH：如果一张图试了一堆工具都不行，可以考虑一下WaterMarkH</li>
+<li>bwm双图盲水印：<code>blind-watermark</code> 是一个流行的 Python 库，常用于 CTF 中。只要有无水印的原图和添加了盲水印的图就可以通过<code>blind-watermark</code>提取盲水印</li>
+<li>傅里叶变换： 傅里叶变换（Fourier Transform, FT）是图像处理中将图像从空域（像素域）转换到频域（Frequency Domain）的关键技术。基于傅里叶变换或其衍生的离散余弦变换（DCT）、小波变换（DWT）的盲水印算法，通常将水印嵌入到图像的中低频部分，以实现鲁棒性（抵抗压缩、裁剪等攻击）。<ul>
+<li>解题关键：<ul>
+<li>需要对图像进行傅里叶变换。</li>
+<li>观察变换后的频域图，查找是否有异常的、周期性的结构（这往往是水印的特征）。</li>
+<li>尝试对频域的特定区域进行修改或提取，然后进行逆变换返回空域观察结果。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="音频隐写"><a href="#音频隐写" class="headerlink" title="音频隐写"></a>音频隐写</h3><ul>
+<li>频谱图</li>
+<li>如果有明显的声音变换，可以考虑morse之类的编码 一般常见的是各种软件隐写</li>
+<li>slientEye</li>
+<li>deepsound</li>
+<li>DTMF拨号音</li>
+<li>SSTV</li>
+</ul>
+<h3 id="压缩包"><a href="#压缩包" class="headerlink" title="压缩包"></a><strong>压缩包</strong></h3><p>Note</p>
+<p>一般压缩包爆破密码是zip比较多 爆破的时候记得先尝试纯数字，或者存一套趁手的字典</p>
+<h4 id="zip"><a href="#zip" class="headerlink" title="zip"></a>zip</h4><p><img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/088234996997639157fedf29f4f1d6e9.png" alt="img"></p>
+<blockquote>
+<p>50 4B 03 04：这是头文件标记（0x04034b50）<br>14 00：解压文件所需 pkware 版本<br>00 00：全局方式位标记（有无加密）<br>08 00：压缩方式<br>5A 7E：最后修改文件时间<br>F7 46：最后修改文件日期<br>16 B5 80 14：CRC-32校验（1480B516）<br>19 00 00 00：压缩后尺寸（25）<br>17 00 00 00：未压缩尺寸（23）<br>07 00：文件名长度<br>00 00：扩展记录长度<br>6B65792E7478740BCECC750E71ABCE48CDC9C95728CECC2DC849AD284DAD0500 </p>
+<p><code>50 4B 01 02</code>：中央目录文件头标识（0x02014b50）</p>
+<p>【版本信息区】</p>
+<ul>
+<li><code>14 00</code>：压缩所用PKWare版本（本例为2.0）</li>
+<li><code>14 00</code>：解压所需PKWare最低版本（本例为2.0）</li>
+</ul>
+<p>【通用位标记与压缩信息】</p>
+<ul>
+<li><code>00 00</code>：通用位标记（用于加密、数据描述符等）</li>
+<li><code>08 00</code>：压缩方法（08 &#x3D; DEFLATED）</li>
+<li><code>5A 7E</code>：文件最后修改时间（与本地文件头相同）</li>
+<li><code>F7 46</code>：文件最后修改日期（与本地文件头相同）</li>
+</ul>
+<p>【校验与尺寸信息】</p>
+<ul>
+<li><code>16 B5 80 14</code>：CRC-32校验值（1480B516）</li>
+<li><code>19 00 00 00</code>：压缩后大小（25字节）</li>
+<li><code>17 00 00 00</code>：未压缩大小（23字节）</li>
+</ul>
+<p>【文件名与额外字段信息】</p>
+<ul>
+<li><code>07 00</code>：文件名长度（7字节）</li>
+<li><code>00 00</code>：额外字段长度（0字节）</li>
+<li><code>00 00</code>：文件注释长度（0字节）</li>
+</ul>
+<p>【磁盘与文件属性】</p>
+<ul>
+<li><code>00 00</code>：文件开始磁盘号（0 &#x3D; 本磁盘）</li>
+<li><code>00 00</code>：内部文件属性（通常为0）</li>
+<li><code>20 00 00 00</code>：外部文件属性（操作系统相关，例如存档属性）</li>
+<li><code>00 00 00 00</code>：本地文件头的相对偏移量（重要！指向 <code>50 4B 03 04</code> 的位置）</li>
+</ul>
+<p>【可变长度数据区】</p>
+<ul>
+<li><code>6B 65 79 2E 74 78 74</code>：文件名（<code>key.txt</code> 的ASCII码）</li>
+<li><em>（如果有额外字段或注释，会接在此处）</em></li>
+</ul>
+</blockquote>
+<ul>
+<li>压缩包修复</li>
+<li>伪加密</li>
+<li><strong>密码未知</strong></li>
+<li>看看是否在其他部分能找到密码</li>
+<li>爆破密码</li>
+<li>明文攻击</li>
+<li>掩码攻击</li>
+<li>crc攻击（一般是文件大小小于等于6字节）</li>
+</ul>
+<h4 id="rar"><a href="#rar" class="headerlink" title="rar"></a>rar</h4><table>
+<thead>
+<tr>
+<th><strong>结构名称</strong></th>
+<th><strong>描述</strong></th>
+<th><strong>固定内容 (Magic Number)</strong></th>
+<th><strong>大小 (字节)</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>标记块 (Marker Block)</strong></td>
+<td>标识文件为 RAR 5.0 格式的起始标记。</td>
+<td><code>0x52 0x61 0x72 0x21 0x1A 0x07 0x01 0x00</code></td>
+<td>8</td>
+</tr>
+<tr>
+<td><strong>主块 (Main Header Block)</strong></td>
+<td>包含整个压缩包的一般信息。</td>
+<td>(无固定魔数，块类型字段定义)</td>
+<td>变长</td>
+</tr>
+<tr>
+<td><strong>文件块 (File Header Block)</strong></td>
+<td>包含单个文件或目录的信息。</td>
+<td>(无固定魔数，块类型字段定义)</td>
+<td>变长</td>
+</tr>
+<tr>
+<td><strong>服务块 (Service Header Block)</strong></td>
+<td>包含如恢复记录等附加数据。</td>
+<td>(无固定魔数，块类型字段定义)</td>
+<td>变长</td>
+</tr>
+<tr>
+<td><strong>结尾块 (End of Archive Block)</strong></td>
+<td>标记压缩包的结束。</td>
+<td>(无固定魔数，块类型字段定义)</td>
+<td>变长</td>
+</tr>
+</tbody></table>
+<ul>
+<li>伪加密</li>
+<li>隐藏文件</li>
+<li>NTFS流隐写</li>
+</ul>
+<h3 id="流量分析"><a href="#流量分析" class="headerlink" title="流量分析"></a>流量分析</h3><p>Note</p>
+<p>流量分析真的考积累，多刷题 这两年考的最多的简单题就是蚁剑流量，扫目录流量，各种入侵流量</p>
+<h4 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h4><ul>
+<li>TCP</li>
+<li>DNS（DNS tunnel）</li>
+<li>UDP</li>
+<li>USB流量</li>
+<li>鼠标</li>
+<li>键盘</li>
+<li>其他的比如手柄流量</li>
+<li>蓝牙协议</li>
+</ul>
+<h3 id="二维码"><a href="#二维码" class="headerlink" title="二维码"></a>二维码</h3><h4 id="QRCode"><a href="#QRCode" class="headerlink" title="QRCode"></a>QRCode</h4><ul>
+<li><p>二维码结构<img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/20161126233946256.png" alt="这里写图片描述" style="zoom: 50%;"></p>
+<p><img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/02d9b31b295e4f398c93fdccf460a868tplv-k3u1fbpfcp-zoom-in-crop-mark1512000.webp" alt="image.png"></p>
+<ul>
+<li><p>格式信息位<img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/image-20251021211004480.png" alt="image-20251021211004480" style="zoom: 50%;"></p>
+<ul>
+<li><p>格式信息数据位</p>
+<ul>
+<li><p>前两位纠错等级</p>
+<table>
+<thead>
+<tr>
+<th><strong>纠错等级</strong></th>
+<th><strong>二进制指示符（Format Information）</strong></th>
+<th><strong>容错能力（约）</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>L</strong></td>
+<td>01</td>
+<td>7%</td>
+<td>最小的纠错能力。</td>
+</tr>
+<tr>
+<td><strong>M</strong></td>
+<td>00</td>
+<td>15%</td>
+<td>适度的纠错能力，是推荐的默认等级。</td>
+</tr>
+<tr>
+<td><strong>Q</strong></td>
+<td>11</td>
+<td>25%</td>
+<td>较高的纠错能力。</td>
+</tr>
+<tr>
+<td><strong>H</strong></td>
+<td>10</td>
+<td>30%</td>
+<td>最高的纠错能力。</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>后3位掩码图形编号<img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/604765-20160907140034566-1766794640.gif" alt="img" style="zoom:33%;"></p>
+<p><img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/604765-20160907140044207-1335514151.gif" alt="img">、</p>
+</li>
+</ul>
+</li>
+<li><p>纠错码</p>
+</li>
+</ul>
+</li>
+<li><p>版本信息<img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/image-20251021211310898.png" alt="image-20251021211310898" style="zoom: 50%;"></p>
+</li>
+<li><p>数据位<img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/image-20251021211337221.png" alt="image-20251021211337221" style="zoom:50%;"></p>
+</li>
+</ul>
+</li>
+<li><p>二维码读取顺序<img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/604765-20160907140054832-607109094.gif" alt="img" style="zoom:50%;"></p>
+</li>
+<li><p>Reed-Solomon纠错码(RS码)</p>
+</li>
+</ul>
+<p><img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/abe8d7cbbf22a32498d31cfe31378841.png" alt="在这里插入图片描述"></p>
+<p><img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/0290b70c660025fd1bf3942b8e835fec.png" alt="在这里插入图片描述"></p>
+<p><img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/b17941cd6f7ca2ac55595b1369080619.png" alt="在这里插入图片描述"></p>
+<p><img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/34fcacb4c86a45934312a73888aab475.png" alt="在这里插入图片描述"></p>
+<ul>
+<li>补定位码：如果二维码的这三个定位图案被破坏，需要通过手动或工具进行修复</li>
+<li>反色：扫描器可能无法识别黑白反转的二维码（即背景是黑色，图案是白色）。反色操作就是将图像的黑白颜色对调，恢复到标准的“白背景、黑图案”或“黑背景、白背景图案”状态。</li>
+<li>损坏二维码的修复</li>
+<li>纠错码</li>
+</ul>
+<blockquote>
+<p>其他二维码(举几个例子)</p>
+<ul>
+<li>PDF417</li>
+<li>Aztec Code</li>
+<li>DotCode</li>
+<li>MaxiCode</li>
+</ul>
+</blockquote>
+<h3 id="内存取证"><a href="#内存取证" class="headerlink" title="内存取证"></a>内存取证</h3><p>内存取证是什么</p>
+<p>通常指对计算机中临时数据进行获取与分析，提取有价值的数据，达到想要达到的目的。<br>这是个大项，学起来挺复杂的<br>也是需要多练，拿到一道题不能无从下手</p>
+<h4 id="常用的工具"><a href="#常用的工具" class="headerlink" title="常用的工具"></a>常用的工具</h4><ul>
+<li>volatility</li>
+<li>FTK imager</li>
+<li>DiskGenius</li>
+<li>VeraCrypt</li>
+<li>BitLocker</li>
+</ul>
+<h4 id="常见的文件格式"><a href="#常见的文件格式" class="headerlink" title="常见的文件格式"></a>常见的文件格式</h4><ul>
+<li>.img</li>
+<li>.E01</li>
+<li>.vmdk</li>
+<li>.iso</li>
+</ul>
+<h3 id="文本文件"><a href="#文本文件" class="headerlink" title="文本文件"></a>文本文件</h3><ul>
+<li><p>snow隐写解密</p>
+<p>特徵</p>
+<p><img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/image-20260113112133677.png" alt="image-20260113112133677"></p>
+<p><img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/image-20260113112549595.png" alt="image-20260113112549595"></p>
+<p><img src="/2025/10/21/misc%E9%A2%98%E7%9B%AE/202407071838550.png" alt="flag1"></p>
+</li>
+<li><p>oursecrt</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="wuyaxiao 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="wuyaxiao 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/10/16/%E8%8F%9C%E7%8B%97%E6%9D%AF/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/11/04/uploads-labs/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+            
+    
+  
+
+  <!-- 应使用 elif 而不是 else if -->  
+  <div class="comments" id="comments">  
+    
+  <script src="https://utteranc.es/client.js"
+    repo="wuyaxiao/wuyaxiao.github.io"
+    issue-term="title"
+    theme="github-light"
+    crossorigin="anonymous"
+    async>
+  </script>
+  
+  </div>  
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#misc%E9%A2%98%E5%9E%8B%E6%A6%82%E8%A7%88"><span class="nav-number">1.</span> <span class="nav-text">misc题型概览</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E9%9A%90%E5%86%99"><span class="nav-number">1.1.</span> <span class="nav-text">图片隐写</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PNG-%E6%96%87%E4%BB%B6%E9%9A%90%E5%86%99%E4%B8%8E%E5%88%86%E6%9E%90%E6%8A%80%E6%9C%AF"><span class="nav-number">1.1.1.</span> <span class="nav-text">PNG 文件隐写与分析技术</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E4%BF%AE%E6%94%B9%E5%AE%BD%E9%AB%98%EF%BC%88%E4%B8%80%E8%88%AC%E6%98%AF%E9%AB%98%EF%BC%89"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">1. 修改宽高（一般是高）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-LSB%EF%BC%88%E6%9C%80%E4%BD%8E%E6%9C%89%E6%95%88%E4%BD%8D%E9%9A%90%E5%86%99%EF%BC%89%E9%9A%90%E5%86%99%E6%96%87%E4%BB%B6%E6%88%96%E6%96%87%E5%AD%97%E6%88%96%E5%9B%BE%E7%89%87"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">2. LSB（最低有效位隐写）隐写文件或文字或图片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E4%B8%A4%E5%BC%A0%E5%9B%BE%E7%89%87%E5%BC%82%E6%88%96-XOR"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">3. 两张图片异或 (XOR)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-cloacked-pixel"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">4. cloacked-pixel</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-apng-%E5%8F%AF%E4%BB%A5%E8%80%83%E5%8F%8C%E5%9B%BE%E7%9B%B2%E6%B0%B4%E5%8D%B0"><span class="nav-number">1.1.1.5.</span> <span class="nav-text">5. apng (可以考双图盲水印)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-%E9%9A%90%E8%97%8F%E6%88%96%E5%85%B6%E5%AE%83%E6%A0%BC%E5%BC%8F%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-number">1.1.1.6.</span> <span class="nav-text">6.隐藏或其它格式的文件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JPG"><span class="nav-number">1.1.2.</span> <span class="nav-text">JPG</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GIF"><span class="nav-number">1.1.3.</span> <span class="nav-text">GIF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BMP"><span class="nav-number">1.1.4.</span> <span class="nav-text">BMP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#webp"><span class="nav-number">1.1.5.</span> <span class="nav-text">webp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B2%E6%B0%B4%E5%8D%B0"><span class="nav-number">1.1.6.</span> <span class="nav-text">盲水印</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9F%B3%E9%A2%91%E9%9A%90%E5%86%99"><span class="nav-number">1.2.</span> <span class="nav-text">音频隐写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%8B%E7%BC%A9%E5%8C%85"><span class="nav-number">1.3.</span> <span class="nav-text">压缩包</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#zip"><span class="nav-number">1.3.1.</span> <span class="nav-text">zip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rar"><span class="nav-number">1.3.2.</span> <span class="nav-text">rar</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90"><span class="nav-number">1.4.</span> <span class="nav-text">流量分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.4.1.</span> <span class="nav-text">协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E7%BB%B4%E7%A0%81"><span class="nav-number">1.5.</span> <span class="nav-text">二维码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#QRCode"><span class="nav-number">1.5.1.</span> <span class="nav-text">QRCode</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%8F%96%E8%AF%81"><span class="nav-number">1.6.</span> <span class="nav-text">内存取证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="nav-number">1.6.1.</span> <span class="nav-text">常用的工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.6.2.</span> <span class="nav-text">常见的文件格式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6"><span class="nav-number">1.7.</span> <span class="nav-text">文本文件</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuyaxiao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="fa fa-user">
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuyaxiao</span>
+</div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

